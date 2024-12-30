@@ -10,6 +10,8 @@ import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -17,6 +19,7 @@ import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -116,12 +119,10 @@ public class fingerprint {
             @SuppressLint("PrivateApi") Class<?> c = Class.forName("android.os.SystemProperties");
             Method get = c.getMethod("get", String.class);
 
-            StringBuilder s = new StringBuilder("系统指纹：\n");
+            StringBuilder s = new StringBuilder("\n系统指纹：\n");
 
             String[] properties = {
                     "ro.build.fingerprint",
-                    "ro.build.build.fingerprint",
-                    "ro.bootimage.build.fingerprint",
                     "ro.odm.build.fingerprint",
                     "ro.product.build.fingerprint",
                     "ro.system_ext.build.fingerprint",
@@ -132,7 +133,9 @@ public class fingerprint {
 
             for (String property : properties) {
                 String value = (String) get.invoke(c, property);
-                Log.d("DeviceProperties", property + ": \n" + value);
+                if(Objects.equals(value, "")){
+                    value = "无结果";
+                }
                 s.append(property).append(":").append(value).append("\n");
             }
             List<String> p = getSystemProperties2();
@@ -144,7 +147,6 @@ public class fingerprint {
             Log.w("getSystemPropertiesException",  e.getMessage(), e);
         }
         return "系统属性获取失败";
-
     }
 
     public List<String> getSystemProperties2(){
@@ -171,11 +173,32 @@ public class fingerprint {
         properties.add("INCREMENTAL:" + Build.VERSION.INCREMENTAL);
         properties.add("SDK:" + Build.VERSION.SDK);
         properties.add("SDK_INT:" + Build.VERSION.SDK_INT);
-        return properties;
+        properties.add("FINGERPRINT:" + Build.BRAND+"/" + Build.PRODUCT+"/" + Build.DEVICE+":" + Build.VERSION.RELEASE+"/" +
+                        Build.ID+"/" + Build.VERSION.INCREMENTAL+":" + Build.TYPE+"/" + Build.TAGS);
+
+        List<String> processedProperties = getStrings(properties);
+        return processedProperties;
     }
 
-
-
+    private static @NonNull List<String> getStrings(List<String> properties) {
+        List<String> processedProperties = new ArrayList<>();
+        for (String property : properties) {
+            String[] parts = property.split(":", 2);
+            if (parts.length == 2) {
+                String key = parts[0];
+                String value = parts[1].trim();
+                // 替换空值或unknown
+                if (value.isEmpty() || value.equalsIgnoreCase("unknown")) {
+                    value = "无结果";
+                }
+                processedProperties.add(key + ":" + value);
+            } else {
+                // 保留没有冒号的情况
+                processedProperties.add(property);
+            }
+        }
+        return processedProperties;
+    }
 
     public void getAccounts(Context context) {
         AccountManager accountManager = AccountManager.get(context);

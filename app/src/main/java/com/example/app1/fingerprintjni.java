@@ -8,6 +8,8 @@ public class fingerprintjni {
 
     public native String fingerprint();
 
+    public native String netfp();
+
     public native String check();
 
     public native String mapscheck();

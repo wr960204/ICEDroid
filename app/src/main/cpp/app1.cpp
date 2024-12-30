@@ -15,15 +15,12 @@
 
 
 #include "com_example_app1_fingerprintjni.h"
-
+//-----------------------------------------------设备指纹检测------------------------------------------------------
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject thiz){
-
     const char *properties[] = {
             "ro.build.fingerprint",
-            "ro.build.build.fingerprint",
-            "ro.bootimage.build.fingerprint",
             "ro.odm.build.fingerprint",
             "ro.product.build.fingerprint",
             "ro.system_ext.build.fingerprint",
@@ -71,48 +68,35 @@ Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject thiz){
         }
 
         // 将属性名和属性值合并到结果字符串中
-        snprintf(result + strlen(result), 4096 - strlen(result), "\n%s: %s", properties[i], value);
+        snprintf(result + strlen(result), 4096 - strlen(result), "\n%s:%s", properties[i], value);
     }
 
+    // 创建 FINGERPRINT 字符串
+    char fingerprint[1024] = {0}; // 用于存储组合后的属性信息
+    char brand[PROP_VALUE_MAX] = {0};
+    char name[PROP_VALUE_MAX] = {0};
+    char device[PROP_VALUE_MAX] = {0};
+    char versionRelease[PROP_VALUE_MAX] = {0};
+    char buildId[PROP_VALUE_MAX] = {0};
+    char versionIncremental[PROP_VALUE_MAX] = {0};
+    char buildType[PROP_VALUE_MAX] = {0};
+    char buildTags[PROP_VALUE_MAX] = {0};
+    // 获取所需的属性值
+    __system_property_get("ro.product.brand", brand);
+    __system_property_get("ro.product.name", name);
+    __system_property_get("ro.product.device", device);
+    __system_property_get("ro.build.version.release", versionRelease);
+    __system_property_get("ro.build.id", buildId);
+    __system_property_get("ro.build.version.incremental", versionIncremental);
+    __system_property_get("ro.build.type", buildType);
+    __system_property_get("ro.build.tags", buildTags);
+    // 组合所需的属性
+    snprintf(fingerprint, sizeof(fingerprint),
+             "FINGERPRINT:%s/%s/%s:%s/%s/%s:%s/%s",
+             brand, name, device, versionRelease, buildId, versionIncremental, buildType, buildTags);
 
-
-    /*
-    jclass contextClass = (*env).GetObjectClass(thiz);
-    jmethodID getSystemService = (*env).GetMethodID(contextClass, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
-    jstring wifiService = (*env).NewStringUTF("wifi");
-    jobject wifiManager = (*env).CallObjectMethod(thiz, getSystemService, wifiService);
-
-    // 获取WifiManager类的class
-    jclass wifiManagerClass = (*env).GetObjectClass(wifiManager);
-    jmethodID getConnectionInfo = (*env).GetMethodID(wifiManagerClass, "getConnectionInfo", "()Landroid/net/wifi/WifiInfo;");
-
-    // 获取WifiInfo对象
-    jobject wifiInfo = (*env).CallObjectMethod(wifiManager, getConnectionInfo);
-
-    // 获取WifiInfo类的class
-    jclass wifiInfoClass = (*env).GetObjectClass(wifiInfo);
-    jmethodID getMacAddress = (*env).GetMethodID(wifiInfoClass, "getMacAddress", "()Ljava/lang/String;");
-
-    // 获取MAC地址
-    jstring macAddress = (jstring)(*env).CallObjectMethod(wifiInfo, getMacAddress);
-
-     */
-
-    int sock;
-    struct ifreq ifr;
-
-    sock = socket(AF_INET, SOCK_DGRAM, 0);
-    strcpy(ifr.ifr_name, "wlan0");
-    ioctl(sock, SIOCGIFHWADDR, &ifr);
-    close(sock);
-
-    unsigned char* mac = reinterpret_cast<unsigned char*>(ifr.ifr_hwaddr.sa_data);
-
-    char macAddress[18];
-    sprintf(macAddress, "%02x:%02x:%02x:%02x:%02x:%02x",
-            mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-
-    sprintf(result,"%s\n%s", result,macAddress);
+    // 将组合后的字符串添加到结果中
+    snprintf(result + strlen(result), 4096 - strlen(result), "\n%s", fingerprint);
 
     // 创建 Java 字符串并返回
     jstring jResult = (*env).NewStringUTF(result);
@@ -122,6 +106,25 @@ Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject thiz){
     return jResult; // 返回合并后的字符串
 }
 
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_netfp(JNIEnv * env, jobject){
+
+    int sock;
+    struct ifreq ifr;
+    sock = socket(AF_INET, SOCK_DGRAM, 0);
+    strcpy(ifr.ifr_name, "wlan0");
+    ioctl(sock, SIOCGIFHWADDR, &ifr);
+    close(sock);
+    unsigned char* mac = reinterpret_cast<unsigned char*>(ifr.ifr_hwaddr.sa_data);
+    char macAddress[18];
+    sprintf(macAddress, "%02x:%02x:%02x:%02x:%02x:%02x",
+            mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    // 创建 Java 字符串并返回
+    jstring jResult = (*env).NewStringUTF(macAddress);
+    return jResult; // 返回合并后的字符串
+
+};
+
+//-----------------------------------------------hook检测方法------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_check(JNIEnv *env, jobject){
 
     const char* result1 = "检测到frida服务器端口";

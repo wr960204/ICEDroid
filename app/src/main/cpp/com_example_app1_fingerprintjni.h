@@ -17,6 +17,14 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_fingerprint
 
 /*
  * Class:     com_example_app1_fingerprintjni
+ * Method:    netfp
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_netfp
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_example_app1_fingerprintjni
  * Method:    check
  * Signature: ()Ljava/lang/String;
  */

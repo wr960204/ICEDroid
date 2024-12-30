@@ -22,6 +22,9 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class rootcheck {
@@ -198,5 +201,40 @@ public class rootcheck {
             Log.w("checkTEEException", e.getMessage(),e);
             return false;
         }
+    }
+    //检测指纹属性
+    public boolean checkFP(){
+        fingerprint fp = new fingerprint();
+        fingerprintjni j = new fingerprintjni();
+        String sys = fp.getSystemProperties();
+        String fpjni = "\n系统指纹：" + j.fingerprint() + "\n";
+        String[] lines1 = sys.split("\n");
+        String[] lines2 = fpjni.split("\n");
+        String[] fingerprint = new String[14];
+        System.arraycopy(lines1,2,fingerprint,0,6);
+        System.arraycopy(lines2,2,fingerprint,6,6);
+        System.arraycopy(lines1,lines1.length-1,fingerprint,12,1);
+        System.arraycopy(lines2,lines2.length-1,fingerprint,13,1);
+        System.out.println(Arrays.toString(fingerprint));
+        return  areValuesIdentical(fingerprint);
+
+    }
+    public static boolean areValuesIdentical(String[] data) {
+        Set<String> valuesSet = new HashSet<>();
+        for (String entry : data) {
+            // 将字符串按冒号分割，确保有两个部分
+            String[] parts = entry.split(":", 2);
+            // 如果分割成功，添加冒号后的值到集合中
+            if (parts.length == 2) {
+                String value = parts[1].trim(); // 获取冒号后的值并去除空白
+                valuesSet.add(value);
+            } else {
+                // 如果没有冒号或格式不正确，可以选择抛出异常或添加默认值
+                // 这里直接返回 false 表示数据格式不符合要求
+                return false;
+            }
+        }
+        // 如果集合的大小为 1，表示所有值相同
+        return valuesSet.size() == 1;
     }
 }
