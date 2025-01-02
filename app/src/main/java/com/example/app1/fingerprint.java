@@ -12,6 +12,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -179,21 +180,31 @@ public class fingerprint {
         return getStrings(properties);
     }
 
-    public List<String> getSystemProperties3(){
+    public List<String> getSystemProperties3() throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException {
         List<String> properties = new ArrayList<>();
-        properties.add("SKU:" + Build.SKU);
-        properties.add("ODM_SKU:" + Build.ODM_SKU);
-        properties.add("SOC_MANUFACTURER:" + Build.SOC_MANUFACTURER);
-        properties.add("SOC_MODEL:" + Build.SOC_MODEL);
-        properties.add("BASE_OS:" + Build.VERSION.BASE_OS);
-        properties.add("RELEASE_OR_CODENAME:" + Build.VERSION.RELEASE_OR_CODENAME);
-        properties.add("RELEASE_OR_PREVIEW_DISPLAY:" + Build.VERSION.RELEASE_OR_PREVIEW_DISPLAY);
-        properties.add("BASE_OS:" + Build.VERSION.SECURITY_PATCH);
-        properties.add("BASE_OS:" + Build.VERSION.PREVIEW_SDK_INT);
-        properties.add("BASE_OS:" + Build.VERSION.MEDIA_PERFORMANCE_CLASS);
+        properties.add("SECURITY_PATCH:" + Build.VERSION.SECURITY_PATCH);
+        properties.add("PREVIEW_SDK_INT:" + Build.VERSION.PREVIEW_SDK_INT);
 
+        @SuppressLint("PrivateApi") Class<?> c = Class.forName("android.os.SystemProperties");
+        Method get = c.getMethod("get", String.class);
+        StringBuilder s = new StringBuilder("\n系统指纹：\n");
+        String[] properties1 = {
+                "ro.build.fingerprint",
+                "ro.odm.build.fingerprint",
+                "ro.product.build.fingerprint",
+                "ro.system_ext.build.fingerprint",
+                "ro.system.build.fingerprint",
+                "ro.vendor.build.fingerprint",
+                "ro.build.description"
+        };
 
-
+        for (String property : properties1) {
+            String value = (String) get.invoke(c, property);
+            if(Objects.equals(value, "")){
+                value = "无结果";
+            }
+            properties.add(property + ":" + value);
+        }
 
         return getStrings(properties);
     }

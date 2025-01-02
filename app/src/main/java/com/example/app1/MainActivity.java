@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
         //------------------------------------------测试---------------------------------------------------
         Button button7 = findViewById(R.id.button7);
-        button5.setOnClickListener(view -> {
+        button7.setOnClickListener(view -> {
 
             fingerprint fp = new fingerprint();
             StringBuilder fs = new StringBuilder();
