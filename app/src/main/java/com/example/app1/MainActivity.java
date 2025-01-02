@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -163,7 +164,13 @@ public class MainActivity extends AppCompatActivity {
 
             fingerprint fp = new fingerprint();
             StringBuilder fs = new StringBuilder();
-            List<String> p = fp.getSystemProperties3();
+            List<String> p = null;
+            try {
+                p = fp.getSystemProperties3();
+            } catch (NoSuchMethodException | ClassNotFoundException | InvocationTargetException |
+                     IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
             for (String property : p){
                 fs.append(property).append("\n");
             }
