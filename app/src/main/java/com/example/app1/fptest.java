@@ -37,17 +37,37 @@ public class fptest {
 
         for (PackageInfo packageInfo : list2) {
             //得到手机上已经安装的应用的名字,即在AndriodMainfest.xml中的app_name。
-            String appName=packageInfo.applicationInfo.loadLabel(context.getPackageManager()).toString();
+            //String appName=packageInfo.applicationInfo.loadLabel(context.getPackageManager()).toString();
             //得到手机上已经安装的应用的图标,即在AndriodMainfest.xml中的icon。
-            Drawable drawable = packageInfo.applicationInfo.loadIcon(context.getPackageManager());
+            //Drawable drawable = packageInfo.applicationInfo.loadIcon(context.getPackageManager());
             //得到应用所在包的名字,即在AndriodMainfest.xml中的package的值。
-            String packageName=packageInfo.packageName;
+            //String packageName=packageInfo.packageName;
             //Log.d("应用名", "应用的名字:"+appName);
             //Log.d("应用包名", "应用的包名字:"+packageName);
             j++;
         }
         Log.d("========", "应用的总个数:"+j);
         return "应用的总个数:"+j;
+    }
+
+    public String developmentSettings(Context context){
+        List<String> d = new ArrayList<>();
+
+        int developmentSettings = Settings.Secure.getInt(context.getContentResolver(), Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0);
+        if (developmentSettings == 1) {
+            // 开发者选项已启⽤
+            d.add("开发者选项已启⽤");
+        }else {
+            d.add("开发者选项未启⽤");
+        }
+        int adbEnabled = Settings.Global.getInt(context.getContentResolver(), Settings.Global.ADB_ENABLED, 0);
+        if (adbEnabled == 1) {
+            // USB调试已启⽤
+            d.add("USB调试已启⽤");
+        }else {
+            d.add("USB调试未启⽤");
+        }
+        return getStrings(d).toString();
     }
 
     private static @NonNull List<String> getStrings(List<String> properties) {
@@ -70,13 +90,9 @@ public class fptest {
         return processedProperties;
     }
 
-    public String developmentSettings(Context context){
-        int developmentSettings = Settings.Secure.getInt(context.getContentResolver(), Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0);
-        if (developmentSettings == 1) {
-            // 开发者选项已启⽤
-            return "开发者模式已启用";
-        }
-        return "开发者模式未启用";
-    }
+
+
+
+
 
 }
