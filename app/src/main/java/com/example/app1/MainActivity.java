@@ -166,11 +166,11 @@ public class MainActivity extends AppCompatActivity {
         Button button7 = findViewById(R.id.button7);
         button7.setOnClickListener(view -> {
 
-            fingerprint fp = new fingerprint();
+            fptest fp = new fptest();
             StringBuilder fs = new StringBuilder();
             List<String> p = null;
             try {
-                p = fp.getSystemProperties3(this);
+                p = fp.getProperties(this);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -519,27 +519,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //-----------------------------------------------测试方法------------------------------------------------------
-    public String getAllAppNames(){
-        PackageManager pm=getPackageManager();
-        ////获取到所有安装了的应用程序的信息，包括那些卸载了的，但没有清除数据的应用程序
-        @SuppressLint("QueryPermissionsNeeded") List<PackageInfo> list2=pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
 
-        int j=0;
-
-        for (PackageInfo packageInfo : list2) {
-            //得到手机上已经安装的应用的名字,即在AndriodMainfest.xml中的app_name。
-            String appName=packageInfo.applicationInfo.loadLabel(getPackageManager()).toString();
-            //得到手机上已经安装的应用的图标,即在AndriodMainfest.xml中的icon。
-            Drawable drawable = packageInfo.applicationInfo.loadIcon(getPackageManager());
-            //得到应用所在包的名字,即在AndriodMainfest.xml中的package的值。
-            String packageName=packageInfo.packageName;
-            //Log.d("应用名", "应用的名字:"+appName);
-            //Log.d("应用包名", "应用的包名字:"+packageName);
-            j++;
-        }
-        Log.d("========cccccc", "应用的总个数:"+j);
-        return "应用的总个数:"+j;
-    }
 
 }
 
