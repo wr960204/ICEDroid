@@ -18,7 +18,7 @@
 //-----------------------------------------------设备指纹检测------------------------------------------------------
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject thiz){
+Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject ){
     const char *properties[] = {
             "ro.build.fingerprint",
             "ro.odm.build.fingerprint",
@@ -128,7 +128,6 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_netfp(JNIEnv * en
     // 创建 Java 字符串并返回
     jstring jResult = (*env).NewStringUTF(macAddress);
     return jResult; // 返回合并后的字符串
-
 };
 
 //-----------------------------------------------hook检测方法------------------------------------------------------

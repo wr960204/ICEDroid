@@ -42,7 +42,7 @@ public class fptest {
             //Log.d("应用包名", "应用的包名字:"+packageName);
             j++;
         }
-        Log.d("========cccccc", "应用的总个数:"+j);
+        Log.d("========", "应用的总个数:"+j);
         return "应用的总个数:"+j;
     }
 
