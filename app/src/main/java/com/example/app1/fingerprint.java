@@ -6,6 +6,8 @@ import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
@@ -208,7 +210,6 @@ public class fingerprint {
 
         };
 
-
         for (String property : properties1) {
             String value = (String) get.invoke(c, property);
             if(Objects.equals(value, "")){
@@ -234,6 +235,8 @@ public class fingerprint {
         }
         return result;
         }
+
+
 
 
 

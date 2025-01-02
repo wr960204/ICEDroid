@@ -1,10 +1,14 @@
 package com.example.app1;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -175,12 +179,17 @@ public class MainActivity extends AppCompatActivity {
                 fs.append(property).append("\n");
             }
 
+            String app = getAllAppNames();
+
+            String result = fs.toString() + "\n" + app;
+
+
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",fs.toString());
+            intent.putExtra("s",result);
             startActivity(intent);
         });
 
@@ -510,4 +519,29 @@ public class MainActivity extends AppCompatActivity {
             h = "检测到frida";
         return h;
     }
+
+    //-----------------------------------------------测试方法------------------------------------------------------
+    public String getAllAppNames(){
+        PackageManager pm=getPackageManager();
+        ////获取到所有安装了的应用程序的信息，包括那些卸载了的，但没有清除数据的应用程序
+        @SuppressLint("QueryPermissionsNeeded") List<PackageInfo> list2=pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
+
+        int j=0;
+
+        for (PackageInfo packageInfo : list2) {
+            //得到手机上已经安装的应用的名字,即在AndriodMainfest.xml中的app_name。
+            String appName=packageInfo.applicationInfo.loadLabel(getPackageManager()).toString();
+            //得到手机上已经安装的应用的图标,即在AndriodMainfest.xml中的icon。
+            Drawable drawable = packageInfo.applicationInfo.loadIcon(getPackageManager());
+            //得到应用所在包的名字,即在AndriodMainfest.xml中的package的值。
+            String packageName=packageInfo.packageName;
+            //Log.d("应用名", "应用的名字:"+appName);
+            //Log.d("应用包名", "应用的包名字:"+packageName);
+            j++;
+        }
+        Log.d("========cccccc", "应用的总个数:"+j);
+        return "应用的总个数:"+j;
+    }
+
 }
+
