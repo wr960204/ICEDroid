@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 
 import androidx.annotation.NonNull;
 
@@ -19,6 +22,7 @@ public class fptest {
         int availableCores = Runtime.getRuntime().availableProcessors();
         properties.add("可⽤处理器核⼼数：" + availableCores);
         properties.add(getAllAppNames(context));
+        properties.add(developmentSettings(context));
 
         return getStrings(properties);
     }
@@ -65,4 +69,14 @@ public class fptest {
         }
         return processedProperties;
     }
+
+    public String developmentSettings(Context context){
+        int developmentSettings = Settings.Secure.getInt(context.getContentResolver(), Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0);
+        if (developmentSettings == 1) {
+            // 开发者选项已启⽤
+            return "开发者模式已启用";
+        }
+        return "开发者模式未启用";
+    }
+
 }
