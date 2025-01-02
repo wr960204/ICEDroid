@@ -189,13 +189,10 @@ public class fingerprint {
         Method get = c.getMethod("get", String.class);
         StringBuilder s = new StringBuilder("\n系统指纹：\n");
         String[] properties1 = {
-                "ro.build.fingerprint",
-                "ro.odm.build.fingerprint",
-                "ro.product.build.fingerprint",
-                "ro.system_ext.build.fingerprint",
-                "ro.system.build.fingerprint",
-                "ro.vendor.build.fingerprint",
-                "ro.build.description"
+                "ro.build.svn",
+                "ro.build.date",
+                "ro.build.date.utc",
+
         };
 
         for (String property : properties1) {
