@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -161,14 +162,18 @@ public class MainActivity extends AppCompatActivity {
         button5.setOnClickListener(view -> {
 
             fingerprint fp = new fingerprint();
-            String fs = "";
+            StringBuilder fs = new StringBuilder();
+            List<String> p = fp.getSystemProperties3();
+            for (String property : p){
+                fs.append(property).append("\n");
+            }
 
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",fs);
+            intent.putExtra("s",fs.toString());
             startActivity(intent);
         });
 

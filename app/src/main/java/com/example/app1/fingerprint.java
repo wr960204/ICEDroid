@@ -188,6 +188,9 @@ public class fingerprint {
         properties.add("BASE_OS:" + Build.VERSION.BASE_OS);
         properties.add("RELEASE_OR_CODENAME:" + Build.VERSION.RELEASE_OR_CODENAME);
         properties.add("RELEASE_OR_PREVIEW_DISPLAY:" + Build.VERSION.RELEASE_OR_PREVIEW_DISPLAY);
+        properties.add("BASE_OS:" + Build.VERSION.SECURITY_PATCH);
+        properties.add("BASE_OS:" + Build.VERSION.PREVIEW_SDK_INT);
+        properties.add("BASE_OS:" + Build.VERSION.MEDIA_PERFORMANCE_CLASS);
 
 
 
