@@ -189,7 +189,6 @@ public class fingerprint {
         Method get = c.getMethod("get", String.class);
         StringBuilder s = new StringBuilder("\n系统指纹：\n");
         String[] properties1 = {
-                "ro.build.svn",
                 "ro.build.date",
                 "ro.build.date.utc",
 
