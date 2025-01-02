@@ -22,7 +22,7 @@ public class fptest {
         int availableCores = Runtime.getRuntime().availableProcessors();
         properties.add("可⽤处理器核⼼数：" + availableCores);
         properties.add(getAllAppNames(context));
-        properties.add(developmentSettings(context));
+        properties.addAll(developmentSettings(context));
 
         return getStrings(properties);
     }
@@ -50,7 +50,7 @@ public class fptest {
         return "应用的总个数:"+j;
     }
 
-    public String developmentSettings(Context context){
+    public List<String> developmentSettings(Context context){
         List<String> d = new ArrayList<>();
 
         int developmentSettings = Settings.Secure.getInt(context.getContentResolver(), Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0);
@@ -67,7 +67,7 @@ public class fptest {
         }else {
             d.add("USB调试未启⽤");
         }
-        return getStrings(d).toString();
+        return getStrings(d);
     }
 
     private static @NonNull List<String> getStrings(List<String> properties) {
