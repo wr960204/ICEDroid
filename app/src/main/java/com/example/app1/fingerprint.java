@@ -176,9 +176,20 @@ public class fingerprint {
         properties.add("FINGERPRINT:" + Build.BRAND+"/" + Build.PRODUCT+"/" + Build.DEVICE+":" + Build.VERSION.RELEASE+"/" +
                         Build.ID+"/" + Build.VERSION.INCREMENTAL+":" + Build.TYPE+"/" + Build.TAGS);
 
-        List<String> processedProperties = getStrings(properties);
-        return processedProperties;
+        return getStrings(properties);
     }
+
+    public List<String> getSystemProperties3(){
+        List<String> properties = new ArrayList<>();
+        properties.add("CODENAME:" + Build.VERSION.CODENAME);
+        
+
+
+
+        return getStrings(properties);
+    }
+
+
 
     private static @NonNull List<String> getStrings(List<String> properties) {
         List<String> processedProperties = new ArrayList<>();
