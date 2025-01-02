@@ -181,9 +181,11 @@ public class fingerprint {
 
     public List<String> getSystemProperties3(){
         List<String> properties = new ArrayList<>();
-        properties.add("CODENAME:" + Build.VERSION.CODENAME);
-        properties.add("CODENAME:" + Build.VERSION.RELEASE);
-        
+        properties.add("SKU:" + Build.SKU);
+        properties.add("ODM_SKU:" + Build.ODM_SKU);
+        properties.add("SOC_MANUFACTURER:" + Build.SOC_MANUFACTURER);
+        properties.add("SOC_MODEL:" + Build.SOC_MODEL);
+
 
 
 
