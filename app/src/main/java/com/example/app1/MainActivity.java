@@ -150,12 +150,38 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        //------------------------------------------测试---------------------------------------------------
+        Button button7 = findViewById(R.id.button7);
+        button5.setOnClickListener(view -> {
+
+            fingerprint fp = new fingerprint();
+            String fs = "";
+
+            checkSign();
+            startScheduledTask();
+            setDailyAlarm();
+
+            Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+            intent.putExtra("s",fs);
+            startActivity(intent);
+        });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+
+
+
     }
 
     //-----------------------------------------------ROOT检测------------------------------------------------------
