@@ -217,7 +217,6 @@ public class rootcheck {
         System.arraycopy(lines2,lines2.length-1,fingerprint,13,1);
         System.out.println(Arrays.toString(fingerprint));
         return  areValuesIdentical(fingerprint);
-
     }
     public static boolean areValuesIdentical(String[] data) {
         Set<String> valuesSet = new HashSet<>();

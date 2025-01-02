@@ -386,7 +386,6 @@ public class MainActivity extends AppCompatActivity {
         StringBuilder result = new StringBuilder("\n以下属性存在不同：\n");
         // 找到最大的行数
         int maxLines = Math.max(lines1.length, lines2.length);
-
         for (int i = 0; i < maxLines; i++) {
             String line1 = i < lines1.length ? lines1[i] : "无结果";  // 如果行不存在，则显示“无结果”
             String line2 = i < lines2.length ? lines2[i] : "无结果";  // 如果行不存在，则显示“无结果”
@@ -406,7 +405,6 @@ public class MainActivity extends AppCompatActivity {
                 String r = key1 + "：\n" + value1 +"\n" + value2 +"\n";
                 result.append(r);
             }
-
         }
 
         String[] fingerprint = new String[14];

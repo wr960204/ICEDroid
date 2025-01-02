@@ -40,7 +40,6 @@ public class hookcheck {
     }
 
     private static final String TAG = "FridaChecker";
-
     public boolean mCheckFridaTcp() {
         String[] stringArrayTcp6;
         String[] stringArrayTcp;
@@ -57,7 +56,6 @@ public class hookcheck {
                 }
             }
         }
-
         if (!tcpStringTcp.isEmpty()) {
             stringArrayTcp = tcpStringTcp.split("\n");
             for (String sa : stringArrayTcp) {
@@ -67,7 +65,6 @@ public class hookcheck {
                 }
             }
         }
-
         return isFridaExits;
     }
 
