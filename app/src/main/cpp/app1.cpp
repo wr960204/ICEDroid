@@ -28,6 +28,9 @@ Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject thiz){
             "ro.vendor.build.fingerprint",
             "ro.build.description",
 
+            "ro.build.date",
+            "ro.build.date.utc",
+
             "ro.product.board",
             "ro.bootloader",
             "ro.product.brand",
@@ -49,7 +52,10 @@ Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject thiz){
             "ro.build.version.codename",
             "ro.build.version.incremental",
             "ro.build.version.sdk",
-            "ro.build.version.sdk_int"
+            "ro.build.version.sdk_int",
+
+            "ro.build.version.security_patch",
+            "ro.build.version.preview_sdk_int",
     };
 
     int numProperties = sizeof(properties) / sizeof(properties[0]);
@@ -63,7 +69,7 @@ Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject thiz){
         char value[PROP_VALUE_MAX] = {0};
         __system_property_get(properties[i], value);
 
-        if (strlen(value) == 0) {
+        if (strlen(value) == 0 | strcmp(value,"unknown") == 0) {
             snprintf(value, sizeof(value), "无结果");
         }
 

@@ -129,7 +129,10 @@ public class fingerprint {
                     "ro.system_ext.build.fingerprint",
                     "ro.system.build.fingerprint",
                     "ro.vendor.build.fingerprint",
-                    "ro.build.description"
+                    "ro.build.description",
+
+                    "ro.build.date",
+                    "ro.build.date.utc",
             };
 
             for (String property : properties) {
@@ -174,6 +177,10 @@ public class fingerprint {
         properties.add("INCREMENTAL:" + Build.VERSION.INCREMENTAL);
         properties.add("SDK:" + Build.VERSION.SDK);
         properties.add("SDK_INT:" + Build.VERSION.SDK_INT);
+
+        properties.add("SECURITY_PATCH:" + Build.VERSION.SECURITY_PATCH);
+        properties.add("PREVIEW_SDK_INT:" + Build.VERSION.PREVIEW_SDK_INT);
+
         properties.add("FINGERPRINT:" + Build.BRAND+"/" + Build.PRODUCT+"/" + Build.DEVICE+":" + Build.VERSION.RELEASE+"/" +
                         Build.ID+"/" + Build.VERSION.INCREMENTAL+":" + Build.TYPE+"/" + Build.TAGS);
 
