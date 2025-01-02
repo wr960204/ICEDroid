@@ -170,18 +170,16 @@ public class MainActivity extends AppCompatActivity {
             StringBuilder fs = new StringBuilder();
             List<String> p = null;
             try {
-                p = fp.getSystemProperties3();
-            } catch (NoSuchMethodException | ClassNotFoundException | InvocationTargetException |
-                     IllegalAccessException e) {
+                p = fp.getSystemProperties3(this);
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
             for (String property : p){
                 fs.append(property).append("\n");
             }
 
-            String app = getAllAppNames();
 
-            String result = fs.toString() + "\n" + app;
+            String result = fs.toString();
 
 
             checkSign();

@@ -7,7 +7,9 @@ import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
@@ -195,48 +197,38 @@ public class fingerprint {
         return getStrings(properties);
     }
 
-    public List<String> getSystemProperties3() throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException {
+    public List<String> getSystemProperties3(Context context) {
         List<String> properties = new ArrayList<>();
-        properties.add("SECURITY_PATCH:" + Build.VERSION.SECURITY_PATCH);
-        properties.add("PREVIEW_SDK_INT:" + Build.VERSION.PREVIEW_SDK_INT);
-        properties.add("SUPPORTED_ABIS:" + Arrays.toString(Build.SUPPORTED_ABIS));
 
-        @SuppressLint("PrivateApi") Class<?> c = Class.forName("android.os.SystemProperties");
-        Method get = c.getMethod("get", String.class);
-        StringBuilder s = new StringBuilder("\n系统指纹：\n");
-        String[] properties1 = {
-                "ro.build.date",
-                "ro.build.date.utc",
-
-        };
-
-        for (String property : properties1) {
-            String value = (String) get.invoke(c, property);
-            if(Objects.equals(value, "")){
-                value = "无结果";
-            }
-            properties.add(property + ":" + value);
-        }
-        properties.add(getCurCpuFreq());
+        int availableCores = Runtime.getRuntime().availableProcessors();
+        properties.add("可⽤处理器核⼼数：" + availableCores);
+        properties.add(getAllAppNames(context));
 
         return getStrings(properties);
     }
 
-    public static String getCurCpuFreq() {
-        String result = "N/A";
-        try {
-            FileReader fr = new FileReader(
-                    "/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
-            BufferedReader br = new BufferedReader(fr);
-            String text = br.readLine();
-            result = text.trim();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-        }
 
+    public String getAllAppNames(Context context){
+        PackageManager pm = context.getPackageManager();
+        ////获取到所有安装了的应用程序的信息，包括那些卸载了的，但没有清除数据的应用程序
+        @SuppressLint("QueryPermissionsNeeded") List<PackageInfo> list2=pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
 
+        int j=0;
+
+        for (PackageInfo packageInfo : list2) {
+            //得到手机上已经安装的应用的名字,即在AndriodMainfest.xml中的app_name。
+            String appName=packageInfo.applicationInfo.loadLabel(context.getPackageManager()).toString();
+            //得到手机上已经安装的应用的图标,即在AndriodMainfest.xml中的icon。
+            Drawable drawable = packageInfo.applicationInfo.loadIcon(context.getPackageManager());
+            //得到应用所在包的名字,即在AndriodMainfest.xml中的package的值。
+            String packageName=packageInfo.packageName;
+            //Log.d("应用名", "应用的名字:"+appName);
+            //Log.d("应用包名", "应用的包名字:"+packageName);
+            j++;
+        }
+        Log.d("========cccccc", "应用的总个数:"+j);
+        return "应用的总个数:"+j;
+    }
 
 
 
