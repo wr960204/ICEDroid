@@ -185,6 +185,9 @@ public class fingerprint {
         properties.add("ODM_SKU:" + Build.ODM_SKU);
         properties.add("SOC_MANUFACTURER:" + Build.SOC_MANUFACTURER);
         properties.add("SOC_MODEL:" + Build.SOC_MODEL);
+        properties.add("BASE_OS:" + Build.VERSION.BASE_OS);
+        properties.add("RELEASE_OR_CODENAME:" + Build.VERSION.RELEASE_OR_CODENAME);
+        properties.add("RELEASE_OR_PREVIEW_DISPLAY:" + Build.VERSION.RELEASE_OR_PREVIEW_DISPLAY);
 
 
 
