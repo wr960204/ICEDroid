@@ -12,12 +12,17 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
@@ -180,6 +185,7 @@ public class fingerprint {
 
         properties.add("SECURITY_PATCH:" + Build.VERSION.SECURITY_PATCH);
         properties.add("PREVIEW_SDK_INT:" + Build.VERSION.PREVIEW_SDK_INT);
+        properties.add("SUPPORTED_ABIS:" + Arrays.toString(Build.SUPPORTED_ABIS));
 
         properties.add("FINGERPRINT:" + Build.BRAND+"/" + Build.PRODUCT+"/" + Build.DEVICE+":" + Build.VERSION.RELEASE+"/" +
                         Build.ID+"/" + Build.VERSION.INCREMENTAL+":" + Build.TYPE+"/" + Build.TAGS);
@@ -191,6 +197,7 @@ public class fingerprint {
         List<String> properties = new ArrayList<>();
         properties.add("SECURITY_PATCH:" + Build.VERSION.SECURITY_PATCH);
         properties.add("PREVIEW_SDK_INT:" + Build.VERSION.PREVIEW_SDK_INT);
+        properties.add("SUPPORTED_ABIS:" + Arrays.toString(Build.SUPPORTED_ABIS));
 
         @SuppressLint("PrivateApi") Class<?> c = Class.forName("android.os.SystemProperties");
         Method get = c.getMethod("get", String.class);
@@ -201,6 +208,7 @@ public class fingerprint {
 
         };
 
+
         for (String property : properties1) {
             String value = (String) get.invoke(c, property);
             if(Objects.equals(value, "")){
@@ -208,9 +216,24 @@ public class fingerprint {
             }
             properties.add(property + ":" + value);
         }
+        properties.add(getCurCpuFreq());
 
         return getStrings(properties);
     }
+
+    public static String getCurCpuFreq() {
+        String result = "N/A";
+        try {
+            FileReader fr = new FileReader(
+                    "/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
+            BufferedReader br = new BufferedReader(fr);
+            String text = br.readLine();
+            result = text.trim();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+        }
 
 
 

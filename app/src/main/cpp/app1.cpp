@@ -56,6 +56,7 @@ Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject thiz){
 
             "ro.build.version.security_patch",
             "ro.build.version.preview_sdk_int",
+            "ro.build.support_abis",
     };
 
     int numProperties = sizeof(properties) / sizeof(properties[0]);
