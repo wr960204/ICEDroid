@@ -6,6 +6,7 @@ import android.os.Build;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class result {
@@ -261,6 +262,21 @@ public class result {
         String msjni = j.mapscheck() + "\n";
         s.append(fpjni).append(npjni).append("\nhook检测：\n").append(chjni).append(msjni);
         return s.toString();
+    }
+
+    //------------------------------------------测试---------------------------------------------------
+    public String test(Context context){
+        fptest fp = new fptest();
+        StringBuilder fs = new StringBuilder("test：\n");
+        List<String> p = null;
+
+        p = fp.getProperties(context);
+
+        for (String property : p){
+            fs.append(property).append("\n");
+        }
+
+        return fs.toString();
     }
 
 

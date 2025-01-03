@@ -164,20 +164,8 @@ public class MainActivity extends AppCompatActivity {
         Button button7 = findViewById(R.id.button7);
         button7.setOnClickListener(view -> {
 
-            fptest fp = new fptest();
-            StringBuilder fs = new StringBuilder();
-            List<String> p = null;
-            try {
-                p = fp.getProperties(this);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            for (String property : p){
-                fs.append(property).append("\n");
-            }
-
-
-            String result = fs.toString();
+            result rs = new result();
+            s += rs.test(this);
 
 
             checkSign();
@@ -185,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",result);
+            intent.putExtra("s",s);
             startActivity(intent);
         });
 
