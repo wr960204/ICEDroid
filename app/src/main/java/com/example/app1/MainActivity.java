@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         Button button2 = findViewById(R.id.button2);
         button2.setOnClickListener(view -> {
 
-            emulatorCheck();
+            result rs = new result();
+            s += rs.emulatorCheck(this);
             checkSign();
 
             startScheduledTask();
