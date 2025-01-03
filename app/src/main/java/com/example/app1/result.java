@@ -254,8 +254,9 @@ public class result {
 
     //-----------------------------------------------native检测方法------------------------------------------------------
     public String fingerprintjni(){
-        fingerprintjni j = new fingerprintjni();
         StringBuilder s = new StringBuilder();
+        fingerprintjni j = new fingerprintjni();
+
         String fpjni = "\n系统指纹：" + j.fingerprint() + "\n";
         String npjni = "\n网络地址：\n" + j.netfp() + "\n";
         String chjni = j.check() + "\n";
@@ -268,9 +269,7 @@ public class result {
     public String test(Context context){
         fptest fp = new fptest();
         StringBuilder fs = new StringBuilder("test：\n");
-        List<String> p = null;
-
-        p = fp.getProperties(context);
+        List<String> p = fp.getProperties(context);
 
         for (String property : p){
             fs.append(property).append("\n");

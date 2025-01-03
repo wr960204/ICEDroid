@@ -1,7 +1,5 @@
 package com.example.app1;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
