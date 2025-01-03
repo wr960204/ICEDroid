@@ -22,9 +22,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
+
     StringBuilder s = new StringBuilder("检测开始\n");
-    String sc_myappkey = "4D:DD:19:7F:A2:A2:59:77:0F:F1:3A:EB:FE:DD:26:A4:C1:8A:80:AA";//自建密钥库签名
-    String sc_default = "5F:49:E9:F6:AC:16:31:F7:9A:77:7F:1A:15:06:EE:84:48:1D:4D:DF";//默认密钥库签名
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //-----------------------------------------------签名校验------------------------------------------------------
-    public void checkSign(){
+    private void checkSign(){
         if(signCheck()) {
             //TODO 签名正常
             s.append("\n签名校验成功");
@@ -178,11 +177,16 @@ public class MainActivity extends AppCompatActivity {
             s.append("\n签名校验失败");
         }
     }
-    public boolean signCheck(){
-        signcheck signCheck = new signcheck(this,sc_default);
+    private boolean signCheck(){
+        //默认密钥库签名
+        String sc_default = "5F:49:E9:F6:AC:16:31:F7:9A:77:7F:1A:15:06:EE:84:48:1D:4D:DF";
+        //自建密钥库签名
+        String sc_myappkey = "4D:DD:19:7F:A2:A2:59:77:0F:F1:3A:EB:FE:DD:26:A4:C1:8A:80:AA";
+
+        signcheck signCheck = new signcheck(this, sc_default);
         return signCheck.check();
     }
-    public void startScheduledTask() {
+    private void startScheduledTask() {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleWithFixedDelay(this::signCheck, 0, 15, TimeUnit.SECONDS);
         Log.d("ScheduledTask", "signcheck executed");
@@ -190,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static int executionCount = 0;
 
-    public void setDailyAlarm() {
+    private void setDailyAlarm() {
         AlarmManager aManager = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, MyReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
@@ -211,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
         fl.bufferRead("sc.txt");
     }
 
-    public static class MyReceiver extends BroadcastReceiver {
+    private static class MyReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             // 通过上下文调用 signCheck 方法

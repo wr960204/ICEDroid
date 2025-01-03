@@ -55,7 +55,7 @@ public class filewr {
         try {
             BufferedReader bfr = new BufferedReader(new FileReader(file));
             String line = bfr.readLine();
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder("读取历史记录：\n");
             while (line != null) {
                 sb.append(line);
                 sb.append("\n");
