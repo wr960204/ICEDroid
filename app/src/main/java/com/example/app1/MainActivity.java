@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
             s.delete(5,s.length());
         });
 //------------------------------------------hook检测---------------------------------------------------
-        Button button6 = findViewById(R.id.button6);
-        button6.setOnClickListener(view -> {
+        Button button4 = findViewById(R.id.button4);
+        button4.setOnClickListener(view -> {
 
             result rs = new result();
             s.append(rs.checkhook());
@@ -104,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
             s.delete(5,s.length());
         });
 //------------------------------------------native检测---------------------------------------------------
-        Button button4 = findViewById(R.id.button4);
-        button4.setOnClickListener(view -> {
+        Button button5 = findViewById(R.id.button5);
+        button5.setOnClickListener(view -> {
 
             result rs = new result();
             s.append(rs.fingerprintjni()).append("\n");
@@ -121,8 +121,8 @@ public class MainActivity extends AppCompatActivity {
             s.delete(5,s.length());
         });
 //------------------------------------------历史记录---------------------------------------------------
-        Button button5 = findViewById(R.id.button5);
-        button5.setOnClickListener(view -> {
+        Button button6 = findViewById(R.id.button6);
+        button6.setOnClickListener(view -> {
 
             filewr fl = new filewr();
             String fr = fl.bufferRead("a.txt");

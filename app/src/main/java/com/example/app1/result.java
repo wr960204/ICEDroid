@@ -254,7 +254,7 @@ public class result {
 
     //-----------------------------------------------native检测方法------------------------------------------------------
     public String fingerprintjni(){
-        StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder("native层检测：");
         fingerprintjni j = new fingerprintjni();
 
         String fpjni = "\n系统指纹：" + j.fingerprint() + "\n";
