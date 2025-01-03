@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("s",s.toString());
             startActivity(intent);
 
-            s.delete(1,s.length());
+            s.delete(5,s.length());
         });
 //------------------------------------------模拟器检测---------------------------------------------------
         Button button2 = findViewById(R.id.button2);
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("s",s.toString());
             startActivity(intent);
 
-            s.delete(1,s.length());
+            s.delete(5,s.length());
         });
 //------------------------------------------指纹检测---------------------------------------------------
         Button button3 = findViewById(R.id.button3);
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("s",s.toString());
             startActivity(intent);
 
-            s.delete(1,s.length());
+            s.delete(5,s.length());
         });
 //------------------------------------------hook检测---------------------------------------------------
         Button button6 = findViewById(R.id.button6);
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("s",s.toString());
             startActivity(intent);
 
-            s.delete(1,s.length());
+            s.delete(5,s.length());
         });
 //------------------------------------------native检测---------------------------------------------------
         Button button4 = findViewById(R.id.button4);
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("s",s.toString());
             startActivity(intent);
 
-            s.delete(1,s.length());
+            s.delete(5,s.length());
         });
 //------------------------------------------历史记录---------------------------------------------------
         Button button5 = findViewById(R.id.button5);
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("s",s.toString());
             startActivity(intent);
 
-            s.delete(1,s.length());
+            s.delete(5,s.length());
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
