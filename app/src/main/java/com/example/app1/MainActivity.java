@@ -43,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
         button1.setOnClickListener(view -> {
 
             try {
-                rootCheck();
+                result rs = new result();
+                s += rs.rootCheck();
                 checkSign();
 
                 startScheduledTask();
