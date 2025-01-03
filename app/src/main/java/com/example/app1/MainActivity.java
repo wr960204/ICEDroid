@@ -106,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 result rs = new result();
                 s += rs.checkhook();
-                checkSign();
 
+                checkSign();
                 startScheduledTask();
                 setDailyAlarm();
 
@@ -125,8 +125,8 @@ public class MainActivity extends AppCompatActivity {
         Button button4 = findViewById(R.id.button4);
         button4.setOnClickListener(view -> {
 
-            String fj = fingerprintjni();
-            s += fj + "\n";
+            result rs = new result();
+            s += rs.fingerprintjni() + "\n";
 
             checkSign();
             startScheduledTask();

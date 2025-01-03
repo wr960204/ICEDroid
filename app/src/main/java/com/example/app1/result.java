@@ -240,7 +240,6 @@ public class result {
 
         return s.toString();
     }
-
     public String checkfrida(){
         StringBuilder s = new StringBuilder();
         hookcheck hc = new hookcheck();
@@ -251,6 +250,20 @@ public class result {
         s.append("未检测到frida");
         return s.toString();
     }
+
+    //-----------------------------------------------native检测方法------------------------------------------------------
+    public String fingerprintjni(){
+        fingerprintjni j = new fingerprintjni();
+        StringBuilder s = new StringBuilder();
+        String fpjni = "\n系统指纹：" + j.fingerprint() + "\n";
+        String npjni = "\n网络地址：\n" + j.netfp() + "\n";
+        String chjni = j.check() + "\n";
+        String msjni = j.mapscheck() + "\n";
+        s.append(fpjni).append(npjni).append("\nhook检测：\n").append(chjni).append(msjni);
+        return s.toString();
+    }
+
+
 
 
 }
