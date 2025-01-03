@@ -28,8 +28,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-
-    String s ="检测开始\n";
+    StringBuilder s = new StringBuilder("检测开始\n");
     String sc_myappkey = "4D:DD:19:7F:A2:A2:59:77:0F:F1:3A:EB:FE:DD:26:A4:C1:8A:80:AA";//自建密钥库签名
     String sc_default = "5F:49:E9:F6:AC:16:31:F7:9A:77:7F:1A:15:06:EE:84:48:1D:4D:DF";//默认密钥库签名
 
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 result rs = new result();
-                s += rs.rootCheck();
+                s.append(rs.rootCheck());
                 checkSign();
 
                 startScheduledTask();
@@ -55,27 +54,27 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s);
+            intent.putExtra("s",s.toString());
             startActivity(intent);
 
-            s = "检测开始";
+            s.delete(1,s.length());
         });
 //------------------------------------------模拟器检测---------------------------------------------------
         Button button2 = findViewById(R.id.button2);
         button2.setOnClickListener(view -> {
 
             result rs = new result();
-            s += rs.emulatorCheck(this);
+            s.append(rs.emulatorCheck(this));
             checkSign();
 
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s);
+            intent.putExtra("s",s.toString());
             startActivity(intent);
 
-            s = "检测开始";
+            s.delete(1,s.length());
         });
 //------------------------------------------指纹检测---------------------------------------------------
         Button button3 = findViewById(R.id.button3);
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 result rs = new result();
-                s += rs.checkFingerPrint(this);
+                s.append(rs.checkFingerPrint(this));
 
                 checkSign();
                 startScheduledTask();
@@ -94,10 +93,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s);
+            intent.putExtra("s",s.toString());
             startActivity(intent);
 
-            s = "检测开始";
+            s.delete(1,s.length());
         });
 //------------------------------------------hook检测---------------------------------------------------
         Button button6 = findViewById(R.id.button6);
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 result rs = new result();
-                s += rs.checkhook();
+                s.append(rs.checkhook());
 
                 checkSign();
                 startScheduledTask();
@@ -116,27 +115,27 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s);
+            intent.putExtra("s",s.toString());
             startActivity(intent);
 
-            s = "检测开始";
+            s.delete(1,s.length());
         });
 //------------------------------------------native检测---------------------------------------------------
         Button button4 = findViewById(R.id.button4);
         button4.setOnClickListener(view -> {
 
             result rs = new result();
-            s += rs.fingerprintjni() + "\n";
+            s.append(rs.fingerprintjni()).append("\n");
 
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s);
+            intent.putExtra("s",s.toString());
             startActivity(intent);
 
-            s = "检测开始";
+            s.delete(1,s.length());
         });
 //------------------------------------------历史记录---------------------------------------------------
         Button button5 = findViewById(R.id.button5);
@@ -165,16 +164,17 @@ public class MainActivity extends AppCompatActivity {
         button7.setOnClickListener(view -> {
 
             result rs = new result();
-            s += rs.test(this);
-
+            s.append(rs.test(this));
 
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s);
+            intent.putExtra("s",s.toString());
             startActivity(intent);
+
+            s.delete(1,s.length());
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -185,15 +185,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     //-----------------------------------------------签名校验------------------------------------------------------
     public void checkSign(){
         if(signCheck()) {
             //TODO 签名正常
-            s += "\n签名校验成功";
+            s.append("\n签名校验成功");
         }else{
             //TODO 签名不正确
-            s += "\n签名校验失败";
+            s.append("\n签名校验失败");
         }
     }
     public boolean signCheck(){
