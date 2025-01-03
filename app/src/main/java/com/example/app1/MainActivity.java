@@ -82,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
         button3.setOnClickListener(view -> {
 
             try {
-                checkFingerPrint();
+                result rs = new result();
+                s += rs.checkFingerPrint(this);
 
                 checkSign();
                 startScheduledTask();

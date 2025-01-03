@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Build;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class result {
     //-----------------------------------------------ROOT检测------------------------------------------------------
@@ -145,6 +148,86 @@ public class result {
         }
         return s.toString();
 
+    }
+
+    //-----------------------------------------------设备指纹检测------------------------------------------------------
+    public String checkFingerPrint(Context context) {
+        String s = "设备指纹检测：";
+        fingerprint fp = new fingerprint();
+        String dev =fp.getDeviceID(context.getContentResolver());
+        String net = fp.getLocalMacAddress();
+        String sys = fp.getSystemProperties();
+
+        fingerprintjni j = new fingerprintjni();
+        String fpjni = "\n系统指纹：" + j.fingerprint() + "\n";
+        String npjni = "网络地址：\n" + j.netfp() + "\n";
+
+        s += "\njava层检测：\n"+dev + net + sys + "\nnative层检测：" + fpjni + npjni;
+
+        s += compareResults(sys,fpjni);
+
+        fp.getAccounts(context);
+        return s;
+    }
+
+    private String compareResults(String result1, String result2) {
+        String s = "\n对比结果：";
+        String[] lines1 = result1.split("\n");
+        String[] lines2 = result2.split("\n");
+        StringBuilder result = new StringBuilder("\n以下属性存在不同：\n");
+        // 找到最大的行数
+        int maxLines = Math.max(lines1.length, lines2.length);
+        for (int i = 0; i < maxLines; i++) {
+            String line1 = i < lines1.length ? lines1[i] : "无结果";  // 如果行不存在，则显示“无结果”
+            String line2 = i < lines2.length ? lines2[i] : "无结果";  // 如果行不存在，则显示“无结果”
+            String[] parts1 = line1.split(":", 2);
+            String[] parts2 = line2.split(":", 2);
+            // 默认值
+            String key1 = parts1.length > 0 ? parts1[0].trim() : "无结果";
+            String value1 = parts1.length > 1 ? parts1[1].trim() : "无结果";
+            String value2 = parts2.length > 1 ? parts2[1].trim() : "无结果";
+            // 输出对比结果
+            System.out.printf("属性: %s\n", key1);
+            System.out.printf("结果1: %s\n", value1);
+            System.out.printf("结果2: %s\n", value2);
+            System.out.println("对比结果: " + (value1.equals(value2) ? "相同" : "不同"));
+            System.out.println("-------------------------------------------------");
+            if(!value1.equals(value2)){
+                String r = key1 + "：\n" + value1 +"\n" + value2 +"\n";
+                result.append(r);
+            }
+        }
+
+        String[] fingerprint = new String[14];
+        System.arraycopy(lines1,2,fingerprint,0,6);
+        System.arraycopy(lines2,2,fingerprint,6,6);
+        System.arraycopy(lines1,lines1.length-1,fingerprint,12,1);
+        System.arraycopy(lines2,lines2.length-1,fingerprint,13,1);
+        System.out.println(Arrays.toString(fingerprint));
+        if(areValuesIdentical(fingerprint))
+            s += "\n指纹属性一致\n";
+
+        s += result;
+        return s;
+    }
+
+    public static boolean areValuesIdentical(String[] data) {
+        Set<String> valuesSet = new HashSet<>();
+        for (String entry : data) {
+            // 将字符串按冒号分割，确保有两个部分
+            String[] parts = entry.split(":", 2);
+            // 如果分割成功，添加冒号后的值到集合中
+            if (parts.length == 2) {
+                String value = parts[1].trim(); // 获取冒号后的值并去除空白
+                valuesSet.add(value);
+            } else {
+                // 如果没有冒号或格式不正确，可以选择抛出异常或添加默认值
+                // 这里直接返回 false 表示数据格式不符合要求
+                return false;
+            }
+        }
+        // 如果集合的大小为 1，表示所有值相同
+        return valuesSet.size() == 1;
     }
 
 
