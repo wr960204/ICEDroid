@@ -90,17 +90,12 @@ public class MainActivity extends AppCompatActivity {
         Button button6 = findViewById(R.id.button6);
         button6.setOnClickListener(view -> {
 
-            try {
-                result rs = new result();
-                s.append(rs.checkhook());
+            result rs = new result();
+            s.append(rs.checkhook());
 
-                checkSign();
-                startScheduledTask();
-                setDailyAlarm();
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            checkSign();
+            startScheduledTask();
+            setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
             intent.putExtra("s",s.toString());
