@@ -152,7 +152,7 @@ public class result {
 
     //-----------------------------------------------设备指纹检测------------------------------------------------------
     public String checkFingerPrint(Context context) {
-        String s = "设备指纹检测：";
+        StringBuilder s = new StringBuilder("设备指纹检测：");
         fingerprint fp = new fingerprint();
         String dev =fp.getDeviceID(context.getContentResolver());
         String net = fp.getLocalMacAddress();
@@ -162,16 +162,16 @@ public class result {
         String fpjni = "\n系统指纹：" + j.fingerprint() + "\n";
         String npjni = "网络地址：\n" + j.netfp() + "\n";
 
-        s += "\njava层检测：\n"+dev + net + sys + "\nnative层检测：" + fpjni + npjni;
-
-        s += compareResults(sys,fpjni);
+        s.append("\njava层检测：\n").append(dev).append(net).append(sys).append("\nnative层检测：").append(fpjni).append(npjni);
+        s.append(compareResults(sys, fpjni));
 
         fp.getAccounts(context);
-        return s;
+        return s.toString();
     }
 
     private String compareResults(String result1, String result2) {
-        String s = "\n对比结果：";
+        StringBuilder s = new StringBuilder("\n对比结果：");
+
         String[] lines1 = result1.split("\n");
         String[] lines2 = result2.split("\n");
         StringBuilder result = new StringBuilder("\n以下属性存在不同：\n");
@@ -205,10 +205,9 @@ public class result {
         System.arraycopy(lines2,lines2.length-1,fingerprint,13,1);
         System.out.println(Arrays.toString(fingerprint));
         if(areValuesIdentical(fingerprint))
-            s += "\n指纹属性一致\n";
-
-        s += result;
-        return s;
+            s.append("\n指纹属性一致\n");
+        s.append(result);
+        return s.toString();
     }
 
     public static boolean areValuesIdentical(String[] data) {
