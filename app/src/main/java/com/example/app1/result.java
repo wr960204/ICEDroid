@@ -168,7 +168,6 @@ public class result {
         fp.getAccounts(context);
         return s.toString();
     }
-
     private String compareResults(String result1, String result2) {
         StringBuilder s = new StringBuilder("\n对比结果：");
 
@@ -209,7 +208,6 @@ public class result {
         s.append(result);
         return s.toString();
     }
-
     public static boolean areValuesIdentical(String[] data) {
         Set<String> valuesSet = new HashSet<>();
         for (String entry : data) {
@@ -227,6 +225,28 @@ public class result {
         }
         // 如果集合的大小为 1，表示所有值相同
         return valuesSet.size() == 1;
+    }
+
+    //-----------------------------------------------hook检测方法------------------------------------------------------
+    public String checkhook(){
+        String ch = checkfrida() + "\n";
+
+        fingerprintjni j = new fingerprintjni();
+        String chjni = j.check() + "\n";
+        String msjni = j.mapscheck() + "\n";
+
+        return "\njava层检测：\n" + ch + "\nnative层检测：\n" + chjni + msjni;
+    }
+
+    public String checkfrida(){
+        hookcheck hc = new hookcheck();
+        String h = "未检测到frida";
+        if(hc.hasReadProcMaps("frida")){
+            h = "检测到frida";
+        }
+        if(hc.mCheckFridaTcp())
+            h = "检测到frida";
+        return h;
     }
 
 
