@@ -91,59 +91,59 @@ public class result {
 
     //-----------------------------------------------模拟器检测------------------------------------------------------
     public String emulatorCheck(Context context){
-        String s = "模拟器检测：";
+        StringBuilder s = new StringBuilder("模拟器检测：");
         boolean flag = false;
 
         emulatorcheck ec = new emulatorcheck();
         //检查设备型号和品牌
         if (ec.checkDeviceModel()){
-            s += "\n检查设备型号和品牌:异常";
+            s.append("\n检查设备型号和品牌:异常");
             flag = true;
         }else {
-            s += "\n检查设备型号和品牌:正常";
+            s.append("\n检查设备型号和品牌:正常");
         }
         //检查硬件特征
         if (ec.checkHardwareFeatures(context)){
-            s += "\n检查硬件特征:异常";
+            s.append("\n检查硬件特征:异常");
             flag = true;
         }else {
-            s += "\n检查硬件特征:正常";
+            s.append("\n检查硬件特征:正常");
         }
         //检查文件系统
         if (ec.checkFileSystem()){
-            s += "\n检查文件系统:存在特征文件";
+            s.append("\n检查文件系统:存在特征文件");
             flag = true;
         }else {
-            s += "\n检查文件系统:不存在特征文件";
+            s.append("\n检查文件系统:不存在特征文件");
         }
         //检查运行程序
         if (ec.checkRunningApps()){
-            s += "\n检查运行程序:存在运行中特征程序";
+            s.append("\n检查运行程序:存在运行中特征程序");
             flag = true;
         }else {
-            s += "\n检查运行程序:不存在运行中特征程序";
+            s.append("\n检查运行程序:不存在运行中特征程序");
         }
         //检查系统架构
         if (ec.checkArchitecture()){
-            s += "\n检查系统架构:x86";
+            s.append("\n检查系统架构:x86");
             flag = true;
         }else {
-            s += "\n检查系统架构:arm";
+            s.append("\n检查系统架构:arm");
         }
         //检查电池状态
         if (ec.checkBattery(context)){
-            s += "\n检查电池状态:异常";
+            s.append("\n检查电池状态:异常");
             flag = true;
         }else {
-            s += "\n检查电池状态:正常";
+            s.append("\n检查电池状态:正常");
         }
 
         if (flag){
-            s += "\n\n可能是模拟器";
+            s.append("\n\n可能是模拟器");
         }else {
-            s += "\n\n可能是真机";
+            s.append("\n\n可能是真机");
         }
-        return s;
+        return s.toString();
 
     }
 
