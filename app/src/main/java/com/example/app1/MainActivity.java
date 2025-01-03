@@ -73,17 +73,12 @@ public class MainActivity extends AppCompatActivity {
         Button button3 = findViewById(R.id.button3);
         button3.setOnClickListener(view -> {
 
-            try {
-                result rs = new result();
-                s.append(rs.checkFingerPrint(this));
+            result rs = new result();
+            s.append(rs.checkFingerPrint(this));
 
-                checkSign();
-                startScheduledTask();
-                setDailyAlarm();
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            checkSign();
+            startScheduledTask();
+            setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
             intent.putExtra("s",s.toString());
