@@ -104,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
         button6.setOnClickListener(view -> {
 
             try {
-                String h = checkhook();
-                s += h;
+                result rs = new result();
+                s += rs.checkhook();
                 checkSign();
 
                 startScheduledTask();

@@ -229,24 +229,27 @@ public class result {
 
     //-----------------------------------------------hook检测方法------------------------------------------------------
     public String checkhook(){
-        String ch = checkfrida() + "\n";
-
+        StringBuilder s = new StringBuilder("hook检测：\n");
         fingerprintjni j = new fingerprintjni();
-        String chjni = j.check() + "\n";
-        String msjni = j.mapscheck() + "\n";
 
-        return "\njava层检测：\n" + ch + "\nnative层检测：\n" + chjni + msjni;
+        s.append("\nJava层检测：\n");
+        s.append(checkfrida()).append("\n");
+        s.append("\nnative层检测：\n");
+        s.append(j.check()).append("\n");
+        s.append(j.mapscheck()).append("\n");
+
+        return s.toString();
     }
 
     public String checkfrida(){
+        StringBuilder s = new StringBuilder();
         hookcheck hc = new hookcheck();
-        String h = "未检测到frida";
-        if(hc.hasReadProcMaps("frida")){
-            h = "检测到frida";
+
+        if(hc.hasReadProcMaps("frida") | hc.mCheckFridaTcp()){
+            s.append("检测到frida");
         }
-        if(hc.mCheckFridaTcp())
-            h = "检测到frida";
-        return h;
+        s.append("未检测到frida");
+        return s.toString();
     }
 
 
