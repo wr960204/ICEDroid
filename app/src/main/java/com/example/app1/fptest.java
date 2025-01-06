@@ -1,10 +1,6 @@
 package com.example.app1;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.provider.Settings;
 
 import androidx.annotation.NonNull;

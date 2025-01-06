@@ -32,7 +32,7 @@ public class appname {
         @SuppressLint("QueryPermissionsNeeded") List<PackageInfo> list2=pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
 
         int j=0;
-        for (PackageInfo packageInfo : list2) {
+        for (PackageInfo ignored : list2) {
             j++;
         }
         return "应用的总个数:" + j + "\n";
