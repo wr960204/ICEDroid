@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -34,13 +35,13 @@ public class fptest {
 
         for (PackageInfo packageInfo : list2) {
             //得到手机上已经安装的应用的名字,即在AndriodMainfest.xml中的app_name。
-            //String appName=packageInfo.applicationInfo.loadLabel(context.getPackageManager()).toString();
+            String appName=packageInfo.applicationInfo.loadLabel(context.getPackageManager()).toString();
             //得到手机上已经安装的应用的图标,即在AndriodMainfest.xml中的icon。
             //Drawable drawable = packageInfo.applicationInfo.loadIcon(context.getPackageManager());
             //得到应用所在包的名字,即在AndriodMainfest.xml中的package的值。
-            //String packageName=packageInfo.packageName;
-            //Log.d("应用名", "应用的名字:"+appName);
-            //Log.d("应用包名", "应用的包名字:"+packageName);
+            String packageName=packageInfo.packageName;
+            Log.d("应用名", "应用的名字:"+appName);
+            Log.d("应用包名", "应用的包名字:"+packageName);
             j++;
         }
         Log.d("========", "应用的总个数:"+j);

@@ -9,4 +9,6 @@
     <string name="查看记录">查看记录</string>
     <string name="hook检测">hook检测</string>
     <string name="测试">测试</string>
+    <string name="获取已安装应用">获取已安装应用</string>
+    <string name="获取系统证书">获取系统证书</string>
 </resources>
