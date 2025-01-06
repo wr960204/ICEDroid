@@ -7,8 +7,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 
-import javax.security.auth.x500.X500Principal;
-
 public class certificate {
     public void listInstalledCertificates(Context context) {
         try {
@@ -22,12 +20,12 @@ public class certificate {
                 String alias = aliases.nextElement();
                 Certificate certificate = keyStore.getCertificate(alias);
                 if (certificate instanceof X509Certificate) {
-                    X509Certificate x509Certificate = (X509Certificate) certificate;
+                    X509Certificate x509c = (X509Certificate) certificate;
 
                     // 提取证书信息
-                    String subjectDN = x509Certificate.getSubjectDN().getName();  // 使用者
-                    String issuerDN = x509Certificate.getIssuerDN().getName();    // 颁发者
-                    String validity = x509Certificate.getNotBefore() + " - " + x509Certificate.getNotAfter(); // 有效期
+                    String subjectDN = x509c.getSubjectDN().getName();  // 使用者
+                    String issuerDN = x509c.getIssuerDN().getName();    // 颁发者
+                    String validity = x509c.getNotBefore() + " - " + x509c.getNotAfter(); // 有效期
 
                     // 打印所需的信息
                     System.out.println("Alias: " + alias);
