@@ -1,6 +1,6 @@
 package com.example.app1;
 
-import android.content.Context;
+import android.util.Log;
 
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -36,12 +36,12 @@ public class certificate {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("checkcertException", e.getMessage(),e);
         }
         return cert.toString();
     }
 
-    public void listInstalledCertificates1(Context context) {
+    public void listInstalledCertificates1() {
         try {
             // 获取Android系统的KeyStore
             KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
@@ -67,7 +67,7 @@ public class certificate {
                 System.out.println("---------------------------------");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("checkcertException", e.getMessage(),e);
         }
     }
 
