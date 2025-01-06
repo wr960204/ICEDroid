@@ -11,7 +11,7 @@ import java.util.List;
 
 public class certificate {
     public String listInstalledCertificates(Context context) {
-        StringBuilder cert = new StringBuilder("证书信息\n---------------------------------");
+        StringBuilder cert = new StringBuilder("证书信息\n---------------------------------\n");
         try {
             // 获取Android系统的KeyStore
             KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
@@ -22,20 +22,11 @@ public class certificate {
             while (aliases.hasMoreElements()) {
                 String alias = aliases.nextElement();
                 Certificate certificate = keyStore.getCertificate(alias);
-                if (certificate instanceof X509Certificate) {
-                    X509Certificate x509c = (X509Certificate) certificate;
-
+                if (certificate instanceof X509Certificate x509c) {
                     // 提取证书信息
                     String subjectDN = x509c.getSubjectDN().getName();  // 使用者
                     String issuerDN = x509c.getIssuerDN().getName();    // 颁发者
                     String validity = x509c.getNotBefore() + " - " + x509c.getNotAfter(); // 有效期
-
-                    // 打印所需的信息
-                    System.out.println("Alias: " + alias);
-                    System.out.println("Subject: " + subjectDN);
-                    System.out.println("Issuer: " + issuerDN);
-                    System.out.println("Validity: " + validity);
-                    System.out.println("---------------------------------");
 
                     cert.append("Alias:").append(alias).append("\n");
                     cert.append("Subject:").append(subjectDN).append("\n");
