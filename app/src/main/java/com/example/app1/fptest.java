@@ -22,7 +22,6 @@ public class fptest {
 
         return getStrings(properties);
     }
-    
 
 
     public List<String> developmentSettings(Context context){

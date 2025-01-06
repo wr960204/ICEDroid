@@ -288,6 +288,11 @@ public class result {
         return an.getAllAppNames(context);
     }
 
+    //------------------------------------------获取系统证书----------------------------------------------------------
+    public void certinfo(Context context){
+        certificate c = new certificate();
+        c.listInstalledCertificates(context);
+    }
 
 
 }
