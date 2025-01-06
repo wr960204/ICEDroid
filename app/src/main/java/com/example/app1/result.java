@@ -275,6 +275,10 @@ public class result {
             fs.append(property).append("\n");
         }
 
+        certificate c = new certificate();
+        fs.append(c.getCertificateSubject(c.getCertificateFromKeystore()));
+
+
         return fs.toString();
     }
 

@@ -8,7 +8,7 @@ import java.util.Enumeration;
 import javax.security.auth.x500.X500Principal;
 
 public class certificate {
-    public static X509Certificate getCertificateFromKeystore() {
+    public X509Certificate getCertificateFromKeystore() {
         try {
             // 获取KeyStore实例
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -16,6 +16,7 @@ public class certificate {
 
             // 获取所有证书
             Enumeration<String> aliases = keyStore.aliases();
+            System.out.println(aliases);
 
             while (aliases.hasMoreElements()) {
                 // 获取第一个证书
@@ -33,7 +34,7 @@ public class certificate {
         return null;
     }
 
-    public static String getCertificateSubject(X509Certificate certificate) {
+    public String getCertificateSubject(X509Certificate certificate) {
         if (certificate != null) {
             X500Principal principal = certificate.getSubjectX500Principal();
             return principal.getName();
