@@ -165,7 +165,36 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        //------------------------------------------获取已安装应用---------------------------------------------
+        Button button8 = findViewById(R.id.button8);
+        button8.setOnClickListener(view -> {
+
+            result rs = new result();
+            s.append(rs.appname(this));
+
+            checkSign();
+            startScheduledTask();
+            setDailyAlarm();
+
+            Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+            intent.putExtra("s",s.toString());
+            startActivity(intent);
+
+            s.delete(5,s.length());
+        });
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
     }
+
+
+
+
+
 
     //-----------------------------------------------签名校验------------------------------------------------------
     private void checkSign(){

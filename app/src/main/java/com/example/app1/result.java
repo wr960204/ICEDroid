@@ -265,7 +265,7 @@ public class result {
         return s.toString();
     }
 
-    //------------------------------------------测试---------------------------------------------------
+    //------------------------------------------测试-------------------------------------------------------------------
     public String test(Context context){
         fptest fp = new fptest();
         StringBuilder fs = new StringBuilder("test：\n");
@@ -282,6 +282,11 @@ public class result {
         return fs.toString();
     }
 
+    //------------------------------------------获取已安装应用----------------------------------------------------------
+    public String appname(Context context){
+        appname an = new appname();
+        return an.getAllAppNames(context);
+    }
 
 
 
