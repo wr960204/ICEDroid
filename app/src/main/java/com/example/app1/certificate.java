@@ -10,7 +10,8 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class certificate {
-    public void listInstalledCertificates(Context context) {
+    public String listInstalledCertificates(Context context) {
+        StringBuilder cert = new StringBuilder("证书信息\n---------------------------------");
         try {
             // 获取Android系统的KeyStore
             KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
@@ -35,11 +36,18 @@ public class certificate {
                     System.out.println("Issuer: " + issuerDN);
                     System.out.println("Validity: " + validity);
                     System.out.println("---------------------------------");
+
+                    cert.append("Alias:").append(alias).append("\n");
+                    cert.append("Subject:").append(subjectDN).append("\n");
+                    cert.append("Issuer:").append(issuerDN).append("\n");
+                    cert.append("Validity:").append(validity).append("\n");
+                    cert.append("---------------------------------").append("\n");
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return cert.toString();
     }
 
     public void listInstalledCertificates1(Context context) {

@@ -275,10 +275,6 @@ public class result {
             fs.append(property).append("\n");
         }
 
-        certificate c = new certificate();
-        c.listInstalledCertificates(context);
-
-
         return fs.toString();
     }
 
