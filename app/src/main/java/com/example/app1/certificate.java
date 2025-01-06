@@ -5,7 +5,9 @@ import android.content.Context;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 public class certificate {
     public void listInstalledCertificates(Context context) {
@@ -38,6 +40,62 @@ public class certificate {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void listInstalledCertificates1(Context context) {
+        try {
+            // 获取Android系统的KeyStore
+            KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
+            keyStore.load(null, null); // 加载密钥库
+
+            // 存储所有证书
+            List<X509Certificate> certificates = new ArrayList<>();
+
+            // 遍历所有证书别名并存储X509证书
+            Enumeration<String> aliases = keyStore.aliases();
+            while (aliases.hasMoreElements()) {
+                String alias = aliases.nextElement();
+                Certificate certificate = keyStore.getCertificate(alias);
+                if (certificate instanceof X509Certificate) {
+                    certificates.add((X509Certificate) certificate);
+                }
+            }
+
+            // 打印证书链
+            for (X509Certificate cert : certificates) {
+                System.out.println("Certificate: " + cert.getSubjectDN().getName());
+                printCertificateChain(cert, certificates);
+                System.out.println("---------------------------------");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void printCertificateChain(X509Certificate cert, List<X509Certificate> allCertificates) {
+        List<X509Certificate> chain = new ArrayList<>();
+        X509Certificate currentCert = cert;
+
+        // 构建证书链
+        while (currentCert != null) {
+            chain.add(currentCert);
+            currentCert = findIssuer(currentCert, allCertificates);
+        }
+
+        // 输出证书链
+        for (X509Certificate c : chain) {
+            System.out.println(" - " + c.getSubjectDN().getName() + " (Issuer: " + c.getIssuerDN().getName() + ")");
+        }
+    }
+
+    private static X509Certificate findIssuer(X509Certificate cert, List<X509Certificate> allCertificates) {
+        String issuerDN = cert.getIssuerDN().getName();
+        for (X509Certificate c : allCertificates) {
+            if (c.getSubjectDN().getName().equals(issuerDN)) {
+                return c;
+            }
+        }
+        return null; // 找不到颁发者
     }
 
 }
