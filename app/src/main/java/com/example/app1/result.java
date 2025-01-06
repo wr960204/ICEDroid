@@ -233,11 +233,14 @@ public class result {
         StringBuilder s = new StringBuilder("hook检测：\n");
         fingerprintjni j = new fingerprintjni();
 
+        String cf = checkfrida();
+        String jc = j.check();
+        String jm = j.mapscheck();
         s.append("\nJava层检测：\n");
-        s.append(checkfrida()).append("\n");
+        s.append(cf).append("\n");
         s.append("\nnative层检测：\n");
-        s.append(j.check()).append("\n");
-        s.append(j.mapscheck()).append("\n");
+        s.append(jc).append("\n");
+        s.append(jm).append("\n");
 
         return s.toString();
     }
