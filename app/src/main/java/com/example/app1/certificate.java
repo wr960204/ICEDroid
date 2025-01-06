@@ -10,7 +10,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class certificate {
-    public String listInstalledCertificates(Context context) {
+    public String listInstalledCertificates() {
         StringBuilder cert = new StringBuilder("证书信息\n---------------------------------\n");
         try {
             // 获取Android系统的KeyStore

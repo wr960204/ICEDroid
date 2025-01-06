@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         button9.setOnClickListener(view -> {
 
             result rs = new result();
-            s.append(rs.certinfo(this));
+            s.append(rs.certinfo());
 
             checkSign();
             startScheduledTask();
