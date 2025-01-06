@@ -276,7 +276,7 @@ public class result {
         }
 
         certificate c = new certificate();
-        fs.append(c.getCertificateSubject(c.getCertificateFromKeystore()));
+        c.listInstalledCertificates(context);
 
 
         return fs.toString();
