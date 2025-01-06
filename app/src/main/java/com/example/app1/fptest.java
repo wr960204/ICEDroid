@@ -19,7 +19,7 @@ public class fptest {
 
         int availableCores = Runtime.getRuntime().availableProcessors();
         properties.add("可⽤处理器核⼼数：" + availableCores);
-        properties.add(getAllAppNames(context));
+        properties.add(getAppNumber(context));
         properties.addAll(developmentSettings(context));
 
         return getStrings(properties);
@@ -30,8 +30,7 @@ public class fptest {
         PackageManager pm = context.getPackageManager();
         ////获取到所有安装了的应用程序的信息，包括那些卸载了的，但没有清除数据的应用程序
         @SuppressLint("QueryPermissionsNeeded") List<PackageInfo> list2=pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
-
-        int j=0;
+        StringBuilder appname = new StringBuilder(getAppNumber(context));
 
         for (PackageInfo packageInfo : list2) {
             //得到手机上已经安装的应用的名字,即在AndriodMainfest.xml中的app_name。
@@ -40,13 +39,24 @@ public class fptest {
             //Drawable drawable = packageInfo.applicationInfo.loadIcon(context.getPackageManager());
             //得到应用所在包的名字,即在AndriodMainfest.xml中的package的值。
             String packageName=packageInfo.packageName;
-            Log.d("应用名", "应用的名字:"+appName);
-            Log.d("应用包名", "应用的包名字:"+packageName);
+            appname.append(appName).append(":").append(packageName).append("\n");
+        }
+        return appname.toString();
+    }
+
+    public String getAppNumber(Context context){
+        PackageManager pm = context.getPackageManager();
+        ////获取到所有安装了的应用程序的信息，包括那些卸载了的，但没有清除数据的应用程序
+        @SuppressLint("QueryPermissionsNeeded") List<PackageInfo> list2=pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
+
+        int j=0;
+        for (PackageInfo packageInfo : list2) {
             j++;
         }
-        Log.d("========", "应用的总个数:"+j);
         return "应用的总个数:"+j;
     }
+
+
 
     public List<String> developmentSettings(Context context){
         List<String> d = new ArrayList<>();
