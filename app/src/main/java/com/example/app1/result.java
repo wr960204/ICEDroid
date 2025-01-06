@@ -285,9 +285,9 @@ public class result {
     }
 
     //------------------------------------------获取系统证书----------------------------------------------------------
-    public void certinfo(Context context){
+    public String certinfo(Context context){
         certificate c = new certificate();
-        c.listInstalledCertificates(context);
+        return c.listInstalledCertificates(context);
     }
 
 
