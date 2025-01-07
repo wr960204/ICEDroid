@@ -22,7 +22,7 @@ public class fptest {
         int availableCores = Runtime.getRuntime().availableProcessors();
         properties.add("可⽤处理器核⼼数：" + availableCores);
         properties.addAll(developmentSettings(context));
-
+        checkBattery(context);
 
         return getStrings(properties);
     }
@@ -78,8 +78,11 @@ public class fptest {
             float batteryPct = batteryLevel * 100 / (float)batteryScale;
             System.out.println(batteryPct);
             boolean isCharging = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1) == BatteryManager.BATTERY_STATUS_CHARGING;
-            // 判断电池电量和充电状态，通常模拟器电池满电且不在充电
+            boolean usbCharge = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) == BatteryManager.BATTERY_PLUGGED_USB;
+            boolean acCharge = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) == BatteryManager.BATTERY_PLUGGED_AC;
             System.out.println(isCharging);
+            System.out.println(usbCharge);
+            System.out.println(acCharge);
         }
 
     }
