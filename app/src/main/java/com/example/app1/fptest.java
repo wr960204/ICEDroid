@@ -3,16 +3,12 @@ package com.example.app1;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.FeatureInfo;
-import android.content.pm.PackageManager;
 import android.os.BatteryManager;
 import android.provider.Settings;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class fptest {
@@ -69,15 +65,19 @@ public class fptest {
     }
 
     public void checkBattery(Context context) {
+        List<String> b = new ArrayList<>();
         // 获取电池状态
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = context.registerReceiver(null, ifilter);
         if (batteryStatus != null) {
             int batteryLevel = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
             int batteryScale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+            //计算电量
             float batteryPct = batteryLevel * 100 / (float)batteryScale;
             System.out.println(batteryPct);
+            //是否充电
             boolean isCharging = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1) == BatteryManager.BATTERY_STATUS_CHARGING;
+            //充电方式
             boolean usbCharge = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) == BatteryManager.BATTERY_PLUGGED_USB;
             boolean acCharge = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) == BatteryManager.BATTERY_PLUGGED_AC;
             System.out.println(isCharging);
