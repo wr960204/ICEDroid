@@ -74,22 +74,21 @@ public class fptest {
             int batteryScale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
             //计算电量
             float batteryPct = batteryLevel * 100 / (float)batteryScale;
-            b.add(String.valueOf(batteryPct));
+            b.add("当前电量：" + batteryPct);
             //是否充电
             boolean isCharging = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1) == BatteryManager.BATTERY_STATUS_CHARGING;
             //充电方式
             boolean usbCharge = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) == BatteryManager.BATTERY_PLUGGED_USB;
             boolean acCharge = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) == BatteryManager.BATTERY_PLUGGED_AC;
             if (isCharging){
-                b.add("正在充电");
+                if(usbCharge){
+                    b.add("正在使用usb充电");
+                }
+                if(acCharge){
+                    b.add("正在使用交流充电器充电");
+                }
             }else {
-                b.add("未充电");
-            }
-            if(usbCharge){
-                b.add("使用usb充电");
-            }
-            if(acCharge){
-                b.add("使用交流充电器充电");
+                b.add("未处于充电状态");
             }
         }
         return b;
