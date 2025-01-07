@@ -18,7 +18,7 @@ public class fptest {
         int availableCores = Runtime.getRuntime().availableProcessors();
         properties.add("可⽤处理器核⼼数：" + availableCores);
         properties.addAll(developmentSettings(context));
-        checkBattery(context);
+        properties.addALL(checkBattery(context));
 
         return getStrings(properties);
     }
@@ -64,7 +64,7 @@ public class fptest {
         return processedProperties;
     }
 
-    public void checkBattery(Context context) {
+    public List<String> checkBattery(Context context) {
         List<String> b = new ArrayList<>();
         // 获取电池状态
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -74,17 +74,25 @@ public class fptest {
             int batteryScale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
             //计算电量
             float batteryPct = batteryLevel * 100 / (float)batteryScale;
-            System.out.println(batteryPct);
+            b.add(String.valueOf(batteryPct));
             //是否充电
             boolean isCharging = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1) == BatteryManager.BATTERY_STATUS_CHARGING;
             //充电方式
             boolean usbCharge = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) == BatteryManager.BATTERY_PLUGGED_USB;
             boolean acCharge = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) == BatteryManager.BATTERY_PLUGGED_AC;
-            System.out.println(isCharging);
-            System.out.println(usbCharge);
-            System.out.println(acCharge);
+            if (isCharging){
+                b.add("正在充电");
+            }else {
+                b.add("未充电");
+            }
+            if(usbCharge){
+                b.add("使用usb充电");
+            }
+            if(acCharge){
+                b.add("使用交流充电器充电");
+            }
         }
-
+        return b;
     }
 
 
