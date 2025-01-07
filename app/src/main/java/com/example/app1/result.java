@@ -197,7 +197,6 @@ public class result {
                 result.append(r);
             }
         }
-
         String[] fingerprint = new String[14];
         System.arraycopy(lines1,2,fingerprint,0,6);
         System.arraycopy(lines2,2,fingerprint,6,6);
@@ -209,7 +208,7 @@ public class result {
         s.append(result);
         return s.toString();
     }
-    public static boolean areValuesIdentical(String[] data) {
+    private boolean areValuesIdentical(String[] data) {
         Set<String> valuesSet = new HashSet<>();
         for (String entry : data) {
             // 将字符串按冒号分割，确保有两个部分
@@ -244,7 +243,7 @@ public class result {
 
         return s.toString();
     }
-    public String checkfrida(){
+    private String checkfrida(){
         StringBuilder s = new StringBuilder();
         hookcheck hc = new hookcheck();
 
