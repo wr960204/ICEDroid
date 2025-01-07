@@ -71,7 +71,7 @@ public class certificate {
         }
     }
 
-    private static void printCertificateChain(X509Certificate cert, List<X509Certificate> allCertificates) {
+    private void printCertificateChain(X509Certificate cert, List<X509Certificate> allCertificates) {
         List<X509Certificate> chain = new ArrayList<>();
         X509Certificate currentCert = cert;
 
@@ -87,7 +87,7 @@ public class certificate {
         }
     }
 
-    private static X509Certificate findIssuer(X509Certificate cert, List<X509Certificate> allCertificates) {
+    private X509Certificate findIssuer(X509Certificate cert, List<X509Certificate> allCertificates) {
         String issuerDN = cert.getIssuerDN().getName();
         for (X509Certificate c : allCertificates) {
             if (c.getSubjectDN().getName().equals(issuerDN)) {
