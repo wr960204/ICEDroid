@@ -18,7 +18,7 @@ public class devicesfeatures {
         return fr.toString();
     }
 
-    public List<String> checkDeviceFeatures(Context context) {
+    private List<String> checkDeviceFeatures(Context context) {
         List<String> f = new ArrayList<>();
         PackageManager pm = context.getPackageManager();
         FeatureInfo[] features = pm.getSystemAvailableFeatures();
