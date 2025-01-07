@@ -72,7 +72,7 @@ public class fptest {
         PackageManager pm = context.getPackageManager();
         FeatureInfo[] features = pm.getSystemAvailableFeatures();
         for (FeatureInfo feature : features)
-            Log.v("feature", feature.name);
+            Log.v("feature", String.valueOf(feature));
         System.out.println(Arrays.toString(features));
         boolean hasTelephony = pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY);
         boolean hasSensor = pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER);
