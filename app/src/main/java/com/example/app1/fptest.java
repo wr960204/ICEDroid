@@ -1,9 +1,12 @@
 package com.example.app1;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.content.Context;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -68,6 +71,8 @@ public class fptest {
     public boolean checkHardwareFeatures(Context context) {
         PackageManager pm = context.getPackageManager();
         FeatureInfo[] features = pm.getSystemAvailableFeatures();
+        for (FeatureInfo feature : features)
+            Log.v("feature", feature.name);
         System.out.println(Arrays.toString(features));
         boolean hasTelephony = pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY);
         boolean hasSensor = pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER);
