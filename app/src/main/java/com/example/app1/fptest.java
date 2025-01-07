@@ -19,7 +19,7 @@ public class fptest {
         int availableCores = Runtime.getRuntime().availableProcessors();
         properties.add("可⽤处理器核⼼数：" + availableCores);
         properties.addAll(developmentSettings(context));
-        properties.addAll(checkHardwareFeatures(context));
+        properties.addAll(checkDeviceFeatures(context));
 
         return getStrings(properties);
     }
@@ -65,7 +65,7 @@ public class fptest {
         return processedProperties;
     }
 
-    public List<String> checkHardwareFeatures(Context context) {
+    public List<String> checkDeviceFeatures(Context context) {
         List<String> f = new ArrayList<>();
         PackageManager pm = context.getPackageManager();
         FeatureInfo[] features = pm.getSystemAvailableFeatures();
