@@ -1,8 +1,11 @@
 package com.example.app1;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
+import android.os.BatteryManager;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -19,7 +22,7 @@ public class fptest {
         int availableCores = Runtime.getRuntime().availableProcessors();
         properties.add("可⽤处理器核⼼数：" + availableCores);
         properties.addAll(developmentSettings(context));
-        properties.addAll(checkDeviceFeatures(context));
+
 
         return getStrings(properties);
     }
@@ -65,17 +68,20 @@ public class fptest {
         return processedProperties;
     }
 
-    public List<String> checkDeviceFeatures(Context context) {
-        List<String> f = new ArrayList<>();
-        PackageManager pm = context.getPackageManager();
-        FeatureInfo[] features = pm.getSystemAvailableFeatures();
-        for (FeatureInfo feature : features) {
-            // 检查特征名称是否不为null，并且是软件特征
-            if (feature.name != null) {
-                f.add(feature.name); // 输出特征名称
-            }
+    public void checkBattery(Context context) {
+        // 获取电池状态
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.registerReceiver(null, ifilter);
+        if (batteryStatus != null) {
+            int batteryLevel = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+            int batteryScale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+            float batteryPct = batteryLevel * 100 / (float)batteryScale;
+            System.out.println(batteryPct);
+            boolean isCharging = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1) == BatteryManager.BATTERY_STATUS_CHARGING;
+            // 判断电池电量和充电状态，通常模拟器电池满电且不在充电
+            System.out.println(isCharging);
         }
-        return f;
+
     }
 
 

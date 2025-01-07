@@ -23,9 +23,9 @@ public class devicesfeatures {
         PackageManager pm = context.getPackageManager();
         FeatureInfo[] features = pm.getSystemAvailableFeatures();
         for (FeatureInfo feature : features) {
-            // 检查特征名称是否不为null，并且是软件特征
+            // 检查特征名称是否不为null
             if (feature.name != null) {
-                f.add(feature.name); // 输出特征名称
+                f.add(feature.name); // 特征名称
             }
         }
         return f;
