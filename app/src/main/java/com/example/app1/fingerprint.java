@@ -12,11 +12,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -49,7 +44,7 @@ public class fingerprint {
         return s;
     }
 
-    public String getUUID(){
+    private String getUUID(){
         String s = "UUID：";
         StringBuilder n = new StringBuilder();
         List<String> l = getSystemProperties2();
@@ -93,7 +88,7 @@ public class fingerprint {
         return Addr;
     }
 
-    protected InetAddress getLocalInetAddress() {
+    private InetAddress getLocalInetAddress() {
         InetAddress ip = null;
         try {
             //列举
@@ -158,7 +153,7 @@ public class fingerprint {
         return "系统属性获取失败";
     }
 
-    public List<String> getSystemProperties2(){
+    private List<String> getSystemProperties2(){
         List<String> properties = new ArrayList<>();
         properties.add("BOARD:" + Build.BOARD);
         properties.add("BOOTLOADER:" + Build.BOOTLOADER);
@@ -193,7 +188,7 @@ public class fingerprint {
         return getStrings(properties);
     }
 
-    private static @NonNull List<String> getStrings(List<String> properties) {
+    private @NonNull List<String> getStrings(List<String> properties) {
         List<String> processedProperties = new ArrayList<>();
         for (String property : properties) {
             String[] parts = property.split(":", 2);
