@@ -24,7 +24,7 @@ public class fptest {
     }
 
 
-    public List<String> developmentSettings(Context context){
+    private List<String> developmentSettings(Context context){
         List<String> d = new ArrayList<>();
 
         int developmentSettings = Settings.Secure.getInt(context.getContentResolver(), Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0);
@@ -64,7 +64,7 @@ public class fptest {
         return processedProperties;
     }
 
-    public List<String> checkBattery(Context context) {
+    private List<String> checkBattery(Context context) {
         List<String> b = new ArrayList<>();
         // 获取电池状态
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
