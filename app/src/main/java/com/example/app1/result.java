@@ -294,9 +294,9 @@ public class result {
     }
 
     //------------------------------------------获取支持软硬件----------------------------------------------------------
-    public String devicefeatures(){
-        certificate c = new certificate();
-        return c.listInstalledCertificates();
+    public String devicefeatures(Context context){
+        devicesfeatures df = new devicesfeatures();
+        return df.features(context);
     }
 
 
