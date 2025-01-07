@@ -1,7 +1,5 @@
 package com.example.app1;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.content.Context;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
@@ -21,8 +19,7 @@ public class fptest {
         int availableCores = Runtime.getRuntime().availableProcessors();
         properties.add("可⽤处理器核⼼数：" + availableCores);
         properties.addAll(developmentSettings(context));
-
-        checkHardwareFeatures(context);
+        properties.addAll(checkHardwareFeatures(context));
 
         return getStrings(properties);
     }
@@ -68,15 +65,17 @@ public class fptest {
         return processedProperties;
     }
 
-    public boolean checkHardwareFeatures(Context context) {
+    public List<String> checkHardwareFeatures(Context context) {
+        List<String> f = new ArrayList<>();
         PackageManager pm = context.getPackageManager();
         FeatureInfo[] features = pm.getSystemAvailableFeatures();
-        for (FeatureInfo feature : features)
-            Log.v("feature", String.valueOf(feature));
-        System.out.println(Arrays.toString(features));
-        boolean hasTelephony = pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY);
-        boolean hasSensor = pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER);
-        return !hasTelephony || !hasSensor; // 模拟器可能缺少这些特征
+        for (FeatureInfo feature : features) {
+            // 检查特征名称是否不为null，并且是软件特征
+            if (feature.name != null) {
+                f.add(feature.name); // 输出特征名称
+            }
+        }
+        return f;
     }
 
 
