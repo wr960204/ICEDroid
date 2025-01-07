@@ -18,7 +18,7 @@ public class fptest {
         int availableCores = Runtime.getRuntime().availableProcessors();
         properties.add("可⽤处理器核⼼数：" + availableCores);
         properties.addAll(developmentSettings(context));
-        properties.addALL(checkBattery(context));
+        properties.addAll(checkBattery(context));
 
         return getStrings(properties);
     }
