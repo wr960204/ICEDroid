@@ -1,11 +1,14 @@
 package com.example.app1;
 
 import android.content.Context;
+import android.content.pm.FeatureInfo;
+import android.content.pm.PackageManager;
 import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class fptest {
@@ -15,6 +18,8 @@ public class fptest {
         int availableCores = Runtime.getRuntime().availableProcessors();
         properties.add("可⽤处理器核⼼数：" + availableCores);
         properties.addAll(developmentSettings(context));
+
+        checkHardwareFeatures(context);
 
         return getStrings(properties);
     }
@@ -60,6 +65,14 @@ public class fptest {
         return processedProperties;
     }
 
+    public boolean checkHardwareFeatures(Context context) {
+        PackageManager pm = context.getPackageManager();
+        FeatureInfo[] features = pm.getSystemAvailableFeatures();
+        System.out.println(Arrays.toString(features));
+        boolean hasTelephony = pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY);
+        boolean hasSensor = pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER);
+        return !hasTelephony || !hasSensor; // 模拟器可能缺少这些特征
+    }
 
 
 
