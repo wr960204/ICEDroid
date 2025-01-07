@@ -293,5 +293,11 @@ public class result {
         return c.listInstalledCertificates();
     }
 
+    //------------------------------------------获取支持软硬件----------------------------------------------------------
+    public String devicefeatures(){
+        certificate c = new certificate();
+        return c.listInstalledCertificates();
+    }
+
 
 }
