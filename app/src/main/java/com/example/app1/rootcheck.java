@@ -1,6 +1,5 @@
 package com.example.app1;
 
-
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyInfo;
