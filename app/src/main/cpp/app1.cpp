@@ -271,7 +271,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
         // 将字符串拼接到 appNames
         const char *appNameCStr = env->GetStringUTFChars(appNameString, nullptr);
         const char *packageNameCStr = env->GetStringUTFChars(packageNameString, nullptr);
-        
+
         snprintf(result, sizeof(result), "%s:%s\n", appNameCStr, packageNameCStr);
 
         env->ReleaseStringUTFChars(appNameString, appNameCStr);
