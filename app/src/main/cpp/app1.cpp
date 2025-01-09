@@ -210,5 +210,61 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_mapscheck(JNIEnv 
 };
 
 //-----------------------------------------------获取已安装应用------------------------------------------------------
-JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames
-        (JNIEnv *, jobject);
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEnv * env, jobject){
+    jclass contextClass = env->GetObjectClass(context);
+    jclass pmClass = env->FindClass("android/content/pm/PackageManager");
+
+    // 获取 PackageManager 实例
+    jmethodID getPackageManagerMethod = env->GetMethodID(contextClass, "getPackageManager", "()Landroid/content/pm/PackageManager;");
+    jobject pmObject = env->CallObjectMethod(context, getPackageManagerMethod);
+
+    // 获取已安装应用程序
+    jmethodID getInstalledPackagesMethod = env->GetMethodID(pmClass, "getInstalledPackages", "(I)Ljava/util/List;");
+    jobject installedPackages = env->CallObjectMethod(pmObject, getInstalledPackagesMethod, 0); // 0 = GET_UNINSTALLED_PACKAGES
+
+    // 获取 List 类和相关方法
+    jclass listClass = env->FindClass("java/util/List");
+    jmethodID sizeMethod = env->GetMethodID(listClass, "size", "()I");
+    jmethodID getMethod = env->GetMethodID(listClass, "get", "(I)Ljava/lang/Object;");
+
+    // 获取 List 的大小
+    jint size = env->CallIntMethod(installedPackages, sizeMethod);
+    jstring appNames;
+
+    // 遍历安装的应用程序
+    jclass packageInfoClass = env->FindClass("android/content/pm/PackageInfo");
+    jclass applicationInfoClass = env->FindClass("android/content/pm/ApplicationInfo");
+
+    for (int i = 0; i < size; i++) {
+        jobject packageInfo = env->CallObjectMethod(installedPackages, getMethod, i);
+
+        // 获取应用名
+        jfieldID applicationInfoField = env->GetFieldID(packageInfoClass, "applicationInfo", "Landroid/content/pm/ApplicationInfo;");
+        jobject applicationInfo = env->GetObjectField(packageInfo, applicationInfoField);
+
+        jclass aiClass = applicationInfoClass;
+        jmethodID loadLabelMethod = env->GetMethodID(aiClass, "loadLabel", "(Landroid/content/pm/PackageManager;)Ljava/lang/CharSequence;");
+        jobject appNameCharSequence = env->CallObjectMethod(applicationInfo, loadLabelMethod, pmObject);
+
+        // 将 CharSequence 转换为 String
+        jclass charSequenceClass = env->FindClass("java/lang/CharSequence");
+        jmethodID toStringMethod = env->GetMethodID(charSequenceClass, "toString", "()Ljava/lang/String;");
+        jstring appNameString = static_cast<jstring>(env->CallObjectMethod(appNameCharSequence, toStringMethod));
+
+        // 获取包名
+        jfieldID packageNameField = env->GetFieldID(packageInfoClass, "packageName", "Ljava/lang/String;");
+        jstring packageNameString = static_cast<jstring>(env->GetObjectField(packageInfo, packageNameField));
+
+        // 将字符串拼接到 appNames
+        const char *appNameCStr = env->GetStringUTFChars(appNameString, nullptr);
+        const char *packageNameCStr = env->GetStringUTFChars(packageNameString, nullptr);
+
+        appNames += jstring(appNameCStr) + ":" + jstring(packageNameCStr) + "\n";
+
+        env->ReleaseStringUTFChars(appNameString, appNameCStr);
+        env->ReleaseStringUTFChars(packageNameString, packageNameCStr);
+    }
+
+    // 返回拼接的字符串
+    return env->NewStringUTF(appNames.c_str());
+};
