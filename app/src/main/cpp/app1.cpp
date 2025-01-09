@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <linux/in.h>
 #include <sys/endian.h>
+#include <string.h>
 
 
 
@@ -210,13 +211,13 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_mapscheck(JNIEnv 
 };
 
 //-----------------------------------------------获取已安装应用------------------------------------------------------
-JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEnv * env, jobject){
-    jclass contextClass = env->GetObjectClass(context);
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEnv * env, jobject obj){
+    jclass contextClass = env->GetObjectClass(obj);
     jclass pmClass = env->FindClass("android/content/pm/PackageManager");
 
     // 获取 PackageManager 实例
     jmethodID getPackageManagerMethod = env->GetMethodID(contextClass, "getPackageManager", "()Landroid/content/pm/PackageManager;");
-    jobject pmObject = env->CallObjectMethod(context, getPackageManagerMethod);
+    jobject pmObject = env->CallObjectMethod(obj, getPackageManagerMethod);
 
     // 获取已安装应用程序
     jmethodID getInstalledPackagesMethod = env->GetMethodID(pmClass, "getInstalledPackages", "(I)Ljava/util/List;");
@@ -229,7 +230,11 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
 
     // 获取 List 的大小
     jint size = env->CallIntMethod(installedPackages, sizeMethod);
-    jstring appNames;
+    char *result = (char *)malloc(4096); // 分配足够的内存以存储结果
+    if (result == nullptr) {
+        return nullptr; // 处理内存分配失败的情况
+    }
+    result[0] = '\0'; // 初始化字符串
 
     // 遍历安装的应用程序
     jclass packageInfoClass = env->FindClass("android/content/pm/PackageInfo");
@@ -259,12 +264,14 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
         const char *appNameCStr = env->GetStringUTFChars(appNameString, nullptr);
         const char *packageNameCStr = env->GetStringUTFChars(packageNameString, nullptr);
 
-        appNames += jstring(appNameCStr) + ":" + jstring(packageNameCStr) + "\n";
+        char buffer[1024]; // 创建一个足够大的字符数组以存储结果
+        snprintf(buffer, sizeof(buffer), "%s:%s\n", appNameCStr, packageNameCStr);
+        strcat(result,buffer); // 将拼接后的字符串添加到 appNames
 
         env->ReleaseStringUTFChars(appNameString, appNameCStr);
         env->ReleaseStringUTFChars(packageNameString, packageNameCStr);
     }
-
     // 返回拼接的字符串
-    return env->NewStringUTF(appNames.c_str());
+    jstring jResult = (*env).NewStringUTF(result);
+    return jResult;
 };
