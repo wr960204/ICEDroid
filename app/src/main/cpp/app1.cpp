@@ -237,8 +237,9 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
     jmethodID getMethod = env->GetMethodID(listClass, "get", "(I)Ljava/lang/Object;");
 
     // 获取 List 的大小
+    jint mallocsize = 8192;//分配结果空间大小
     jint size = env->CallIntMethod(installedPackages, sizeMethod);
-    char *result = (char *)malloc(8192); // 分配足够的内存以存储结果
+    char *result = (char *)malloc(mallocsize); // 分配足够的内存以存储结果
     if (result == nullptr) {
         return nullptr; // 处理内存分配失败的情况
     }
@@ -272,7 +273,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
         const char *appNameCStr = env->GetStringUTFChars(appNameString, nullptr);
         const char *packageNameCStr = env->GetStringUTFChars(packageNameString, nullptr);
 
-        snprintf(result + strlen(result), 8192 - strlen(result), "%s:%s\n", appNameCStr, packageNameCStr);
+        snprintf(result + strlen(result), mallocsize - strlen(result), "%s:%s\n", appNameCStr, packageNameCStr);
 
         env->ReleaseStringUTFChars(appNameString, appNameCStr);
         env->ReleaseStringUTFChars(packageNameString, packageNameCStr);
