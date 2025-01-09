@@ -208,3 +208,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_mapscheck(JNIEnv 
     jstring jResult = (*env).NewStringUTF(result2);
     return jResult; // No evil library detected.
 };
+
+//-----------------------------------------------获取已安装应用------------------------------------------------------
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames
+        (JNIEnv *, jobject);

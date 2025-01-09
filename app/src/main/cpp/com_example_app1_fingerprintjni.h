@@ -39,6 +39,14 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_check
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_mapscheck
   (JNIEnv *, jobject);
 
+/*
+ * Class:     com_example_app1_fingerprintjni
+ * Method:    getappnames
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif
