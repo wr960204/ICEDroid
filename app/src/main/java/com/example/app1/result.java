@@ -261,12 +261,12 @@ public class result {
 
         String fingerprint = "\n系统指纹：" + j.fingerprint() + "\n";
         String netaddress = "\n网络地址：\n" + j.netfp() + "\n";
-        String chjni = j.check() + "\n";
-        String msjni = j.mapscheck() + "\n";
+        String hookcheck = "\nhook检测：\n" + j.check() + "\n" + j.mapscheck() + "\n";
+
 
         String anjni = j.getappnames() + "\n";
 
-        s.append(fingerprint).append(netaddress).append("\nhook检测：\n").append(chjni).append(msjni).append(anjni);
+        s.append(fingerprint).append(netaddress).append(hookcheck).append(anjni);
         return s.toString();
     }
 
