@@ -14,4 +14,6 @@ public class fingerprintjni {
 
     public native String mapscheck();
 
+    public native String getAllAppNamesJNI();
+
 }
