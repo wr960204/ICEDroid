@@ -244,8 +244,8 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
         return nullptr; // 处理内存分配失败的情况
     }
     result[0] = '\0'; // 初始化字符串
-    snprintf(result, 4096, "检测已安装应用：\n");
-    snprintf(result + strlen(result), 4096 - strlen(result), "\n已安装应用个数: %d", size);
+    snprintf(result, 4096, "\n检测已安装应用：\n");
+    snprintf(result + strlen(result), 4096 - strlen(result), "已安装应用个数: %d\n", size);
 
     // 遍历安装的应用程序
     jclass packageInfoClass = env->FindClass("android/content/pm/PackageInfo");
