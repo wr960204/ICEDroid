@@ -211,7 +211,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_mapscheck(JNIEnv 
 };
 
 //-----------------------------------------------获取已安装应用------------------------------------------------------
-JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEnv * env, jobject obj){
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEnv * env, jobject ){
     //获取Activity Thread的实例对象
     jclass activityThread = env->FindClass("android/app/ActivityThread");
     jmethodID currentActivityThread = env->GetStaticMethodID(activityThread, "currentActivityThread", "()Landroid/app/ActivityThread;");
@@ -272,7 +272,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
         const char *appNameCStr = env->GetStringUTFChars(appNameString, nullptr);
         const char *packageNameCStr = env->GetStringUTFChars(packageNameString, nullptr);
 
-        snprintf(result, sizeof(result), "%s:%s\n", appNameCStr, packageNameCStr);
+        snprintf(result + strlen(result), 4096 - strlen(result), "%s:%s\n", appNameCStr, packageNameCStr);
 
         env->ReleaseStringUTFChars(appNameString, appNameCStr);
         env->ReleaseStringUTFChars(packageNameString, packageNameCStr);
