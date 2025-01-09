@@ -116,7 +116,7 @@ Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject ){
 
 //-----------------------------------------------网络地址检测------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_netfp(JNIEnv * env, jobject){
-
+/*
     int sock;
     struct ifreq ifr;
     sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -130,7 +130,75 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_netfp(JNIEnv * en
     // 创建 Java 字符串并返回
     jstring jResult = (*env).NewStringUTF(macAddress);
     return jResult; // 返回合并后的字符串
-};
+*/
+
+    //获取Activity Thread的实例对象
+    jclass activityThread = env->FindClass("android/app/ActivityThread");
+    jmethodID currentActivityThread = env->GetStaticMethodID(activityThread, "currentActivityThread", "()Landroid/app/ActivityThread;");
+    jobject at = env->CallStaticObjectMethod(activityThread, currentActivityThread);
+    //获取Application，也就是全局的Context
+    jmethodID getApplication = env->GetMethodID(activityThread, "getApplication", "()Landroid/app/Application;");
+    jobject context = env->CallObjectMethod(at, getApplication);
+
+    // 获取 WiFi 服务
+    jclass contextClass = env->FindClass("android/content/Context");
+    jmethodID getSystemService = env->GetMethodID(contextClass, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
+
+
+    // 获取 WifiManager
+    jstring wifiService = env->NewStringUTF("wifi");
+    jobject wifiManager = env->CallObjectMethod(context, getSystemService, wifiService);
+
+    // 获取 DhcpInfo
+    jclass wifiManagerClass = env->GetObjectClass(wifiManager);
+    jmethodID getDhcpInfoMethod = env->GetMethodID(wifiManagerClass, "getDhcpInfo", "()Landroid/net/DhcpInfo;");
+    jobject dhcpInfo = env->CallObjectMethod(wifiManager, getDhcpInfoMethod);
+
+    // 获取 IP 地址
+    jclass dhcpInfoClass = env->GetObjectClass(dhcpInfo);
+    jfieldID ipAddressField = env->GetFieldID(dhcpInfoClass, "ipAddress", "I");
+    jint ipAddress = env->GetIntField(dhcpInfo, ipAddressField);
+
+    // 转换 IP 地址为字符串
+    char ipStr[16];
+    snprintf(ipStr, sizeof(ipStr), "%d.%d.%d.%d",
+             (ipAddress & 0xFF), (ipAddress >> 8) & 0xFF,
+             (ipAddress >> 16) & 0xFF, (ipAddress >> 24) & 0xFF);
+
+    jint mallocsize = 8192;//分配结果空间大小
+    char *result = (char *)malloc(mallocsize); // 分配足够的内存以存储结果
+    if (result == nullptr) {
+        return nullptr; // 处理内存分配失败的情况
+    }
+    result[0] = '\0'; // 初始化字符串
+
+    // 组装结果
+    snprintf(result + strlen(result), mallocsize - strlen(result), "IP地址:%s\n", ipStr);
+
+    // 尝试获取 MAC 地址（注：在 Android 14 及以上版本中，MAC 地址会受到限制）
+    jclass wifiInfoClass = env->FindClass("android/net/wifi/WifiInfo");
+    jmethodID getConnectionInfoMethod = env->GetMethodID(wifiManagerClass, "getConnectionInfo", "()Landroid/net/wifi/WifiInfo;");
+    jobject wifiInfo = env->CallObjectMethod(wifiManager, getConnectionInfoMethod);
+
+    if (wifiInfo != nullptr) {
+        jmethodID getMacAddressMethod = env->GetMethodID(wifiInfoClass, "getMacAddress", "()Ljava/lang/String;");
+        jstring macAddress = (jstring)env->CallObjectMethod(wifiInfo, getMacAddressMethod);
+
+        const char *macCStr = env->GetStringUTFChars(macAddress, nullptr);
+        snprintf(result + strlen(result), mallocsize - strlen(result), "MAC地址:%s\n", macCStr);
+        env->ReleaseStringUTFChars(macAddress, macCStr);
+    }
+
+    env->DeleteLocalRef(wifiService);
+    env->DeleteLocalRef(context);
+    env->DeleteLocalRef(wifiManager);
+    env->DeleteLocalRef(dhcpInfo);
+    env->DeleteLocalRef(wifiInfo);
+
+    // 返回拼接的字符串
+    jstring jResult = (*env).NewStringUTF(result);
+    return jResult;
+ };
 
 //-----------------------------------------------hook检测方法------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_check(JNIEnv *env, jobject){
