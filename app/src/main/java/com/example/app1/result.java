@@ -262,11 +262,9 @@ public class result {
         String fingerprint = "\n系统指纹：" + j.fingerprint() + "\n";
         String netaddress = "\n网络地址：\n" + j.netfp() + "\n";
         String hookcheck = "\nhook检测：\n" + j.check() + "\n" + j.mapscheck() + "\n";
+        String appnames = "\n检测已安装应用：\n" + j.getappnames() + "\n";
 
-
-        String anjni = j.getappnames() + "\n";
-
-        s.append(fingerprint).append(netaddress).append(hookcheck).append(anjni);
+        s.append(fingerprint).append(netaddress).append(hookcheck).append(appnames);
         return s.toString();
     }
 
