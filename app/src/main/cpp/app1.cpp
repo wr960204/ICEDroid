@@ -271,10 +271,8 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
         // 将字符串拼接到 appNames
         const char *appNameCStr = env->GetStringUTFChars(appNameString, nullptr);
         const char *packageNameCStr = env->GetStringUTFChars(packageNameString, nullptr);
-
-        char buffer[1024]; // 创建一个足够大的字符数组以存储结果
-        snprintf(buffer, sizeof(buffer), "%s:%s\n", appNameCStr, packageNameCStr);
-        strcat(result,buffer); // 将拼接后的字符串添加到 appNames
+        
+        snprintf(result, sizeof(result), "%s:%s\n", appNameCStr, packageNameCStr);
 
         env->ReleaseStringUTFChars(appNameString, appNameCStr);
         env->ReleaseStringUTFChars(packageNameString, packageNameCStr);
