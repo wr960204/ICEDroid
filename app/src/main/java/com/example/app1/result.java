@@ -263,7 +263,10 @@ public class result {
         String npjni = "\n网络地址：\n" + j.netfp() + "\n";
         String chjni = j.check() + "\n";
         String msjni = j.mapscheck() + "\n";
-        s.append(fpjni).append(npjni).append("\nhook检测：\n").append(chjni).append(msjni);
+
+        String anjni = j.getappnames() + "\n";
+
+        s.append(fpjni).append(npjni).append("\nhook检测：\n").append(chjni).append(msjni).append(anjni);
         return s.toString();
     }
 

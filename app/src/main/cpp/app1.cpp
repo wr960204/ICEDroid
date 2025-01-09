@@ -212,12 +212,20 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_mapscheck(JNIEnv 
 
 //-----------------------------------------------获取已安装应用------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEnv * env, jobject obj){
-    jclass contextClass = env->GetObjectClass(obj);
+    //获取Activity Thread的实例对象
+    jclass activityThread = env->FindClass("android/app/ActivityThread");
+    jmethodID currentActivityThread = env->GetStaticMethodID(activityThread, "currentActivityThread", "()Landroid/app/ActivityThread;");
+    jobject at = env->CallStaticObjectMethod(activityThread, currentActivityThread);
+    //获取Application，也就是全局的Context
+    jmethodID getApplication = env->GetMethodID(activityThread, "getApplication", "()Landroid/app/Application;");
+    jobject context = env->CallObjectMethod(at, getApplication);
+
+    jclass contextClass = env->GetObjectClass(context);
     jclass pmClass = env->FindClass("android/content/pm/PackageManager");
 
     // 获取 PackageManager 实例
     jmethodID getPackageManagerMethod = env->GetMethodID(contextClass, "getPackageManager", "()Landroid/content/pm/PackageManager;");
-    jobject pmObject = env->CallObjectMethod(obj, getPackageManagerMethod);
+    jobject pmObject = env->CallObjectMethod(context, getPackageManagerMethod);
 
     // 获取已安装应用程序
     jmethodID getInstalledPackagesMethod = env->GetMethodID(pmClass, "getInstalledPackages", "(I)Ljava/util/List;");
