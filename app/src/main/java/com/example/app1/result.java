@@ -260,13 +260,13 @@ public class result {
         fingerprintjni j = new fingerprintjni();
 
         String fingerprint = "\n系统指纹：" + j.fingerprint() + "\n";
-        String npjni = "\n网络地址：\n" + j.netfp() + "\n";
+        String netaddress = "\n网络地址：\n" + j.netfp() + "\n";
         String chjni = j.check() + "\n";
         String msjni = j.mapscheck() + "\n";
 
         String anjni = j.getappnames() + "\n";
 
-        s.append(fingerprint).append(npjni).append("\nhook检测：\n").append(chjni).append(msjni).append(anjni);
+        s.append(fingerprint).append(netaddress).append("\nhook检测：\n").append(chjni).append(msjni).append(anjni);
         return s.toString();
     }
 
