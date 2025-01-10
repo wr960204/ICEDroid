@@ -358,8 +358,9 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
 //-----------------------------------------------获取CA证书------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JNIEnv *env, jobject){
     // 初始化字符串结果
-    char certInfo[65535]; // 确保缓冲区足够大
-    snprintf(certInfo, sizeof(certInfo), "证书信息\n---------------------------------\n");
+    jint mallocsize = 65535;//分配结果空间大小
+    char *certInfo = (char *)malloc(mallocsize); // 分配足够的内存以存储结果
+    snprintf(certInfo, mallocsize, "证书信息\n---------------------------------\n");
 
     // 获取 KeyStore 类
     jclass keyStoreClass = env->FindClass("java/security/KeyStore");
@@ -429,7 +430,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JN
             const char *validityEndCStr = env->GetStringUTFChars(notAfterString, nullptr);
 
             // 将证书信息添加到结果字符串
-            snprintf(certInfo + strlen(certInfo), sizeof(certInfo) - strlen(certInfo),
+            snprintf(certInfo + strlen(certInfo), mallocsize - strlen(certInfo),
                      "Alias: %s\nSubject: %s\nIssuer: %s\nValidity: %s - %s\n---------------------------------\n",
                      aliasCStr, subjectCStr, issuerCStr, validityCStr, validityEndCStr);
 
