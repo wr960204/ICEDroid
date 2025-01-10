@@ -263,14 +263,13 @@ public class MainActivity extends AppCompatActivity {
         signcheck signCheck = new signcheck(this, sc_default);
         return signCheck.check();
     }
+    //定时校验
     private void startScheduledTask() {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleWithFixedDelay(this::signCheck, 0, 15, TimeUnit.SECONDS);
         Log.d("ScheduledTask", "signcheck executed");
     }
-
     private static int executionCount = 0;
-
     private void setDailyAlarm() {
         AlarmManager aManager = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, MyReceiver.class);
@@ -291,7 +290,6 @@ public class MainActivity extends AppCompatActivity {
         filewr fl = new filewr();
         fl.bufferRead("sc.txt");
     }
-
     private static class MyReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

@@ -30,8 +30,4 @@
             android:text="@string/返回" />
 
     </LinearLayout>
-
-
-
-
 </ScrollView>
