@@ -16,4 +16,6 @@ public class fingerprintjni {
 
     public native String getappnames();
 
+    public native String getcertificate();
+
 }
