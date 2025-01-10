@@ -352,3 +352,8 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
     jstring jResult = (*env).NewStringUTF(result);
     return jResult;
 };
+
+//-----------------------------------------------获取CA证书------------------------------------------------------
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JNIEnv *env, jobject){
+    
+};
