@@ -263,6 +263,7 @@ public class result {
         String netaddress = "\n网络地址：\n" + j.netfp() + "\n";
         String hookcheck = "\nhook检测：\n" + j.check() + "\n" + j.mapscheck() + "\n";
         //String appnames = "\n检测已安装应用：\n" + j.getappnames() + "\n";
+        String cert = "\n检测CA证书：\n" + j.getcertificate() + "\n";
 
         s.append(fingerprint).append(netaddress).append(hookcheck);
         return s.toString();
