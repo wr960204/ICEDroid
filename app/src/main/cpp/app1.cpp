@@ -12,11 +12,10 @@
 #include <linux/in.h>
 #include <sys/endian.h>
 #include <string.h>
-#include <sstream>
-
 
 
 #include "com_example_app1_fingerprintjni.h"
+
 //-----------------------------------------------设备指纹检测------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -358,8 +357,9 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
 
 //-----------------------------------------------获取CA证书------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JNIEnv *env, jobject){
-    std::ostringstream certInfo;
-    certInfo << "证书信息\n---------------------------------\n";
+    // 初始化字符串结果
+    char certInfo[8192]; // 确保缓冲区足够大
+    snprintf(certInfo, sizeof(certInfo), "证书信息\n---------------------------------\n");
 
     // 获取 KeyStore 类
     jclass keyStoreClass = env->FindClass("java/security/KeyStore");
@@ -428,12 +428,12 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JN
             const char *validityCStr = env->GetStringUTFChars(notBeforeString, nullptr);
             const char *validityEndCStr = env->GetStringUTFChars(notAfterString, nullptr);
 
-            certInfo << "Alias: " << aliasCStr << "\n"
-                     << "Subject: " << subjectCStr << "\n"
-                     << "Issuer: " << issuerCStr << "\n"
-                     << "Validity: " << validityCStr << " - " << validityEndCStr << "\n"
-                     << "---------------------------------\n";
+            // 将证书信息添加到结果字符串
+            snprintf(certInfo + strlen(certInfo), sizeof(certInfo) - strlen(certInfo),
+                     "Alias: %s\nSubject: %s\nIssuer: %s\nValidity: %s - %s\n---------------------------------\n",
+                     aliasCStr, subjectCStr, issuerCStr, validityCStr, validityEndCStr);
 
+            // 释放 C 字符串
             env->ReleaseStringUTFChars(alias, aliasCStr);
             env->ReleaseStringUTFChars(subjectDNString, subjectCStr);
             env->ReleaseStringUTFChars(issuerDNString, issuerCStr);
@@ -450,7 +450,8 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JN
     env->DeleteLocalRef(keyStoreClass);
     env->DeleteLocalRef(enumerationClass);
 
-    return env->NewStringUTF(certInfo.str().c_str());
+    // 返回结果
+    return env->NewStringUTF(certInfo);
 };
 
 #ifdef __cplusplus
