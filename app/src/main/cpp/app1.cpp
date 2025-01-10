@@ -306,7 +306,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
     jmethodID getMethod = env->GetMethodID(listClass, "get", "(I)Ljava/lang/Object;");
 
     // 获取 List 的大小
-    jint mallocsize = 16384;//分配结果空间大小
+    jint mallocsize = 65535;//分配结果空间大小
     jint size = env->CallIntMethod(installedPackages, sizeMethod);
     char *result = (char *)malloc(mallocsize); // 分配足够的内存以存储结果
     if (result == nullptr) {
