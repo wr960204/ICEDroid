@@ -306,14 +306,14 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
     jmethodID getMethod = env->GetMethodID(listClass, "get", "(I)Ljava/lang/Object;");
 
     // 获取 List 的大小
-    jint mallocsize = 8192;//分配结果空间大小
+    jint mallocsize = 16384;//分配结果空间大小
     jint size = env->CallIntMethod(installedPackages, sizeMethod);
     char *result = (char *)malloc(mallocsize); // 分配足够的内存以存储结果
     if (result == nullptr) {
         return nullptr; // 处理内存分配失败的情况
     }
     result[0] = '\0'; // 初始化字符串
-    snprintf(result + strlen(result), 4096 - strlen(result), "已安装应用个数: %d\n", size);
+    snprintf(result + strlen(result), mallocsize - strlen(result), "已安装应用个数: %d\n", size);
 
     // 遍历安装的应用程序
     jclass packageInfoClass = env->FindClass("android/content/pm/PackageInfo");
