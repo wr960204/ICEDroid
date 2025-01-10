@@ -18,7 +18,9 @@
 
 #include "com_example_app1_fingerprintjni.h"
 //-----------------------------------------------设备指纹检测------------------------------------------------------
-extern "C"
+#ifdef __cplusplus
+extern "C" {
+#endif
 JNIEXPORT jstring JNICALL
 Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject ){
     const char *properties[] = {
@@ -450,3 +452,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JN
 
     return env->NewStringUTF(certInfo.str().c_str());
 };
+
+#ifdef __cplusplus
+}
+#endif
