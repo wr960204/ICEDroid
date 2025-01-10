@@ -310,7 +310,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
     jint size = env->CallIntMethod(installedPackages, sizeMethod);
     char *result = (char *)malloc(mallocsize); // 分配足够的内存以存储结果
     if (result == nullptr) {
-        return nullptr; // 处理内存分配失败的情况
+        return nullptr; // 处理内存分配失败的情况mallocsize
     }
     result[0] = '\0'; // 初始化字符串
     snprintf(result + strlen(result), mallocsize - strlen(result), "已安装应用个数: %d\n", size);
