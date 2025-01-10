@@ -12,10 +12,11 @@ import java.util.Set;
 public class result {
     //-----------------------------------------------ROOT检测------------------------------------------------------
     public String rootCheck() throws IOException {
+        rootcheck rc = new rootcheck();
+
         StringBuilder s = new StringBuilder("root检测:");
         boolean flag = false;
         //检查SU命令
-        rootcheck rc = new rootcheck();
         if (rc.checkSuCommand()){
             s.append("\n检查SU命令:执行成功");
             flag = true;
@@ -95,10 +96,10 @@ public class result {
 
     //-----------------------------------------------模拟器检测------------------------------------------------------
     public String emulatorCheck(Context context){
+        emulatorcheck ec = new emulatorcheck();
+
         StringBuilder s = new StringBuilder("模拟器检测：");
         boolean flag = false;
-
-        emulatorcheck ec = new emulatorcheck();
         //检查设备型号和品牌
         if (ec.checkDeviceModel()){
             s.append("\n检查设备型号和品牌:异常");
@@ -153,22 +154,26 @@ public class result {
 
     //-----------------------------------------------设备指纹检测------------------------------------------------------
     public String checkFingerPrint(Context context) {
-        StringBuilder s = new StringBuilder("设备指纹检测：");
         fingerprint fp = new fingerprint();
+        fingerprintjni j = new fingerprintjni();
+
+        StringBuilder s = new StringBuilder("设备指纹检测：");
+        //java层
         String dev =fp.getDeviceID(context.getContentResolver());
         String net = fp.getLocalMacAddress();
         String sys = fp.getSystemProperties();
-
-        fingerprintjni j = new fingerprintjni();
+        //native层
         String fpjni = "\n系统指纹：" + j.fingerprint() + "\n";
         String npjni = "网络地址：\n" + j.netfp() + "\n";
-
-        s.append("\njava层检测：\n").append(dev).append(net).append(sys).append("\nnative层检测：").append(fpjni).append(npjni);
+        //合并结果
+        s.append("\njava层检测：\n").append(dev).append(net).append(sys);
+        s.append("\nnative层检测：").append(fpjni).append(npjni);
+        //对比结果
         s.append(compareResults(sys, fpjni));
 
-        fp.getAccounts(context);
         return s.toString();
     }
+
     private String compareResults(String result1, String result2) {
         StringBuilder s = new StringBuilder("\n对比结果：");
 
@@ -187,11 +192,13 @@ public class result {
             String value1 = parts1.length > 1 ? parts1[1].trim() : "无结果";
             String value2 = parts2.length > 1 ? parts2[1].trim() : "无结果";
             // 输出对比结果
+            /*
             System.out.printf("属性: %s\n", key1);
             System.out.printf("结果1: %s\n", value1);
             System.out.printf("结果2: %s\n", value2);
             System.out.println("对比结果: " + (value1.equals(value2) ? "相同" : "不同"));
             System.out.println("-------------------------------------------------");
+            */
             if(!value1.equals(value2)){
                 String r = key1 + "：\n" + value1 +"\n" + value2 +"\n";
                 result.append(r);
@@ -208,6 +215,7 @@ public class result {
         s.append(result);
         return s.toString();
     }
+
     private boolean areValuesIdentical(String[] data) {
         Set<String> valuesSet = new HashSet<>();
         for (String entry : data) {
@@ -231,18 +239,20 @@ public class result {
     public String checkhook(){
         StringBuilder s = new StringBuilder("hook检测：\n");
         fingerprintjni j = new fingerprintjni();
-
+        //java层
         String cf = checkfrida();
+        //native层
         String jc = j.check();
         String jm = j.mapscheck();
+        //合并结果
         s.append("\nJava层检测：\n");
         s.append(cf).append("\n");
         s.append("\nnative层检测：\n");
-        s.append(jc).append("\n");
-        s.append(jm).append("\n");
+        s.append(jc).append("\n").append(jm).append("\n");
 
         return s.toString();
     }
+
     private String checkfrida(){
         StringBuilder s = new StringBuilder();
         hookcheck hc = new hookcheck();
@@ -287,9 +297,13 @@ public class result {
     public String appname(Context context){
         appname an = new appname();
         fingerprintjni j = new fingerprintjni();
+
         StringBuilder name = new StringBuilder("获取已安装应用：\n");
+        //java层
         String javaan = an.getAllAppNames(context);
+        //native层
         String nativean = j.getappnames();
+        //合并结果
         name.append("java层检测：\n").append(javaan);
         name.append("\nnative层检测：\n").append(nativean);
 
@@ -302,8 +316,11 @@ public class result {
         fingerprintjni j = new fingerprintjni();
 
         StringBuilder cert = new StringBuilder("获取CA证书：\n");
+        //java层
         String jc = c.listInstalledCertificates();
+        //native层
         String nc = j.getcertificate();
+        //合并结果
         cert.append("java层检测：\n").append(jc);
         cert.append("\nnative层检测：\n").append(nc);
 

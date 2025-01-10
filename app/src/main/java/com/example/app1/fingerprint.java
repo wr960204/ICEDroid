@@ -1,11 +1,8 @@
 package com.example.app1;
 
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
@@ -206,15 +203,6 @@ public class fingerprint {
             }
         }
         return processedProperties;
-    }
-
-    public void getAccounts(Context context) {
-        AccountManager accountManager = AccountManager.get(context);
-        Account[] accounts = accountManager.getAccounts();
-        for (Account account : accounts) {
-            System.out.println(account);
-            Log.d("AccountManager", "Account: " + account.name + " Type: " + account.type);
-        }
     }
 
 
