@@ -358,7 +358,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
 //-----------------------------------------------获取CA证书------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JNIEnv *env, jobject){
     // 初始化字符串结果
-    char certInfo[8192]; // 确保缓冲区足够大
+    char certInfo[65535]; // 确保缓冲区足够大
     snprintf(certInfo, sizeof(certInfo), "证书信息\n---------------------------------\n");
 
     // 获取 KeyStore 类
