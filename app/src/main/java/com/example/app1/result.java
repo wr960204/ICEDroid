@@ -284,7 +284,14 @@ public class result {
     //------------------------------------------获取已安装应用----------------------------------------------------------
     public String appname(Context context){
         appname an = new appname();
-        return an.getAllAppNames(context);
+        fingerprintjni j = new fingerprintjni();
+        StringBuilder name = new StringBuilder("获取已安装应用：\n");
+        String javaan = an.getAllAppNames(context);
+        String nativean = j.getappnames();
+        name.append("java层检测：\n").append(javaan);
+        name.append("\nnative层检测：\n").append(nativean);
+
+        return name.toString();
     }
 
     //------------------------------------------获取系统证书----------------------------------------------------------
