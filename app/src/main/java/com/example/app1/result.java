@@ -265,7 +265,7 @@ public class result {
         //String appnames = "\n检测已安装应用：\n" + j.getappnames() + "\n";
         String cert = "\n检测CA证书：\n" + j.getcertificate() + "\n";
 
-        s.append(fingerprint).append(netaddress).append(hookcheck);
+        s.append(fingerprint).append(netaddress).append(hookcheck).append(cert);
         return s.toString();
     }
 
