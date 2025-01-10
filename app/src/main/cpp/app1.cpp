@@ -398,7 +398,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JN
         // 获取 X509Certificate 类
         jclass x509Class = env->FindClass("java/security/cert/X509Certificate");
         if (x509Class == nullptr) {
-            continue;
+            return env->NewStringUTF("错误：无法找到 X509Certificate 类");
         }
 
         // 检查证书是否为 X509Certificate
