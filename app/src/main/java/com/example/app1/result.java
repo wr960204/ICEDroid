@@ -256,9 +256,9 @@ public class result {
 
     //-----------------------------------------------native检测方法------------------------------------------------------
     public String fingerprintjni(){
-        StringBuilder s = new StringBuilder("native层检测：");
         fingerprintjni j = new fingerprintjni();
 
+        StringBuilder s = new StringBuilder("native层检测：");
         String fingerprint = "\n系统指纹：" + j.fingerprint() + "\n";
         String netaddress = "\n网络地址：\n" + j.netfp() + "\n";
         String hookcheck = "\nhook检测：\n" + j.check() + "\n" + j.mapscheck() + "\n";
@@ -272,6 +272,7 @@ public class result {
     //------------------------------------------测试-------------------------------------------------------------------
     public String test(Context context){
         fptest fp = new fptest();
+
         StringBuilder fs = new StringBuilder("test：\n");
         List<String> p = fp.getProperties(context);
 
@@ -298,7 +299,15 @@ public class result {
     //------------------------------------------获取系统证书----------------------------------------------------------
     public String certinfo(){
         certificate c = new certificate();
-        return c.listInstalledCertificates();
+        fingerprintjni j = new fingerprintjni();
+
+        StringBuilder cert = new StringBuilder("获取CA证书：\n");
+        String jc = c.listInstalledCertificates();
+        String nc = j.getcertificate();
+        cert.append("java层检测：\n").append(jc);
+        cert.append("\nnative层检测：\n").append(nc);
+
+        return cert.toString();
     }
 
     //------------------------------------------获取支持软硬件----------------------------------------------------------
