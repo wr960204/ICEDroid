@@ -237,10 +237,12 @@ public class result {
 
     //-----------------------------------------------hook检测方法------------------------------------------------------
     public String checkhook(){
-        StringBuilder s = new StringBuilder("hook检测：\n");
+        hookcheck hc = new hookcheck();
         fingerprintjni j = new fingerprintjni();
+
+        StringBuilder s = new StringBuilder("hook检测：");
         //java层
-        String cf = checkfrida();
+        String cf = hc.checkfrida();
         //native层
         String jc = j.check();
         String jm = j.mapscheck();
@@ -253,16 +255,6 @@ public class result {
         return s.toString();
     }
 
-    private String checkfrida(){
-        StringBuilder s = new StringBuilder();
-        hookcheck hc = new hookcheck();
-
-        if(hc.hasReadProcMaps("frida") | hc.mCheckFridaTcp()){
-            s.append("检测到frida");
-        }
-        s.append("未检测到frida");
-        return s.toString();
-    }
 
     //-----------------------------------------------native检测方法------------------------------------------------------
     public String fingerprintjni(){
@@ -298,13 +290,13 @@ public class result {
         appname an = new appname();
         fingerprintjni j = new fingerprintjni();
 
-        StringBuilder name = new StringBuilder("获取已安装应用：\n");
+        StringBuilder name = new StringBuilder("获取已安装应用：");
         //java层
         String javaan = an.getAllAppNames(context);
         //native层
         String nativean = j.getappnames();
         //合并结果
-        name.append("java层检测：\n").append(javaan);
+        name.append("\njava层检测：\n").append(javaan);
         name.append("\nnative层检测：\n").append(nativean);
 
         return name.toString();
@@ -315,13 +307,13 @@ public class result {
         certificate c = new certificate();
         fingerprintjni j = new fingerprintjni();
 
-        StringBuilder cert = new StringBuilder("获取CA证书：\n");
+        StringBuilder cert = new StringBuilder("获取CA证书：");
         //java层
         String jc = c.listInstalledCertificates();
         //native层
         String nc = j.getcertificate();
         //合并结果
-        cert.append("java层检测：\n").append(jc);
+        cert.append("\njava层检测：\n").append(jc);
         cert.append("\nnative层检测：\n").append(nc);
 
         return cert.toString();

@@ -11,7 +11,17 @@ import android.util.Log;
 
 
 public class hookcheck {
-    public boolean hasReadProcMaps(String paramString) {
+    public String checkfrida(){
+        StringBuilder s = new StringBuilder();
+
+        if(hasReadProcMaps("frida") | mCheckFridaTcp()){
+            s.append("检测到frida");
+        }
+        s.append("未检测到frida");
+        return s.toString();
+    }
+
+    private boolean hasReadProcMaps(String paramString) {
         try {
             Object localObject = new HashSet<>();
             BufferedReader localBufferedReader = new BufferedReader(new FileReader("/proc/" + Process.myPid() + "/maps"));
@@ -38,7 +48,7 @@ public class hookcheck {
     }
 
     private static final String TAG = "FridaChecker";
-    public boolean mCheckFridaTcp() {
+    private boolean mCheckFridaTcp() {
         String[] stringArrayTcp6;
         String[] stringArrayTcp;
         String tcpStringTcp6 = mReadFile("/proc/net/tcp6");
