@@ -68,6 +68,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid(JNIE
 //-----------------------------------------------系统指纹检测------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject ){
     const char *properties[] = {
+            //复合指纹
             "ro.build.fingerprint",
             "ro.odm.build.fingerprint",
             "ro.product.build.fingerprint",
@@ -75,10 +76,9 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_fingerprint(JNIEn
             "ro.system.build.fingerprint",
             "ro.vendor.build.fingerprint",
             "ro.build.description",
-
+            //普通指纹
             "ro.build.date",
             "ro.build.date.utc",
-
             "ro.product.board",
             "ro.bootloader",
             "ro.product.brand",
@@ -101,19 +101,17 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_fingerprint(JNIEn
             "ro.build.version.incremental",
             "ro.build.version.sdk",
             "ro.build.version.sdk_int",
-
             "ro.build.version.security_patch",
             "ro.build.version.preview_sdk_int",
             "ro.build.support_abis",
     };
-
     int numProperties = sizeof(properties) / sizeof(properties[0]);
     char *result = (char *)malloc(4096); // 分配足够的内存以存储结果
     if (result == nullptr) {
         return nullptr; // 处理内存分配失败的情况
     }
     result[0] = '\0'; // 初始化字符串
-
+    //替换空结果
     for (int i = 0; i < numProperties; i++) {
         char value[PROP_VALUE_MAX] = {0};
         __system_property_get(properties[i], value);
@@ -121,12 +119,11 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_fingerprint(JNIEn
         if (strlen(value) == 0 | strcmp(value,"unknown") == 0) {
             snprintf(value, sizeof(value), "无结果");
         }
-
         // 将属性名和属性值合并到结果字符串中
         snprintf(result + strlen(result), 4096 - strlen(result), "\n%s:%s", properties[i], value);
     }
-
-    // 创建 FINGERPRINT 字符串
+    //组合普通指纹为复合指纹
+    //创建 FINGERPRINT 字符串
     char fingerprint[1024] = {0}; // 用于存储组合后的属性信息
     char brand[PROP_VALUE_MAX] = {0};
     char name[PROP_VALUE_MAX] = {0};
@@ -149,15 +146,12 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_fingerprint(JNIEn
     snprintf(fingerprint, sizeof(fingerprint),
              "FINGERPRINT:%s/%s/%s:%s/%s/%s:%s/%s",
              brand, name, device, versionRelease, buildId, versionIncremental, buildType, buildTags);
-
     // 将组合后的字符串添加到结果中
     snprintf(result + strlen(result), 4096 - strlen(result), "\n%s", fingerprint);
-
     // 创建 Java 字符串并返回
     jstring jResult = (*env).NewStringUTF(result);
     // 清理
     free(result); // 释放分配的内存
-
     return jResult; // 返回合并后的字符串
 }
 
