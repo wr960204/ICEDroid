@@ -171,7 +171,7 @@ public class result {
         //对比结果
         s.append(compareResults(sys, fpjni));
 
-        System.out.println(sys);
+        System.out.println(fpjni);
 
         return s.toString();
     }
