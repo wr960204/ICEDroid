@@ -65,7 +65,7 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    implementation ("org.bouncycastle:bcprov-jdk18on:1.76")
+
     implementation (libs.guava)
     implementation (libs.cbor)
 
@@ -73,6 +73,7 @@ dependencies {
     implementation (libs.dev.core.ktx)
     //noinspection GradleDependency
     /*
+    implementation ("org.bouncycastle:bcprov-jdk18on:1.76")
     //implementation ("dev.rikka.rikkax.material:material:1.6.6")
     implementation ("dev.rikka.rikkax.html:html-ktx:1.1.2")
     implementation ("dev.rikka.rikkax.recyclerview:recyclerview-adapter:1.3.0")
