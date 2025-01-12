@@ -509,6 +509,11 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JN
     return env->NewStringUTF(certInfo);
 };
 
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getdevicefeatures(JNIEnv *env, jobject){
+    
+};
+
+
 #ifdef __cplusplus
 }
 #endif
