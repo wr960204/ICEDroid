@@ -350,100 +350,85 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
 
 //-----------------------------------------------获取CA证书------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JNIEnv *env, jobject){
-    // 初始化字符串结果
+    //初始化字符串结果
     jint mallocsize = 65535;//分配结果空间大小
     char *certInfo = (char *)malloc(mallocsize); // 分配足够的内存以存储结果
     snprintf(certInfo, mallocsize, "证书信息\n---------------------------------\n");
-
-    // 获取 KeyStore 类
+    //获取KeyStore类
     jclass keyStoreClass = env->FindClass("java/security/KeyStore");
     if (keyStoreClass == nullptr) {
         return env->NewStringUTF("错误：无法找到 KeyStore 类");
     }
-
-    // 获取 AndroidCAStore 的实例
+    //获取AndroidCAStore的实例
     jmethodID getInstanceMethod = env->GetStaticMethodID(keyStoreClass, "getInstance", "(Ljava/lang/String;)Ljava/security/KeyStore;");
     jstring androidCAStore = env->NewStringUTF("AndroidCAStore");
     jobject keyStore = env->CallStaticObjectMethod(keyStoreClass, getInstanceMethod, androidCAStore);
     env->DeleteLocalRef(androidCAStore);
-
-    // 加载密钥库
+    //加载密钥库
     jmethodID loadMethod = env->GetMethodID(keyStoreClass, "load", "(Ljava/io/InputStream;[C)V");
     env->CallVoidMethod(keyStore, loadMethod, nullptr, nullptr); // 使用默认参数加载
-
-    // 获取证书别名的迭代器
+    //获取证书别名的迭代器
     jmethodID aliasesMethod = env->GetMethodID(keyStoreClass, "aliases", "()Ljava/util/Enumeration;");
     jobject aliasesEnumeration = env->CallObjectMethod(keyStore, aliasesMethod);
-
-    // 获取 Enumeration 类和相关方法
+    //获取Enumeration类和相关方法
     jclass enumerationClass = env->FindClass("java/util/Enumeration");
     jmethodID hasMoreElementsMethod = env->GetMethodID(enumerationClass, "hasMoreElements", "()Z");
     jmethodID nextElementMethod = env->GetMethodID(enumerationClass, "nextElement", "()Ljava/lang/Object;");
-
-    // 获取证书信息
+    //获取证书信息
     while (env->CallBooleanMethod(aliasesEnumeration, hasMoreElementsMethod)) {
         jstring alias = (jstring)env->CallObjectMethod(aliasesEnumeration, nextElementMethod);
-
-        // 获取证书
+        //获取证书
         jmethodID getCertificateMethod = env->GetMethodID(keyStoreClass, "getCertificate", "(Ljava/lang/String;)Ljava/security/cert/Certificate;");
         jobject certificate = env->CallObjectMethod(keyStore, getCertificateMethod, alias);
-
-        // 获取 X509Certificate 类
+        //获取X509Certificate类
         jclass x509Class = env->FindClass("java/security/cert/X509Certificate");
         if (x509Class == nullptr) {
             return env->NewStringUTF("错误：无法找到 X509Certificate 类");
         }
-
-        // 检查证书是否为 X509Certificate
+        //检查证书是否为X509Certificate
         if (certificate != nullptr && env->IsInstanceOf(certificate, x509Class)) {
-            // 获取证书信息
+            //获取证书使用者
             jmethodID getSubjectDNMethod = env->GetMethodID(x509Class, "getSubjectDN", "()Ljava/security/Principal;");
             jobject subjectDN = env->CallObjectMethod(certificate, getSubjectDNMethod);
             jmethodID getNameMethod = env->GetMethodID(env->GetObjectClass(subjectDN), "getName", "()Ljava/lang/String;");
             jstring subjectDNString = (jstring)env->CallObjectMethod(subjectDN, getNameMethod);
-
+            //获取证书颁发者
             jmethodID getIssuerDNMethod = env->GetMethodID(x509Class, "getIssuerDN", "()Ljava/security/Principal;");
             jobject issuerDN = env->CallObjectMethod(certificate, getIssuerDNMethod);
             jstring issuerDNString = (jstring)env->CallObjectMethod(issuerDN, getNameMethod);
-
+            //获取证书发布日期
             jmethodID getNotBeforeMethod = env->GetMethodID(x509Class, "getNotBefore", "()Ljava/util/Date;");
             jobject notBeforeDate = env->CallObjectMethod(certificate, getNotBeforeMethod);
             jmethodID toStringMethod = env->GetMethodID(env->GetObjectClass(notBeforeDate), "toString", "()Ljava/lang/String;");
             jstring notBeforeString = (jstring)env->CallObjectMethod(notBeforeDate, toStringMethod);
-
+            //获取证书失效日期
             jmethodID getNotAfterMethod = env->GetMethodID(x509Class, "getNotAfter", "()Ljava/util/Date;");
             jobject notAfterDate = env->CallObjectMethod(certificate, getNotAfterMethod);
             jstring notAfterString = (jstring)env->CallObjectMethod(notAfterDate, toStringMethod);
-
-            // 拼接证书信息
+            //拼接证书信息
             const char *aliasCStr = env->GetStringUTFChars(alias, nullptr);
             const char *subjectCStr = env->GetStringUTFChars(subjectDNString, nullptr);
             const char *issuerCStr = env->GetStringUTFChars(issuerDNString, nullptr);
             const char *validityCStr = env->GetStringUTFChars(notBeforeString, nullptr);
             const char *validityEndCStr = env->GetStringUTFChars(notAfterString, nullptr);
-
-            // 将证书信息添加到结果字符串
+            //将证书信息添加到结果字符串
             snprintf(certInfo + strlen(certInfo), mallocsize - strlen(certInfo),
                      "Alias: %s\nSubject: %s\nIssuer: %s\nValidity: %s - %s\n---------------------------------\n",
                      aliasCStr, subjectCStr, issuerCStr, validityCStr, validityEndCStr);
-
-            // 释放 C 字符串
+            //释放C字符串
             env->ReleaseStringUTFChars(alias, aliasCStr);
             env->ReleaseStringUTFChars(subjectDNString, subjectCStr);
             env->ReleaseStringUTFChars(issuerDNString, issuerCStr);
             env->ReleaseStringUTFChars(notBeforeString, validityCStr);
             env->ReleaseStringUTFChars(notAfterString, validityEndCStr);
         }
-
         env->DeleteLocalRef(alias);
     }
-
     // 清理和释放资源
     env->DeleteLocalRef(aliasesEnumeration);
     env->DeleteLocalRef(keyStore);
     env->DeleteLocalRef(keyStoreClass);
     env->DeleteLocalRef(enumerationClass);
-
     // 返回结果
     return env->NewStringUTF(certInfo);
 };
