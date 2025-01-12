@@ -36,7 +36,6 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid(JNIE
 
     // 初始化字符数组用于存储设备 ID 信息
     char deviceID[256]; // 确保缓冲区足够大
-    snprintf(deviceID, sizeof(deviceID), "设备指纹：\n");
 
     // 获取 Settings.Secure 类
     jclass settingsSecureClass = env->FindClass("android/provider/Settings$Secure");
