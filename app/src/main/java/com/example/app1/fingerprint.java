@@ -117,7 +117,7 @@ public class fingerprint {
             @SuppressLint("PrivateApi") Class<?> c = Class.forName("android.os.SystemProperties");
             Method get = c.getMethod("get", String.class);
 
-            StringBuilder s = new StringBuilder("\n系统指纹：\n");
+            StringBuilder s = new StringBuilder("系统指纹：\n");
 
             String[] properties = {
                     "ro.build.fingerprint",
