@@ -20,7 +20,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+//-----------------------------------------------获取AndroidID------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid(JNIEnv *env, jobject){
     //获取Activity Thread的实例对象
     jclass activityThread = env->FindClass("android/app/ActivityThread");
@@ -74,7 +74,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid(JNIE
 
 };
 
-
+//-----------------------------------------------系统指纹检测------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject ){
     const char *properties[] = {
             "ro.build.fingerprint",
@@ -509,8 +509,9 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JN
     return env->NewStringUTF(certInfo);
 };
 
+//-----------------------------------------------获取支持软硬件------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getdevicefeatures(JNIEnv *env, jobject){
-    
+
 };
 
 
