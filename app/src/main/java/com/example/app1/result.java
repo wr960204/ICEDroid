@@ -83,7 +83,7 @@ public class result {
             s.append("\n检查系统指纹属性：异常");
             flag = true;
         }
-        
+
         if (flag){
             s.append("\n\n可能已root");
         }else {
@@ -180,25 +180,18 @@ public class result {
         String[] lines1 = result1.split("\n");
         String[] lines2 = result2.split("\n");
         StringBuilder result = new StringBuilder("\n以下属性存在不同：\n");
-        // 找到最大的行数
+        //找到最大的行数
         int maxLines = Math.max(lines1.length, lines2.length);
         for (int i = 0; i < maxLines; i++) {
             String line1 = i < lines1.length ? lines1[i] : "无结果";  // 如果行不存在，则显示“无结果”
             String line2 = i < lines2.length ? lines2[i] : "无结果";  // 如果行不存在，则显示“无结果”
             String[] parts1 = line1.split(":", 2);
             String[] parts2 = line2.split(":", 2);
-            // 默认值
+            //默认值
             String key1 = parts1.length > 0 ? parts1[0].trim() : "无结果";
             String value1 = parts1.length > 1 ? parts1[1].trim() : "无结果";
             String value2 = parts2.length > 1 ? parts2[1].trim() : "无结果";
-            // 输出对比结果
-            /*
-            System.out.printf("属性: %s\n", key1);
-            System.out.printf("结果1: %s\n", value1);
-            System.out.printf("结果2: %s\n", value2);
-            System.out.println("对比结果: " + (value1.equals(value2) ? "相同" : "不同"));
-            System.out.println("-------------------------------------------------");
-            */
+            //对比结果
             if(!value1.equals(value2)){
                 String r = key1 + "：\n" + value1 +"\n" + value2 +"\n";
                 result.append(r);
