@@ -167,7 +167,7 @@ public class fingerprint {
         properties.add("RADIO:" + Build.RADIO);
         properties.add("TAGS:" + Build.TAGS);
         properties.add("TIME:" + Build.TIME);
-        properties.add("TYPE):" + Build.TYPE);
+        properties.add("TYPE:" + Build.TYPE);
         properties.add("USER:" + Build.USER);
         properties.add("RELEASE:" + Build.VERSION.RELEASE);
         properties.add("CODENAME:" + Build.VERSION.CODENAME);
