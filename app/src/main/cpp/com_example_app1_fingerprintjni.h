@@ -9,6 +9,14 @@ extern "C" {
 #endif
 /*
  * Class:     com_example_app1_fingerprintjni
+ * Method:    getandroidid
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_example_app1_fingerprintjni
  * Method:    fingerprint
  * Signature: ()Ljava/lang/String;
  */

@@ -20,8 +20,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-JNIEXPORT jstring JNICALL
-Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject ){
+
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid(JNIEnv *env, jobject){
+    
+};
+
+
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_fingerprint(JNIEnv *env, jobject ){
     const char *properties[] = {
             "ro.build.fingerprint",
             "ro.odm.build.fingerprint",
