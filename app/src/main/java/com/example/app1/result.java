@@ -83,13 +83,13 @@ public class result {
             s.append("\n检查系统指纹属性：异常");
             flag = true;
         }
-
-
+        
         if (flag){
             s.append("\n\n可能已root");
         }else {
             s.append("\n\n可能未root");
         }
+
         return s.toString();
 
     }
@@ -148,8 +148,8 @@ public class result {
         }else {
             s.append("\n\n可能是真机");
         }
-        return s.toString();
 
+        return s.toString();
     }
 
     //-----------------------------------------------设备指纹检测------------------------------------------------------
@@ -177,7 +177,6 @@ public class result {
 
     private String compareResults(String result1, String result2) {
         StringBuilder s = new StringBuilder("\n对比结果：");
-
         String[] lines1 = result1.split("\n");
         String[] lines2 = result2.split("\n");
         StringBuilder result = new StringBuilder("\n以下属性存在不同：\n");
@@ -268,8 +267,8 @@ public class result {
         String appnames = "\n检测已安装应用：\n" + j.getappnames() + "\n";
         String cert = "\n检测CA证书：\n" + j.getcertificate() + "\n";
         String features = "\n检测支持软硬件：\n" + j.getdevicefeatures() + "\n";
-
         s.append(fingerprint).append(netaddress).append(hookcheck).append(appnames).append(cert).append(features);
+
         return s.toString();
     }
 
@@ -279,7 +278,6 @@ public class result {
 
         StringBuilder fs = new StringBuilder("test：\n");
         List<String> p = fp.getProperties(context);
-
         for (String property : p){
             fs.append(property).append("\n");
         }
@@ -334,6 +332,7 @@ public class result {
         //合并结果
         features.append("\njava层检测：\n").append(jf);
         features.append("\nnative层检测：\n").append(nf);
+
         return features.toString();
     }
 
