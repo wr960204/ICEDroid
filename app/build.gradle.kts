@@ -22,11 +22,6 @@ android {
         }
     }
 
-
-
-
-
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -47,16 +42,11 @@ android {
         }
     }
 
-
 }
 
 task("testClasses")
 
-
 dependencies {
-
-
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -64,13 +54,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-
     implementation (libs.guava)
     implementation (libs.cbor)
-
-
     implementation (libs.dev.core.ktx)
+
     //noinspection GradleDependency
     /*
     implementation ("org.bouncycastle:bcprov-jdk18on:1.76")
@@ -85,7 +72,4 @@ dependencies {
     implementation ("androidx.fragment:fragment-ktx:1.6.2")
     implementation ("androidx.recyclerview:recyclerview:1.3.2")
     */
-
-
-
 }
