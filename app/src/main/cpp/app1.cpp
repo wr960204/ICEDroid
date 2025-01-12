@@ -22,7 +22,56 @@ extern "C" {
 #endif
 
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid(JNIEnv *env, jobject){
-    
+    //获取Activity Thread的实例对象
+    jclass activityThread = env->FindClass("android/app/ActivityThread");
+    jmethodID currentActivityThread = env->GetStaticMethodID(activityThread, "currentActivityThread", "()Landroid/app/ActivityThread;");
+    jobject at = env->CallStaticObjectMethod(activityThread, currentActivityThread);
+    //获取Application，也就是全局的Context
+    jmethodID getApplication = env->GetMethodID(activityThread, "getApplication", "()Landroid/app/Application;");
+    jobject context = env->CallObjectMethod(at, getApplication);
+
+    jclass contextClass = env->GetObjectClass(context);
+    jmethodID getContentResolverMethod = env->GetMethodID(contextClass, "getContentResolver", "()Landroid/content/ContentResolver;");
+    jobject contentResolver = env->CallObjectMethod(context, getContentResolverMethod);
+
+    // 初始化字符数组用于存储设备 ID 信息
+    char deviceID[256]; // 确保缓冲区足够大
+    snprintf(deviceID, sizeof(deviceID), "设备指纹：\n");
+
+    // 获取 Settings.Secure 类
+    jclass settingsSecureClass = env->FindClass("android/provider/Settings$Secure");
+    if (settingsSecureClass == NULL) {
+        return env->NewStringUTF("错误：无法找到 Settings.Secure 类");
+    }
+
+    // 获取 getString 方法的 ID
+    jmethodID getStringMethod = env->GetStaticMethodID(settingsSecureClass, "getString", "(Landroid/content/ContentResolver;Ljava/lang/String;)Ljava/lang/String;");
+    if (getStringMethod == NULL) {
+        return env->NewStringUTF("错误：无法找到 getString 方法");
+    }
+
+    // 获取 ANDROID_ID 字段 ID
+    jstring androidIdField = env->NewStringUTF("android_id");
+
+    // 调用 getString 方法获取 Android ID
+    jstring androidId = (jstring)env->CallStaticObjectMethod(settingsSecureClass, getStringMethod, contentResolver, androidIdField);
+    env->DeleteLocalRef(androidIdField); // 释放 android_id 字符串引用
+
+    // 从 jstring 转换为 C 字符串
+    if (androidId != NULL) {
+        const char *androidIdCStr = env->GetStringUTFChars(androidId, NULL);
+        snprintf(deviceID + strlen(deviceID), sizeof(deviceID) - strlen(deviceID), "Android ID：%s\n", androidIdCStr);
+        env->ReleaseStringUTFChars(androidId, androidIdCStr); // 释放 C 字符串
+        env->DeleteLocalRef(androidId); // 释放 Android ID 字符串引用
+    } else {
+        strncat(deviceID, "Android ID：未找到\n", sizeof(deviceID) - strlen(deviceID) - 1);
+    }
+
+    // 清理和释放资源
+    env->DeleteLocalRef(settingsSecureClass);
+
+    return env->NewStringUTF(deviceID);
+
 };
 
 
