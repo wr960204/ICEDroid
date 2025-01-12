@@ -20,4 +20,6 @@ public class fingerprintjni {
 
     public native String getcertificate();
 
+    public native String getdevicefeatures();
+
 }
