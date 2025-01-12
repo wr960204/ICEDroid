@@ -33,25 +33,25 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid(JNIE
     jclass contextClass = env->GetObjectClass(context);
     jmethodID getContentResolverMethod = env->GetMethodID(contextClass, "getContentResolver", "()Landroid/content/ContentResolver;");
     jobject contentResolver = env->CallObjectMethod(context, getContentResolverMethod);
-    // 初始化字符数组用于存储设备 ID 信息
+    //初始化字符数组用于存储设备ID信息
     char deviceID[256]; // 确保缓冲区足够大
     snprintf(deviceID, sizeof(deviceID), "Android ID：");
-    // 获取 Settings.Secure 类
+    //获取Settings.Secure类
     jclass settingsSecureClass = env->FindClass("android/provider/Settings$Secure");
     if (settingsSecureClass == NULL) {
         return env->NewStringUTF("错误：无法找到 Settings.Secure 类");
     }
-    // 获取 getString 方法的 ID
+    //获取getString方法的ID
     jmethodID getStringMethod = env->GetStaticMethodID(settingsSecureClass, "getString", "(Landroid/content/ContentResolver;Ljava/lang/String;)Ljava/lang/String;");
     if (getStringMethod == NULL) {
         return env->NewStringUTF("错误：无法找到 getString 方法");
     }
-    // 获取 ANDROID_ID 字段 ID
+    // 获取ANDROID_ID字段ID
     jstring androidIdField = env->NewStringUTF("android_id");
-    // 调用 getString 方法获取 Android ID
+    //调用getString方法获取Android ID
     jstring androidId = (jstring)env->CallStaticObjectMethod(settingsSecureClass, getStringMethod, contentResolver, androidIdField);
     env->DeleteLocalRef(androidIdField); // 释放 android_id 字符串引用
-    // 从 jstring 转换为 C 字符串
+    //从jstring转换为C字符串
     if (androidId != NULL) {
         const char *androidIdCStr = env->GetStringUTFChars(androidId, NULL);
         snprintf(deviceID + strlen(deviceID), sizeof(deviceID) - strlen(deviceID), "%s", androidIdCStr);
@@ -60,7 +60,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid(JNIE
     } else {
         strncat(deviceID, "Android ID：未找到\n", sizeof(deviceID) - strlen(deviceID) - 1);
     }
-    // 清理和释放资源
+    //清理和释放资源
     env->DeleteLocalRef(settingsSecureClass);
     return env->NewStringUTF(deviceID);
 };
@@ -118,11 +118,11 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_fingerprint(JNIEn
         if (strlen(value) == 0 | strcmp(value,"unknown") == 0) {
             snprintf(value, sizeof(value), "无结果");
         }
-        // 将属性名和属性值合并到结果字符串中
+        //将属性名和属性值合并到结果字符串中
         snprintf(result + strlen(result), 4096 - strlen(result), "\n%s:%s", properties[i], value);
     }
     //组合普通指纹为复合指纹
-    //创建 FINGERPRINT 字符串
+    //创建FINGERPRINT字符串
     char fingerprint[1024] = {0}; // 用于存储组合后的属性信息
     char brand[PROP_VALUE_MAX] = {0};
     char name[PROP_VALUE_MAX] = {0};
@@ -132,7 +132,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_fingerprint(JNIEn
     char versionIncremental[PROP_VALUE_MAX] = {0};
     char buildType[PROP_VALUE_MAX] = {0};
     char buildTags[PROP_VALUE_MAX] = {0};
-    // 获取所需的属性值
+    //获取所需的属性值
     __system_property_get("ro.product.brand", brand);
     __system_property_get("ro.product.name", name);
     __system_property_get("ro.product.device", device);
@@ -141,15 +141,15 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_fingerprint(JNIEn
     __system_property_get("ro.build.version.incremental", versionIncremental);
     __system_property_get("ro.build.type", buildType);
     __system_property_get("ro.build.tags", buildTags);
-    // 组合所需的属性
+    //组合所需的属性
     snprintf(fingerprint, sizeof(fingerprint),
              "FINGERPRINT:%s/%s/%s:%s/%s/%s:%s/%s",
              brand, name, device, versionRelease, buildId, versionIncremental, buildType, buildTags);
-    // 将组合后的字符串添加到结果中
+    //将组合后的字符串添加到结果中
     snprintf(result + strlen(result), 4096 - strlen(result), "\n%s", fingerprint);
-    // 创建 Java 字符串并返回
+    //创建Java字符串并返回
     jstring jResult = (*env).NewStringUTF(result);
-    // 清理
+    //清理
     free(result); // 释放分配的内存
     return jResult; // 返回合并后的字符串
 }
@@ -163,21 +163,21 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_netfp(JNIEnv * en
     //获取Application，也就是全局的Context
     jmethodID getApplication = env->GetMethodID(activityThread, "getApplication", "()Landroid/app/Application;");
     jobject context = env->CallObjectMethod(at, getApplication);
-    // 获取 WiFi 服务
+    //获取WiFi服务
     jclass contextClass = env->FindClass("android/content/Context");
     jmethodID getSystemService = env->GetMethodID(contextClass, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
-    // 获取 WifiManager
+    //获取WifiManager
     jstring wifiService = env->NewStringUTF("wifi");
     jobject wifiManager = env->CallObjectMethod(context, getSystemService, wifiService);
-    // 获取 DhcpInfo
+    //获取DhcpInfo
     jclass wifiManagerClass = env->GetObjectClass(wifiManager);
     jmethodID getDhcpInfoMethod = env->GetMethodID(wifiManagerClass, "getDhcpInfo", "()Landroid/net/DhcpInfo;");
     jobject dhcpInfo = env->CallObjectMethod(wifiManager, getDhcpInfoMethod);
-    // 获取 IP 地址
+    //获取IP地址
     jclass dhcpInfoClass = env->GetObjectClass(dhcpInfo);
     jfieldID ipAddressField = env->GetFieldID(dhcpInfoClass, "ipAddress", "I");
     jint ipAddress = env->GetIntField(dhcpInfo, ipAddressField);
-    // 转换 IP 地址为字符串
+    //转换IP地址为字符串
     char ipStr[16];
     snprintf(ipStr, sizeof(ipStr), "%d.%d.%d.%d",
              (ipAddress & 0xFF), (ipAddress >> 8) & 0xFF,
@@ -188,9 +188,9 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_netfp(JNIEnv * en
         return nullptr; // 处理内存分配失败的情况
     }
     result[0] = '\0'; // 初始化字符串
-    // 组装结果
+    //组装结果
     snprintf(result + strlen(result), mallocsize - strlen(result), "IP地址:%s\n", ipStr);
-    // 尝试获取MAC地址（在高版本Android，MAC地址会受到限制）
+    //尝试获取MAC地址（在高版本Android，MAC地址会受到限制）
     jclass wifiInfoClass = env->FindClass("android/net/wifi/WifiInfo");
     jmethodID getConnectionInfoMethod = env->GetMethodID(wifiManagerClass, "getConnectionInfo", "()Landroid/net/wifi/WifiInfo;");
     jobject wifiInfo = env->CallObjectMethod(wifiManager, getConnectionInfoMethod);
@@ -206,7 +206,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_netfp(JNIEnv * en
     env->DeleteLocalRef(wifiManager);
     env->DeleteLocalRef(dhcpInfo);
     env->DeleteLocalRef(wifiInfo);
-    // 返回拼接的字符串
+    //返回拼接的字符串
     jstring jResult = (*env).NewStringUTF(result);
     return jResult;
  };
@@ -216,11 +216,11 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_check(JNIEnv *env
     const char* result1 = "检测到frida服务器端口";
     const char* result2 = "未检测到frida服务器端口";
     struct sockaddr_in sa{};
-    // 创建一个socket文件描述符
+    //创建一个socket文件描述符
     int sock;
-    // 定义一个字符数组res，用于存储接收到的数据
+    //定义一个字符数组res，用于存储接收到的数据
     char res[7];
-    // 循环遍历所有可能的端口号
+    //循环遍历所有可能的端口号
     for(int i = 27042; i <= 27042; i++) {
         // 创建一个新的socket连接
         sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -228,17 +228,17 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_check(JNIEnv *env
         sa.sin_port = htons(i);
         // 尝试连接到当前端口
         if (connect(sock, (struct sockaddr*)&sa, sizeof(sa)) != -1) {
-            // 如果连接成功，记录日志信息，表示发现了一个开放的端口
+            //如果连接成功，记录日志信息，表示发现了一个开放的端口
             //__android_log_print(ANDROID_LOG_VERBOSE, "ZJ595", "FRIDA DETECTION [1]: Open Port: %d", i);
-            // 初始化res数组，清零
+            //初始化res数组，清零
             memset(res, 0, 7);
-            // 向socket发送一个空字节
+            //向socket发送一个空字节
             send(sock, "\x00", 1, 0); // 注意这里的NULL被替换为0
-            // 发送AUTH请求
+            //发送AUTH请求
             send(sock, "AUTH\r\n", 6, 0);
-            // 等待100微秒
+            //等待100微秒
             usleep(100);
-            // 尝试接收响应
+            //尝试接收响应
             if (recv(sock, res, 6, MSG_DONTWAIT) != -1) {
                 // 如果接收到响应，检查响应内容是否为"REJECT"
                 if (strcmp(res, "REJECT") == 0) {
@@ -249,10 +249,10 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_check(JNIEnv *env
                 }
             }
         }
-        // 如果当前端口连接失败或没有检测到Frida服务器，关闭socket
+        //如果当前端口连接失败或没有检测到Frida服务器，关闭socket
         close(sock);
     }
-    // 如果遍历完所有端口都没有检测到Frida服务器
+    //如果遍历完所有端口都没有检测到Frida服务器
     jstring jResult = (*env).NewStringUTF(result2);
     return jResult; // No Frida server detected
 };
@@ -282,7 +282,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_mapscheck(JNIEnv 
         jstring jResult = (*env).NewStringUTF(result3);
         return jResult;
     }
-    // 如果没有在内存映射文件中找到"frida"，表示没有检测到恶意库
+    //如果没有在内存映射文件中找到"frida"，表示没有检测到恶意库
     jstring jResult = (*env).NewStringUTF(result2);
     return jResult; // No evil library detected.
 };
@@ -296,24 +296,20 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
     //获取Application，也就是全局的Context
     jmethodID getApplication = env->GetMethodID(activityThread, "getApplication", "()Landroid/app/Application;");
     jobject context = env->CallObjectMethod(at, getApplication);
-
+    //获取PackageManager
     jclass contextClass = env->GetObjectClass(context);
     jclass pmClass = env->FindClass("android/content/pm/PackageManager");
-
-    // 获取 PackageManager 实例
+    //获取PackageManager实例
     jmethodID getPackageManagerMethod = env->GetMethodID(contextClass, "getPackageManager", "()Landroid/content/pm/PackageManager;");
     jobject pmObject = env->CallObjectMethod(context, getPackageManagerMethod);
-
-    // 获取已安装应用程序
+    //获取已安装应用程序
     jmethodID getInstalledPackagesMethod = env->GetMethodID(pmClass, "getInstalledPackages", "(I)Ljava/util/List;");
     jobject installedPackages = env->CallObjectMethod(pmObject, getInstalledPackagesMethod, 0); // 0 = GET_UNINSTALLED_PACKAGES
-
-    // 获取 List 类和相关方法
+    //获取List类和相关方法
     jclass listClass = env->FindClass("java/util/List");
     jmethodID sizeMethod = env->GetMethodID(listClass, "size", "()I");
     jmethodID getMethod = env->GetMethodID(listClass, "get", "(I)Ljava/lang/Object;");
-
-    // 获取 List 的大小
+    //获取List的大小
     jint mallocsize = 65535;//分配结果空间大小
     jint size = env->CallIntMethod(installedPackages, sizeMethod);
     char *result = (char *)malloc(mallocsize); // 分配足够的内存以存储结果
@@ -322,37 +318,28 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEn
     }
     result[0] = '\0'; // 初始化字符串
     snprintf(result + strlen(result), mallocsize - strlen(result), "已安装应用个数: %d\n", size);
-
-    // 遍历安装的应用程序
+    //遍历安装的应用程序
     jclass packageInfoClass = env->FindClass("android/content/pm/PackageInfo");
     jclass applicationInfoClass = env->FindClass("android/content/pm/ApplicationInfo");
-
     for (int i = 0; i < size; i++) {
         jobject packageInfo = env->CallObjectMethod(installedPackages, getMethod, i);
-
-        // 获取应用名
+        //获取应用名
         jfieldID applicationInfoField = env->GetFieldID(packageInfoClass, "applicationInfo", "Landroid/content/pm/ApplicationInfo;");
         jobject applicationInfo = env->GetObjectField(packageInfo, applicationInfoField);
-
         jclass aiClass = applicationInfoClass;
         jmethodID loadLabelMethod = env->GetMethodID(aiClass, "loadLabel", "(Landroid/content/pm/PackageManager;)Ljava/lang/CharSequence;");
         jobject appNameCharSequence = env->CallObjectMethod(applicationInfo, loadLabelMethod, pmObject);
-
-        // 将 CharSequence 转换为 String
+        //将CharSequence转换为String
         jclass charSequenceClass = env->FindClass("java/lang/CharSequence");
         jmethodID toStringMethod = env->GetMethodID(charSequenceClass, "toString", "()Ljava/lang/String;");
         jstring appNameString = static_cast<jstring>(env->CallObjectMethod(appNameCharSequence, toStringMethod));
-
         // 获取包名
         jfieldID packageNameField = env->GetFieldID(packageInfoClass, "packageName", "Ljava/lang/String;");
         jstring packageNameString = static_cast<jstring>(env->GetObjectField(packageInfo, packageNameField));
-
         // 将字符串拼接到 appNames
         const char *appNameCStr = env->GetStringUTFChars(appNameString, nullptr);
         const char *packageNameCStr = env->GetStringUTFChars(packageNameString, nullptr);
-
         snprintf(result + strlen(result), mallocsize - strlen(result), "%s:%s\n", appNameCStr, packageNameCStr);
-
         env->ReleaseStringUTFChars(appNameString, appNameCStr);
         env->ReleaseStringUTFChars(packageNameString, packageNameCStr);
     }
