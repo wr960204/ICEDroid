@@ -213,10 +213,8 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_netfp(JNIEnv * en
 
 //-----------------------------------------------hook检测方法------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_check(JNIEnv *env, jobject){
-
     const char* result1 = "检测到frida服务器端口";
     const char* result2 = "未检测到frida服务器端口";
-
     struct sockaddr_in sa{};
     // 创建一个socket文件描述符
     int sock;
@@ -258,7 +256,6 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_check(JNIEnv *env
     jstring jResult = (*env).NewStringUTF(result2);
     return jResult; // No Frida server detected
 };
-
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_mapscheck(JNIEnv * env, jobject){
     char line[512];
     const char* result1 = "检测到frida特征文件";
