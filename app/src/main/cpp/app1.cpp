@@ -435,40 +435,34 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getcertificate(JN
 
 //-----------------------------------------------获取支持软硬件------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getdevicefeatures(JNIEnv *env, jobject){
-    // 获取Activity Thread的实例对象
+    //获取Activity Thread的实例对象
     jclass activityThread = env->FindClass("android/app/ActivityThread");
     jmethodID currentActivityThread = env->GetStaticMethodID(activityThread, "currentActivityThread", "()Landroid/app/ActivityThread;");
     jobject at = env->CallStaticObjectMethod(activityThread, currentActivityThread);
-
-    // 获取Application，也就是全局的Context
+    //获取Application，也就是全局的Context
     jmethodID getApplication = env->GetMethodID(activityThread, "getApplication", "()Landroid/app/Application;");
     jobject context = env->CallObjectMethod(at, getApplication);
-
-    // 获取PackageManager
+    //获取PackageManager
     jclass contextClass = env->GetObjectClass(context);
     jmethodID getPackageManagerMethod = env->GetMethodID(contextClass, "getPackageManager", "()Landroid/content/pm/PackageManager;");
     jobject packageManager = env->CallObjectMethod(context, getPackageManagerMethod);
-
-    // 获取系统可用特性
+    //获取系统可用特性
     jclass packageManagerClass = env->GetObjectClass(packageManager);
     jmethodID getSystemAvailableFeaturesMethod = env->GetMethodID(packageManagerClass, "getSystemAvailableFeatures", "()[Landroid/content/pm/FeatureInfo;");
     jobjectArray featuresArray = (jobjectArray)env->CallObjectMethod(packageManager, getSystemAvailableFeaturesMethod);
-
-    // 初始化特性字符串
+    //初始化特性字符串
     jint bufferSize = 65535;
     char *featureList = (char *)malloc(bufferSize);
     if (featureList == NULL) {
         return env->NewStringUTF("错误：内存分配失败");
     }
     snprintf(featureList, bufferSize, "支持软硬件：\n");
-
-    // 迭代特性并获取名称
+    //迭代特性并获取名称
     jsize featureCount = env->GetArrayLength(featuresArray);
     for (int i = 0; i < featureCount; i++) {
         jobject featureInfo = env->GetObjectArrayElement(featuresArray, i);
         jclass featureInfoClass = env->GetObjectClass(featureInfo);
-
-        // 获取特征名称
+        //获取特征名称
         jfieldID nameField = env->GetFieldID(featureInfoClass, "name", "Ljava/lang/String;");
         jstring featureName = (jstring)env->GetObjectField(featureInfo, nameField);
         if (featureName != NULL) {
@@ -480,19 +474,16 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getdevicefeatures
         env->DeleteLocalRef(featureInfo); // 释放局部引用
         env->DeleteLocalRef(featureInfoClass); // 释放局部引用
     }
-
-    // 清理和释放资源
+    //清理和释放资源
     env->DeleteLocalRef(featuresArray);
     env->DeleteLocalRef(packageManagerClass);
     env->DeleteLocalRef(packageManager);
     env->DeleteLocalRef(contextClass);
     env->DeleteLocalRef(context);
     env->DeleteLocalRef(at);
-
-    // 创建返回的字符串
+    //创建返回的字符串
     jstring result = env->NewStringUTF(featureList);
-    free(featureList); // 释放分配的内存
-
+    free(featureList); //释放分配的内存
     return result;
 };
 
