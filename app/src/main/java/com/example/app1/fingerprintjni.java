@@ -6,6 +6,8 @@ public class fingerprintjni {
         System.loadLibrary("app1");
     }
 
+    public native String getandroidid();
+
     public native String fingerprint();
 
     public native String netfp();
