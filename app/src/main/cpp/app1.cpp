@@ -29,34 +29,28 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid(JNIE
     //获取Application，也就是全局的Context
     jmethodID getApplication = env->GetMethodID(activityThread, "getApplication", "()Landroid/app/Application;");
     jobject context = env->CallObjectMethod(at, getApplication);
-
+    //获取contentResolver
     jclass contextClass = env->GetObjectClass(context);
     jmethodID getContentResolverMethod = env->GetMethodID(contextClass, "getContentResolver", "()Landroid/content/ContentResolver;");
     jobject contentResolver = env->CallObjectMethod(context, getContentResolverMethod);
-
     // 初始化字符数组用于存储设备 ID 信息
     char deviceID[256]; // 确保缓冲区足够大
     snprintf(deviceID, sizeof(deviceID), "Android ID：");
-
     // 获取 Settings.Secure 类
     jclass settingsSecureClass = env->FindClass("android/provider/Settings$Secure");
     if (settingsSecureClass == NULL) {
         return env->NewStringUTF("错误：无法找到 Settings.Secure 类");
     }
-
     // 获取 getString 方法的 ID
     jmethodID getStringMethod = env->GetStaticMethodID(settingsSecureClass, "getString", "(Landroid/content/ContentResolver;Ljava/lang/String;)Ljava/lang/String;");
     if (getStringMethod == NULL) {
         return env->NewStringUTF("错误：无法找到 getString 方法");
     }
-
     // 获取 ANDROID_ID 字段 ID
     jstring androidIdField = env->NewStringUTF("android_id");
-
     // 调用 getString 方法获取 Android ID
     jstring androidId = (jstring)env->CallStaticObjectMethod(settingsSecureClass, getStringMethod, contentResolver, androidIdField);
     env->DeleteLocalRef(androidIdField); // 释放 android_id 字符串引用
-
     // 从 jstring 转换为 C 字符串
     if (androidId != NULL) {
         const char *androidIdCStr = env->GetStringUTFChars(androidId, NULL);
@@ -66,12 +60,9 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid(JNIE
     } else {
         strncat(deviceID, "Android ID：未找到\n", sizeof(deviceID) - strlen(deviceID) - 1);
     }
-
     // 清理和释放资源
     env->DeleteLocalRef(settingsSecureClass);
-
     return env->NewStringUTF(deviceID);
-
 };
 
 //-----------------------------------------------系统指纹检测------------------------------------------------------
