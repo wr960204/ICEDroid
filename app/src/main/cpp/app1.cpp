@@ -36,6 +36,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid(JNIE
 
     // 初始化字符数组用于存储设备 ID 信息
     char deviceID[256]; // 确保缓冲区足够大
+    snprintf(deviceID, sizeof(deviceID), "Android ID：");
 
     // 获取 Settings.Secure 类
     jclass settingsSecureClass = env->FindClass("android/provider/Settings$Secure");
@@ -59,7 +60,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getandroidid(JNIE
     // 从 jstring 转换为 C 字符串
     if (androidId != NULL) {
         const char *androidIdCStr = env->GetStringUTFChars(androidId, NULL);
-        snprintf(deviceID + strlen(deviceID), sizeof(deviceID) - strlen(deviceID), "Android ID：%s\n", androidIdCStr);
+        snprintf(deviceID + strlen(deviceID), sizeof(deviceID) - strlen(deviceID), "%s\n", androidIdCStr);
         env->ReleaseStringUTFChars(androidId, androidIdCStr); // 释放 C 字符串
         env->DeleteLocalRef(androidId); // 释放 Android ID 字符串引用
     } else {
