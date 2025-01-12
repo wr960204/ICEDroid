@@ -325,7 +325,17 @@ public class result {
     //------------------------------------------获取支持软硬件----------------------------------------------------------
     public String devicefeatures(Context context){
         devicesfeatures df = new devicesfeatures();
-        return df.features(context);
+        fingerprintjni j = new fingerprintjni();
+
+        StringBuilder features = new StringBuilder("获取支持软硬件：");
+        //java层
+        String jf = df.features(context);
+        //native层
+        String nf = j.getdevicefeatures();
+        //合并结果
+        features.append("\njava层检测：\n").append(jf);
+        features.append("\nnative层检测：\n").append(nf);
+        return features.toString();
     }
 
 
