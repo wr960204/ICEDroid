@@ -163,11 +163,11 @@ public class result {
         String net = fp.getLocalMacAddress();
         String sys = fp.getSystemProperties();
         //native层
-        String fpjni = "\n系统指纹：" + j.fingerprint() + "\n";
+        String fpjni = "系统指纹：" + j.fingerprint() + "\n";
         String npjni = "网络地址：\n" + j.netfp() + "\n";
         //合并结果
         s.append("\njava层检测：\n").append(dev).append(net).append(sys);
-        s.append("\nnative层检测：").append(fpjni).append(npjni);
+        s.append("\nnative层检测：\n").append(fpjni).append(npjni);
         //对比结果
         s.append(compareResults(sys, fpjni));
 
