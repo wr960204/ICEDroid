@@ -263,14 +263,15 @@ public class result {
     public String fingerprintjni(){
         fingerprintjni j = new fingerprintjni();
 
-        StringBuilder s = new StringBuilder("native层检测：");
-        String fingerprint = "\n系统指纹：" + j.fingerprint() + "\n";
+        StringBuilder s = new StringBuilder("native层检测：\n");
+        String fingerprint = "系统指纹：" + j.fingerprint() + "\n";
         String netaddress = "\n网络地址：\n" + j.netfp() + "\n";
         String hookcheck = "\nhook检测：\n" + j.check() + "\n" + j.mapscheck() + "\n";
         String appnames = "\n检测已安装应用：\n" + j.getappnames() + "\n";
         String cert = "\n检测CA证书：\n" + j.getcertificate() + "\n";
+        String features = "\n检测支持软硬件：\n" + j.getdevicefeatures() + "\n";
 
-        s.append(fingerprint).append(netaddress).append(hookcheck).append(appnames).append(cert);
+        s.append(fingerprint).append(netaddress).append(hookcheck).append(appnames).append(cert).append(features);
         return s.toString();
     }
 
