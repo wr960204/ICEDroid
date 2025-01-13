@@ -130,13 +130,6 @@ public class result {
         }else {
             s.append("\n检查运行程序:不存在运行中特征程序");
         }
-        //检查系统架构
-        if (ec.checkArchitecture()){
-            s.append("\n检查系统架构:x86");
-            flag = true;
-        }else {
-            s.append("\n检查系统架构:arm");
-        }
         //检查电池状态
         if (ec.checkBattery(context)){
             s.append("\n检查电池状态:异常");

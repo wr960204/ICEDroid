@@ -14,12 +14,12 @@ import java.io.InputStreamReader;
 
 public class emulatorcheck {
     //模拟器检测
-    //检查设备型号和品牌
+    //检查设备属性
     public boolean checkBuild() {
         String model = Build.MODEL;
         String brand = Build.BRAND;
         String abi = Build.CPU_ABI;
-        String device = Build.DEVICE
+        String device = Build.DEVICE;
         return model.contains("Genymotion") || model.contains("x86") ||
                 brand.contains("generic") ||
                 abi.contains("x86")||
@@ -65,15 +65,6 @@ public class emulatorcheck {
         }
         return false;
     }
-    //检查系统架构
-    public boolean checkArchitecture(){
-        return Build.CPU_ABI.contains("x86");
-    }
-    //检查设备名称
-    public boolean checkdevice(){
-        return Build.DEVICE.contains("x86")||Build.DEVICE.contains("generic");
-    }
-
     //检查电池状态
     public boolean checkBattery(Context context) {
         // 获取电池状态
