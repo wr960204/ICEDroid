@@ -329,5 +329,13 @@ public class result {
         return features.toString();
     }
 
+    //------------------------------------------汇总----------------------------------------------------------
+    public String total(Context context){
+        StringBuilder t = new StringBuilder("汇总：");
+
+        
+        return t.toString();
+    }
+
 
 }
