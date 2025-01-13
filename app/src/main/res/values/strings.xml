@@ -12,4 +12,5 @@
     <string name="获取已安装应用">获取已安装应用</string>
     <string name="获取系统证书">获取系统证书</string>
     <string name="获取支持软硬件">获取支持软硬件</string>
+    <string name="汇总">汇总</string>
 </resources>

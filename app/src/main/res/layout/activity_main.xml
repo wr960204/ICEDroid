@@ -64,6 +64,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/获取支持软硬件"/>
+        <Button
+            android:id="@+id/button11"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/汇总"/>
 
     </LinearLayout>
 </ScrollView>
