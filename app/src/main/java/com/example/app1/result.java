@@ -3,6 +3,8 @@ package com.example.app1;
 import android.content.Context;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -179,6 +181,20 @@ public class result {
         StringBuilder s = new StringBuilder("\n对比结果：");
         String[] lines1 = result1.split("\n");
         String[] lines2 = result2.split("\n");
+        StringBuilder result = getStringBuilder(lines1, lines2);
+        String[] fingerprint = new String[14];
+        System.arraycopy(lines1,2,fingerprint,0,6);
+        System.arraycopy(lines2,2,fingerprint,6,6);
+        System.arraycopy(lines1,lines1.length-1,fingerprint,12,1);
+        System.arraycopy(lines2,lines2.length-1,fingerprint,13,1);
+        System.out.println(Arrays.toString(fingerprint));
+        if(areValuesIdentical(fingerprint))
+            s.append("\n指纹属性一致\n");
+        s.append(result);
+        return s.toString();
+    }
+
+    private @NonNull StringBuilder getStringBuilder(String[] lines1, String[] lines2) {
         StringBuilder result = new StringBuilder("\n以下属性存在不同：\n");
         //找到最大的行数
         int maxLines = Math.max(lines1.length, lines2.length);
@@ -197,16 +213,7 @@ public class result {
                 result.append(r);
             }
         }
-        String[] fingerprint = new String[14];
-        System.arraycopy(lines1,2,fingerprint,0,6);
-        System.arraycopy(lines2,2,fingerprint,6,6);
-        System.arraycopy(lines1,lines1.length-1,fingerprint,12,1);
-        System.arraycopy(lines2,lines2.length-1,fingerprint,13,1);
-        System.out.println(Arrays.toString(fingerprint));
-        if(areValuesIdentical(fingerprint))
-            s.append("\n指纹属性一致\n");
-        s.append(result);
-        return s.toString();
+        return result;
     }
 
     private boolean areValuesIdentical(String[] data) {
@@ -331,7 +338,7 @@ public class result {
 
     //------------------------------------------汇总----------------------------------------------------------
     public String total(Context context) throws IOException {
-        StringBuilder t = new StringBuilder("汇总：");
+        StringBuilder t = new StringBuilder();
         String rc = rootCheck();
         String ec = emulatorCheck(context);
         String fc = checkFingerPrint(context);
