@@ -103,6 +103,12 @@ public class result {
         StringBuilder s = new StringBuilder("模拟器检测：");
         boolean flag = false;
         //检查设备指纹
+        if (ec.checkfingerprint()){
+            s.append("\n检查设备指纹:异常");
+            flag = true;
+        }else {
+            s.append("\n检查设备指纹:正常");
+        }
         //检查设备属性
         if (ec.checkBuild()){
             s.append("\n检查设备属性:异常");
