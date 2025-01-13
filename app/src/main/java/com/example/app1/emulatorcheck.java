@@ -15,11 +15,16 @@ import java.io.InputStreamReader;
 public class emulatorcheck {
     //模拟器检测
     //检查设备型号和品牌
-    public boolean checkDeviceModel() {
-        String model = android.os.Build.MODEL;
-        String brand = android.os.Build.BRAND;
-        
-        return model.contains("Genymotion") || model.contains("x86") || brand.equalsIgnoreCase("generic");
+    public boolean checkBuild() {
+        String model = Build.MODEL;
+        String brand = Build.BRAND;
+        String abi = Build.CPU_ABI;
+        String device = Build.DEVICE
+        return model.contains("Genymotion") || model.contains("x86") ||
+                brand.contains("generic") ||
+                abi.contains("x86")||
+                device.contains("x86")||device.contains("generic")
+                ;
     }
     //检查硬件特征
     public boolean checkHardwareFeatures(Context context) {

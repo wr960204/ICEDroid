@@ -103,7 +103,7 @@ public class result {
         StringBuilder s = new StringBuilder("模拟器检测：");
         boolean flag = false;
         //检查设备型号和品牌
-        if (ec.checkDeviceModel()){
+        if (ec.checkBuild()){
             s.append("\n检查设备型号和品牌:异常");
             flag = true;
         }else {
