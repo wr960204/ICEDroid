@@ -11,24 +11,26 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 public class emulatorcheck {
     //模拟器检测
     //检查设备属性
     public boolean checkBuild() {
-
+        String board = Build.BOARD;
         String brand = Build.BRAND;
         String abi = Build.CPU_ABI;
         String device = Build.DEVICE;
         String model = Build.MODEL;
         String product = Build.PRODUCT;
-        
-        return model.contains("Genymotion") || model.contains("x86") ||
+        String support = Arrays.toString(Build.SUPPORTED_ABIS);
+        return  board.contains("x86") ||
                 brand.contains("generic") ||
                 abi.contains("x86") ||
                 device.contains("x86")||device.contains("generic") ||
-                product.contains("sdk") || product.contains("x86")
-                ;
+                model.contains("Genymotion") || model.contains("x86") ||
+                product.contains("sdk") || product.contains("x86") ||
+                support.contains("x86") || !support.contains("arm");
     }
     //检查硬件特征
     public boolean checkHardwareFeatures(Context context) {
