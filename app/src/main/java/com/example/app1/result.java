@@ -82,7 +82,7 @@ public class result {
         if(rc.checkFP()){
             s.append("\n检查系统指纹属性：一致");
         }else {
-            s.append("\n检查系统指纹属性：异常");
+            s.append("\n检查系统指纹属性：不一致");
             flag = true;
         }
 

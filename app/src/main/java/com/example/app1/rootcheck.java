@@ -210,11 +210,12 @@ public class rootcheck {
         String[] lines1 = sys.split("\n");
         String[] lines2 = fpjni.split("\n");
         String[] fingerprint = new String[14];
-        System.arraycopy(lines1,2,fingerprint,0,6);
+        System.arraycopy(lines1,1,fingerprint,0,6);
         System.arraycopy(lines2,2,fingerprint,6,6);
         System.arraycopy(lines1,lines1.length-1,fingerprint,12,1);
         System.arraycopy(lines2,lines2.length-1,fingerprint,13,1);
-        System.out.println(Arrays.toString(fingerprint));
+        for (String f : fingerprint)
+            System.out.println(f);
         return  areValuesIdentical(fingerprint);
     }
     public static boolean areValuesIdentical(String[] data) {
@@ -232,6 +233,8 @@ public class rootcheck {
                 return false;
             }
         }
+        for (String f : valuesSet)
+            System.out.println(f);
         // 如果集合的大小为 1，表示所有值相同
         return valuesSet.size() == 1;
     }
