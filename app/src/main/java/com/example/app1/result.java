@@ -341,6 +341,8 @@ public class result {
         String ct = certinfo();
         String df = devicefeatures(context);
 
+        t.append(rc).append(ec).append(fc).append(hc).append(tc).append(an).append(ct).append(df);
+
         return t.toString();
     }
 

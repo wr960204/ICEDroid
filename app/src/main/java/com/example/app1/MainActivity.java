@@ -242,7 +242,11 @@ public class MainActivity extends AppCompatActivity {
         button11.setOnClickListener(view -> {
 
             result rs = new result();
-            s.append(rs.total(this));
+            try {
+                s.append(rs.total(this));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             checkSign();
             startScheduledTask();
