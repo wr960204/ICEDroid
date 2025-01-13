@@ -87,9 +87,9 @@ public class result {
         }
 
         if (flag){
-            s.append("\n\n可能已root");
+            s.append("\n\n可能已root\n");
         }else {
-            s.append("\n\n可能未root");
+            s.append("\n\n可能未root\n");
         }
 
         return s.toString();
@@ -146,9 +146,9 @@ public class result {
         }
 
         if (flag){
-            s.append("\n\n可能是模拟器");
+            s.append("\n\n可能是模拟器\n");
         }else {
-            s.append("\n\n可能是真机");
+            s.append("\n\n可能是真机\n");
         }
 
         return s.toString();
