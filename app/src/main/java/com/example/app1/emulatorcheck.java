@@ -1,20 +1,60 @@
 package com.example.app1;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class emulatorcheck {
     //模拟器检测
+    //检查设备指纹
+    public boolean checkfingerprint(){
+        boolean flag = false;
+        try {
+            @SuppressLint("PrivateApi") Class<?> c = Class.forName("android.os.SystemProperties");
+            Method get = c.getMethod("get", String.class);
+
+            String[] properties = {
+                    "ro.build.fingerprint",
+                    "ro.odm.build.fingerprint",
+                    "ro.product.build.fingerprint",
+                    "ro.system_ext.build.fingerprint",
+                    "ro.system.build.fingerprint",
+                    "ro.vendor.build.fingerprint",
+                    "ro.build.description",
+
+                    "ro.build.date",
+                    "ro.build.date.utc",
+            };
+
+            for (String property : properties) {
+                String value = (String) get.invoke(c, property);
+                if(Objects.equals(value, "")){
+                    continue;
+                }
+                assert value != null;
+                if (value.contains("x86")) {
+                    flag = true;
+                }
+            }
+            return flag;
+        } catch (Exception e) {
+            Log.w("getSystemPropertiesException",  e.getMessage(), e);
+        }
+        return flag;
+    }
     //检查设备属性
     public boolean checkBuild() {
         String board = Build.BOARD;

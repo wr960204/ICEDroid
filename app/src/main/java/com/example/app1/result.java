@@ -102,12 +102,13 @@ public class result {
 
         StringBuilder s = new StringBuilder("模拟器检测：");
         boolean flag = false;
-        //检查设备型号和品牌
+        //检查设备指纹
+        //检查设备属性
         if (ec.checkBuild()){
-            s.append("\n检查设备型号和品牌:异常");
+            s.append("\n检查设备属性:异常");
             flag = true;
         }else {
-            s.append("\n检查设备型号和品牌:正常");
+            s.append("\n检查设备属性:正常");
         }
         //检查硬件特征
         if (ec.checkHardwareFeatures(context)){
