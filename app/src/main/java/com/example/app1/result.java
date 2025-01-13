@@ -330,9 +330,16 @@ public class result {
     }
 
     //------------------------------------------汇总----------------------------------------------------------
-    public String total(Context context){
+    public String total(Context context) throws IOException {
         StringBuilder t = new StringBuilder("汇总：");
-
+        String rc = rootCheck();
+        String ec = emulatorCheck(context);
+        String fc = checkFingerPrint(context);
+        String hc = checkhook();
+        String tc = test(context);
+        String an = appname(context);
+        String ct = certinfo();
+        String df = devicefeatures(context);
 
         return t.toString();
     }
