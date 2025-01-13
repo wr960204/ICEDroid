@@ -16,14 +16,18 @@ public class emulatorcheck {
     //模拟器检测
     //检查设备属性
     public boolean checkBuild() {
-        String model = Build.MODEL;
+
         String brand = Build.BRAND;
         String abi = Build.CPU_ABI;
         String device = Build.DEVICE;
+        String model = Build.MODEL;
+        String product = Build.PRODUCT;
+        
         return model.contains("Genymotion") || model.contains("x86") ||
                 brand.contains("generic") ||
-                abi.contains("x86")||
-                device.contains("x86")||device.contains("generic")
+                abi.contains("x86") ||
+                device.contains("x86")||device.contains("generic") ||
+                product.contains("sdk") || product.contains("x86")
                 ;
     }
     //检查硬件特征
