@@ -18,8 +18,7 @@ public class emulatorcheck {
     public boolean checkDeviceModel() {
         String model = android.os.Build.MODEL;
         String brand = android.os.Build.BRAND;
-        System.out.println(model);
-        System.out.println(brand);
+        
         return model.contains("Genymotion") || model.contains("x86") || brand.equalsIgnoreCase("generic");
     }
     //检查硬件特征
@@ -62,9 +61,14 @@ public class emulatorcheck {
         return false;
     }
     //检查系统架构
-    public  boolean checkArchitecture(){
+    public boolean checkArchitecture(){
         return Build.CPU_ABI.contains("x86");
     }
+    //检查设备名称
+    public boolean checkdevice(){
+        return Build.DEVICE.contains("x86")||Build.DEVICE.contains("generic");
+    }
+
     //检查电池状态
     public boolean checkBattery(Context context) {
         // 获取电池状态
