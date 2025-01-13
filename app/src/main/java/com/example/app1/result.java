@@ -178,7 +178,7 @@ public class result {
     }
 
     private String compareResults(String result1, String result2) {
-        StringBuilder s = new StringBuilder("\n对比结果：");
+        StringBuilder s = new StringBuilder("对比结果：\n");
         String[] lines1 = result1.split("\n");
         String[] lines2 = result2.split("\n");
         StringBuilder result = getStringBuilder(lines1, lines2);
@@ -195,7 +195,7 @@ public class result {
     }
 
     private @NonNull StringBuilder getStringBuilder(String[] lines1, String[] lines2) {
-        StringBuilder result = new StringBuilder("\n以下属性存在不同：\n");
+        StringBuilder result = new StringBuilder("以下属性存在不同：\n");
         //找到最大的行数
         int maxLines = Math.max(lines1.length, lines2.length);
         for (int i = 0; i < maxLines; i++) {
