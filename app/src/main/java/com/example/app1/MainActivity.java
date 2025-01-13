@@ -237,6 +237,29 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        //------------------------------------------汇总---------------------------------------------
+        Button button11 = findViewById(R.id.button11);
+        button11.setOnClickListener(view -> {
+
+            result rs = new result();
+            s.append(rs.total(this));
+
+            checkSign();
+            startScheduledTask();
+            setDailyAlarm();
+
+            Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+            intent.putExtra("s",s.toString());
+            startActivity(intent);
+
+            s.delete(5,s.length());
+        });
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
 
 

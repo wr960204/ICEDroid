@@ -333,7 +333,7 @@ public class result {
     public String total(Context context){
         StringBuilder t = new StringBuilder("汇总：");
 
-        
+
         return t.toString();
     }
 
