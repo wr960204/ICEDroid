@@ -22,7 +22,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-
     StringBuilder s = new StringBuilder("检测开始\n");
 
     @Override
@@ -269,7 +268,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
 
     //-----------------------------------------------签名校验------------------------------------------------------
     private void checkSign(){
