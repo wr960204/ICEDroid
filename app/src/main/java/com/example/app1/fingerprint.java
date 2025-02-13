@@ -37,7 +37,7 @@ public class fingerprint {
             Log.w("getDeviceIDException", e.getMessage(), e);
         }
 
-        s += getUUID() + "\n";
+        //s += getUUID() + "\n";
         return s;
     }
 

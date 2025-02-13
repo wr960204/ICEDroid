@@ -83,7 +83,7 @@ public class result {
             s.append("\n检查系统指纹属性：一致");
         }else {
             s.append("\n检查系统指纹属性：不一致");
-            flag = true;
+            //flag = true;
         }
 
         if (flag){
