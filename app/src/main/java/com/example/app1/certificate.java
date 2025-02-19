@@ -38,6 +38,7 @@ public class certificate {
         } catch (Exception e) {
             Log.w("checkcertException", e.getMessage(),e);
         }
+        //listInstalledCertificates1();
         return cert.toString();
     }
 

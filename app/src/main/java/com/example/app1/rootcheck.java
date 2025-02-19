@@ -218,7 +218,7 @@ public class rootcheck {
             System.out.println(f);
         return  areValuesIdentical(fingerprint);
     }
-    public static boolean areValuesIdentical(String[] data) {
+    private static boolean areValuesIdentical(String[] data) {
         Set<String> valuesSet = new HashSet<>();
         for (String entry : data) {
             // 将字符串按冒号分割，确保有两个部分

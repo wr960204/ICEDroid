@@ -41,7 +41,7 @@ public class test {
         return t;
     }
 
-    public boolean detectMagiskFiles() {
+    private boolean detectMagiskFiles() {
         String[] magiskPaths = {
                 "/sbin/.magisk/",           // 通常是 Magisk 的主路径
                 "/data/adb/magisk/",        // Magisk 安装的默认目录
@@ -59,7 +59,7 @@ public class test {
         return false;
     }
 
-    public boolean checkMagiskMountPoints() {
+    private boolean checkMagiskMountPoints() {
         try {
             Process process = Runtime.getRuntime().exec("mount");
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -77,7 +77,7 @@ public class test {
         }
     }
 
-    public boolean detectZygoteHooks() {
+    private boolean detectZygoteHooks() {
         try {
             Process process = Runtime.getRuntime().exec("ps");
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -94,7 +94,7 @@ public class test {
         }
     }
 
-    public boolean detectMagiskProperties() {
+    private boolean detectMagiskProperties() {
         String[] properties = {
                 "ro.magisk.hide",  // Magisk Hide 的标志属性
                 "persist.magisk.hide",
@@ -121,7 +121,7 @@ public class test {
         }
     }
 
-    public boolean detectKernelModification() {
+    private boolean detectKernelModification() {
         try {
             Process process = Runtime.getRuntime().exec("dmesg | grep magisk");
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -138,7 +138,7 @@ public class test {
         }
     }
 
-    public boolean checkProcForMagisk() {
+    private boolean checkProcForMagisk() {
         try {
             Process process = Runtime.getRuntime().exec("cat /proc/self/mountinfo");
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -155,7 +155,7 @@ public class test {
         }
     }
 
-    public boolean checkKernelLogsForMagisk() {
+    private boolean checkKernelLogsForMagisk() {
         try {
             Process process = Runtime.getRuntime().exec("cat /dev/kmsg");
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -172,7 +172,7 @@ public class test {
         }
     }
     
-    public boolean detectCodeInjection() {
+    private boolean detectCodeInjection() {
         try {
             // 检测应用程序是否被注入非法代码
             String[] suspiciousLibs = { "xposed", "substrate", "magisk" };
@@ -187,7 +187,7 @@ public class test {
         return false;
     }
 
-    public boolean isLibraryLoaded(String libName) {
+    private boolean isLibraryLoaded(String libName) {
         try {
             Process process = Runtime.getRuntime().exec("cat /proc/self/maps");
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -204,7 +204,7 @@ public class test {
         }
     }
 
-    public boolean detectReflectionUsage() {
+    private boolean detectReflectionUsage() {
         try {
             Process process = Runtime.getRuntime().exec("ps -A | grep java");
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -221,7 +221,7 @@ public class test {
         }
     }
 
-    public boolean detectHiddenProcesses() {
+    private boolean detectHiddenProcesses() {
         try {
             Process process = Runtime.getRuntime().exec("ps | grep su");
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -238,7 +238,7 @@ public class test {
         }
     }
 
-    public boolean checkNetworkTraffic() {
+    private boolean checkNetworkTraffic() {
         try {
             Process process = Runtime.getRuntime().exec("tcpdump -i any -vv");
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -255,7 +255,7 @@ public class test {
         }
     }
 
-    public boolean detectVirtualization() {
+    private boolean detectVirtualization() {
         try {
             Process process = Runtime.getRuntime().exec("lsmod | grep kvm");
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -272,7 +272,7 @@ public class test {
         }
     }
 
-    public boolean checkKernelModules() {
+    private boolean checkKernelModules() {
         try {
             Process process = Runtime.getRuntime().exec("lsmod");
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
