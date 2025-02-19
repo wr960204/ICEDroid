@@ -26,6 +26,7 @@ public class fingerprint {
     //-----------------------------------------------设备------------------------------------------------------
     public String getDeviceID(ContentResolver contentResolver) {
         String s = "设备指纹：\n";
+
         try {
             // 获取ANDROID_ID
             @SuppressLint("HardwareIds") String androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID);
@@ -36,8 +37,7 @@ public class fingerprint {
             Log.w("getDeviceIDException", e.getMessage(), e);
         }
 
-        s += getUUID() + "\n";
-
+        //s += getUUID() + "\n";
         return s;
     }
 
