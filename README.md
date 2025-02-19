@@ -90,9 +90,10 @@ try {
 }
 ystem.out.println(s);
 ```
-## 可供使用的类及方法
 
-### result类：
+## 可供使用的类及方法
+
+### result类：
 
 rootCheck()：检测设备是否root
 
@@ -114,7 +115,7 @@ devicefeatures(Context context)：设备支持的软硬件
 
 total(Context context)：检测项汇总
 
-### rootcheck类：
+### rootcheck类：
 
 checkSuCommand()：检查SU命令
 
@@ -134,7 +135,7 @@ checkTEE()：检查TEE状态
 
 checkFP()：检查系统指纹属性是否一致
 
-### emulatorcheck类：
+### emulatorcheck类：
 
 checkfingerprint()：检查设备指纹
 
@@ -148,7 +149,7 @@ checkRunningApps()：检查运行程序
 
 checkBattery(context)：检查电池状态
 
-### fingerprint类：
+### fingerprint类：
 
 getDeviceID(ContentResolver contentResolver)：获取设备ID
 
@@ -156,11 +157,11 @@ getLocalMacAddress()：获取网络地址
 
 getSystemProperties()：获取设备属性
 
-### hookcheck类：
+### hookcheck类：
 
 checkfrida()：检测是否有frida相关特征
 
-### fingerprintjni类：
+### fingerprintjni类：
 
 fingerprint()：系统指纹
 
@@ -174,28 +175,29 @@ getcertificate()：检测系统已安装证书
 
 getdevicefeatures()：检测支持软硬件
 
-### fptest类：
+### fptest类：
 
 getProperties(Context context)：获取部分设备属性
 
-### appname类：
+### appname类：
 
 getAllAppNames(Context context)：获取已安装应用
 
-### certificate类：
+### certificate类：
 
 listInstalledCertificates()：获取系统证书
 
-### devicesfeatures类：
+### devicesfeatures类：
 
 features(Context context)：获取支持软硬件
 
-### signcheck类：
+### signcheck类：
 
-签名校验
+check()：签名校验
 
-### filewr类：
+### filewr类：
 
 bufferSave(String msg,String filename)：写入文件并输出有改变的部分
 
 bufferRead(String filename)：读取文件
+
