@@ -90,3 +90,112 @@ try {
 }
 ystem.out.println(s);
 ```
+## 可供使用的类及方法
+
+### result类：
+
+rootCheck()：检测设备是否root
+
+emulatorCheck(Context context)：检测设备是否是模拟器
+
+checkFingerPrint(Context context)：检测设备指纹
+
+checkhook()：检测设备是否安装hook相关工具
+
+fingerprintjni()：全部的jni属性检测方法
+
+test(Context context)：部分设备属性
+
+appname(Context context)：设备已安装app
+
+certinfo()：设备已安装证书
+
+devicefeatures(Context context)：设备支持的软硬件
+
+total(Context context)：检测项汇总
+
+### rootcheck类：
+
+checkSuCommand()：检查SU命令
+
+checkRootFiles()：检查root特征文件
+
+checkSystemTags()：检查系统tag
+
+checkMountInfo()：检查分区读写模式
+
+checkSystemProperty()：检查系统属性:异常
+
+checkSELinuxStatus()：检查SELinux状态
+
+isBootloaderUnlocked()：检查Bootloader状态
+
+checkTEE()：检查TEE状态
+
+checkFP()：检查系统指纹属性是否一致
+
+### emulatorcheck类：
+
+checkfingerprint()：检查设备指纹
+
+checkBuild()：检查设备属性
+
+checkHardwareFeatures(context)：检查硬件特征
+
+checkFileSystem()：检查文件系统
+
+checkRunningApps()：检查运行程序
+
+checkBattery(context)：检查电池状态
+
+### fingerprint类：
+
+getDeviceID(ContentResolver contentResolver)：获取设备ID
+
+getLocalMacAddress()：获取网络地址
+
+getSystemProperties()：获取设备属性
+
+### hookcheck类：
+
+checkfrida()：检测是否有frida相关特征
+
+### fingerprintjni类：
+
+fingerprint()：系统指纹
+
+netfp()：网络地址
+
+check()、mapscheck()：hook检测
+
+getappnames()：检测设备已安装应用
+
+getcertificate()：检测系统已安装证书
+
+getdevicefeatures()：检测支持软硬件
+
+### fptest类：
+
+getProperties(Context context)：获取部分设备属性
+
+### appname类：
+
+getAllAppNames(Context context)：获取已安装应用
+
+### certificate类：
+
+listInstalledCertificates()：获取系统证书
+
+### devicesfeatures类：
+
+features(Context context)：获取支持软硬件
+
+### signcheck类：
+
+签名校验
+
+### filewr类：
+
+bufferSave(String msg,String filename)：写入文件并输出有改变的部分
+
+bufferRead(String filename)：读取文件
