@@ -203,6 +203,9 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("s",s.toString());
             startActivity(intent);
 
+            certificate cf = new certificate();
+            cf.validateAppCertificateChainSimple(this);
+
             s.delete(5,s.length());
         });
 
