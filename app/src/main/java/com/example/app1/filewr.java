@@ -1,16 +1,22 @@
 package com.example.app1;
 
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class filewr {
+    //---------------------------------------------------------外部存储-----------------------------------------------------
     public void bufferSave(String msg,String filename) {
         File file = new File(Environment.getExternalStorageDirectory().getPath(),filename);
         // 先读取原有内容
@@ -70,8 +76,33 @@ public class filewr {
         }
         return "读取失败";
     }
+//---------------------------------------------------------专属文件-----------------------------------------------------
+    // 写入文件方法
+    public void writeToAppSpecificFile(Context context, String filename, String data) {
+        try (FileOutputStream fos = context.openFileOutput(filename, Context.MODE_PRIVATE)) {
+            fos.write(data.getBytes(StandardCharsets.UTF_8));
+            Log.d("writeToAppSpecificFile", "写入成功");
+        } catch (IOException e) {
+            Log.e("FileStorage", "Write error: " + e.getMessage());
+        }
+    }
 
-    
+    // 读取文件方法
+    public String readFromAppSpecificFile(Context context, String filename) {
+        try (FileInputStream fis = context.openFileInput(filename)) {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[65535];
+            int length;
+            while ((length = fis.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            Log.d("readFromAppSpecificFile", "读取成功");
+            return result.toString(StandardCharsets.UTF_8.name());
+        } catch (IOException e) {
+            Log.e("FileStorage", "Read error: " + e.getMessage());
+            return null;
+        }
+    }
 
 
 }

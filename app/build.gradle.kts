@@ -59,6 +59,7 @@ dependencies {
     implementation (libs.dev.core.ktx)
 
     //noinspection GradleDependency
+    implementation (libs.okhttp)
     /*
     implementation ("org.bouncycastle:bcprov-jdk18on:1.76")
     //implementation ("dev.rikka.rikkax.material:material:1.6.6")

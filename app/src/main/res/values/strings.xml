@@ -13,4 +13,7 @@
     <string name="获取系统证书">获取系统证书</string>
     <string name="获取支持软硬件">获取支持软硬件</string>
     <string name="汇总">汇总</string>
+    <string name="更新外部存储">更新外部存储</string>
+    <string name="更新内部文件">更新内部文件</string>
+    <string name="传输数据">传输数据</string>
 </resources>

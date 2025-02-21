@@ -69,6 +69,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/汇总"/>
+        <Button
+            android:id="@+id/button12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/传输数据"/>
 
     </LinearLayout>
 </ScrollView>

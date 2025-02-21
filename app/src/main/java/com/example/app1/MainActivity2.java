@@ -24,14 +24,21 @@ public class MainActivity2 extends AppCompatActivity {
         TextView textView1 = findViewById(R.id.textview1);
         textView1.setText(s);
 //------------------------------------------更新---------------------------------------------------
-        Button button2 = findViewById(R.id.button1);
+        Button button1 = findViewById(R.id.button1);
+        button1.setOnClickListener(view -> {
+            filewr fl = new filewr();
+            assert s != null;
+            fl.writeToAppSpecificFile(this, "check.txt",s);
+        });
+
+        Button button2 = findViewById(R.id.button2);
         button2.setOnClickListener(view -> {
             filewr fl = new filewr();
             fl.bufferSave(s,"a.txt");
         });
 //------------------------------------------返回---------------------------------------------------
-        Button button1 = findViewById(R.id.button2);
-        button1.setOnClickListener(view -> finish());
+        Button button3 = findViewById(R.id.button3);
+        button3.setOnClickListener(view -> finish());
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

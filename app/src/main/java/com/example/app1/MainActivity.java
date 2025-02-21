@@ -123,7 +123,8 @@ public class MainActivity extends AppCompatActivity {
         button6.setOnClickListener(view -> {
 
             filewr fl = new filewr();
-            String fr = fl.bufferRead("a.txt");
+            //String fr = fl.bufferRead("a.txt");
+            String fr = fl.readFromAppSpecificFile(this,"check.txt");
 
             checkSign();
             startScheduledTask();
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        //------------------------------------------测试---------------------------------------------------
+//------------------------------------------测试---------------------------------------------------
         Button button7 = findViewById(R.id.button7);
         button7.setOnClickListener(view -> {
 
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        //------------------------------------------获取已安装应用---------------------------------------------
+//------------------------------------------获取已安装应用---------------------------------------------
         Button button8 = findViewById(R.id.button8);
         button8.setOnClickListener(view -> {
 
@@ -188,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        //------------------------------------------获取系统证书---------------------------------------------
+//------------------------------------------获取系统证书---------------------------------------------
         Button button9 = findViewById(R.id.button9);
         button9.setOnClickListener(view -> {
 
@@ -215,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        //------------------------------------------获取支持软硬件---------------------------------------------
+//------------------------------------------获取支持软硬件---------------------------------------------
         Button button10 = findViewById(R.id.button10);
         button10.setOnClickListener(view -> {
 
@@ -239,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        //------------------------------------------汇总---------------------------------------------
+//------------------------------------------汇总---------------------------------------------
         Button button11 = findViewById(R.id.button11);
         button11.setOnClickListener(view -> {
 
@@ -266,7 +267,30 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+//------------------------------------------传输数据---------------------------------------------
+        Button button12 = findViewById(R.id.button12);
+        button12.setOnClickListener(view -> {
 
+            filewr fl = new filewr();
+            senddata sd = new senddata();
+
+            String fr = fl.readFromAppSpecificFile(this,"check.txt");
+            sd.sendDataToServer("2025.2.21android传输测试");
+
+            checkSign();
+            startScheduledTask();
+            setDailyAlarm();
+
+            Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+            intent.putExtra("s",fr);
+            startActivity(intent);
+        });
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
 
 
@@ -314,9 +338,6 @@ public class MainActivity extends AppCompatActivity {
         }
         long intervalMillis = AlarmManager.INTERVAL_DAY; // 每天
         aManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerTime, intervalMillis, pendingIntent);
-
-        filewr fl = new filewr();
-        fl.bufferRead("sc.txt");
     }
     private static class MyReceiver extends BroadcastReceiver {
         @Override
@@ -326,9 +347,6 @@ public class MainActivity extends AppCompatActivity {
                 ((MainActivity) context).signCheck();
                 System.out.println("setDailyAlarm");
                 executionCount += 1;
-
-                filewr fl = new filewr();
-                fl.bufferSave(String.valueOf(executionCount),"sc.txt");
             }
         }
     }
