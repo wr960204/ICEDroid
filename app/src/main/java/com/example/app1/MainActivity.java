@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
             senddata sd = new senddata();
 
             String fr = fl.readFromAppSpecificFile(this,"check.txt");
-            sd.sendDataToServer("2025.2.21android传输测试");
+            sd.sendDataToServer("2025.2.23android传输测试");
 
             checkSign();
             startScheduledTask();

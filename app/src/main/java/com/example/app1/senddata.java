@@ -35,12 +35,20 @@ public class senddata {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.e("Network", "Send failed: " + e.getMessage());
+                e.printStackTrace(); // 添加完整堆栈跟踪
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
-                if (response.isSuccessful()) {
-                    Log.d("Network", "Send success");
+                try {
+                    String body = response.body().string();
+                    if (response.isSuccessful()) {
+                        Log.d("Network", "Send success. Response: " + body);
+                    } else {
+                        Log.e("Network", "Server error: " + response.code() + "\n" + body);
+                    }
+                } catch (IOException e) {
+                    Log.e("Network", "Response parsing error", e);
                 }
             }
         });
