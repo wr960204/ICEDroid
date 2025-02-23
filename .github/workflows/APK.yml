@@ -20,10 +20,12 @@ jobs:
     
     - name: Make Gradle executable
       run: chmod +x ./gradlew
+    
     - name: Build Release APK
       run: ./gradlew assembleRelease
-    - name: Releasing using Hub
-      uses: sangatdesai/release-apk@main
-      env:
-        GITHUB_TOKEN: ${{ secrets.ASSEMBLE_TOKEN }}
-        APP_FOLDER: app
+    
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-release
+        path: app/build/outputs/apk/release/
