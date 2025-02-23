@@ -37,7 +37,6 @@ public class senddata {
                 Log.e("Network", "Send failed: " + e.getMessage());
                 e.printStackTrace(); // 添加完整堆栈跟踪
             }
-
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 try {
