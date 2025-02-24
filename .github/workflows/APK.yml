@@ -29,3 +29,22 @@ jobs:
       with:
         name: app-release
         path: app/build/outputs/apk/release/
+
+    - name: 获取新版本号
+      id: get__version
+      run: |
+        # 尝试从 package.json 中获取版本号
+        VERSION=$(node -p "require('./chrome-extension/package.json').version" 2>/dev/null || echo "v0.0.1")
+        echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        echo "New version:${VERSION}"
+
+    - name: 创建Release
+      id: create_release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ env.VERSION }}
+        name: apk-${{ env.VERSION }}
+        draft: false
+        prerelease: false
+        files: |
+          app/build/outputs/apk/release/*.apk
