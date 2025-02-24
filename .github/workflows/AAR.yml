@@ -58,5 +58,5 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@master
       with:
-        name: app-release
+        name: app-aar
         path: app/build/outputs/aar/*.aar
