@@ -39,7 +39,6 @@ jobs:
         sed -i '/<intent-filter>/,/<\/intent-filter>/d' app/src/main/AndroidManifest.xml
 
     
-    
     - name: setup jdk
       uses: actions/setup-java@v1
       with:
@@ -74,7 +73,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ env.VERSION }}
-        name: v${{ env.VERSION }}
+        name: aar-${{ env.VERSION }}
         draft: false
         prerelease: false
         files: |
