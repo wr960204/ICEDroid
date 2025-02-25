@@ -40,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
                 throw new RuntimeException(e);
             }
 
+            keyattestion ka = new keyattestion();
+            String c = ka.checkcertchain();
+            System.out.println(c);
+
             checkSign();
             startScheduledTask();
             setDailyAlarm();
@@ -291,7 +295,24 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+//------------------------------------------密钥认证---------------------------------------------
+        Button button13 = findViewById(R.id.button13);
+        button13.setOnClickListener(view -> {
 
+            keyattestion ka = new keyattestion();
+            String c = ka.checkcertchain();
+            s.append(c);
+
+            checkSign();
+            startScheduledTask();
+            setDailyAlarm();
+
+            Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+            intent.putExtra("s",s.toString());
+            startActivity(intent);
+
+            s.delete(5,s.length());
+        });
 
 
     }

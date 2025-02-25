@@ -60,8 +60,10 @@ dependencies {
 
     //noinspection GradleDependency
     implementation (libs.okhttp)
-    /*
     implementation ("org.bouncycastle:bcprov-jdk18on:1.76")
+    
+    /*
+
     //implementation ("dev.rikka.rikkax.material:material:1.6.6")
     implementation ("dev.rikka.rikkax.html:html-ktx:1.1.2")
     implementation ("dev.rikka.rikkax.recyclerview:recyclerview-adapter:1.3.0")

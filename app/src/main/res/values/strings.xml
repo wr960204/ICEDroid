@@ -16,4 +16,5 @@
     <string name="更新外部存储">更新外部存储</string>
     <string name="更新内部文件">更新内部文件</string>
     <string name="传输数据">传输数据</string>
+    <string name="密钥认证">密钥认证</string>
 </resources>
