@@ -8,10 +8,13 @@ import android.security.keystore.KeyProperties;
 import android.util.Log;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 
+import org.bouncycastle.asn1.ASN1Boolean;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Enumerated;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -41,6 +44,7 @@ import java.util.Arrays;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Set;
 
 
@@ -218,6 +222,30 @@ public class keyattestion {
         return builder.build();
     }
 
+    public static String getStringFromAsn1OctetStreamAssumingUTF8(ASN1Encodable encodable)
+            throws CertificateParsingException {
+        if (!(encodable instanceof ASN1OctetString octetString)) {
+            throw new CertificateParsingException(
+                    "Expected octet string, found " + encodable.getClass().getName());
+        }
+        return new String(octetString.getOctets(), StandardCharsets.UTF_8);
+    }
+
+    public static boolean getBooleanFromAsn1(ASN1Encodable value)
+            throws CertificateParsingException {
+        if (!(value instanceof ASN1Boolean booleanValue)) {
+            throw new CertificateParsingException(
+                    "Expected boolean, found " + value.getClass().getName());
+        }
+        if (booleanValue.equals(ASN1Boolean.TRUE)) {
+            return true;
+        } else if (booleanValue.equals((ASN1Boolean.FALSE))) {
+            return false;
+        }
+        throw new CertificateParsingException(
+                "DER-encoded boolean values must contain either 0x00 or 0xFF");
+    }
+
 
 //--------------------------------------------------KeyDescription---------------------------------------------------------
     public static String attestationVersionToString(int version) {
@@ -359,7 +387,7 @@ public class keyattestion {
     private Date creationDateTime;
     private Integer origin;
     private Boolean rollbackResistant;
-    //private RootOfTrust rootOfTrust;
+    private String rootOfTrust;
     private Integer osVersion;
     private Integer osPatchLevel;
     //private AttestationApplicationId attestationApplicationId;
@@ -402,14 +430,18 @@ public class keyattestion {
     public static final int KM_ALGORITHM_3DES = 33;
     public static final int KM_ALGORITHM_HMAC = 128;
     public static String algorithmToString(int algorithm) {
-        return switch (algorithm) {
-            case KM_ALGORITHM_RSA -> "RSA";
-            case KM_ALGORITHM_EC -> "ECDSA";
-            case KM_ALGORITHM_AES -> "AES";
-            case KM_ALGORITHM_3DES -> "3DES";
-            case KM_ALGORITHM_HMAC -> "HMAC";
-            default -> "Unknown (" + algorithm + ")";
-        };
+        if (algorithm == KM_ALGORITHM_RSA) {
+            return "RSA";
+        } else if (algorithm == KM_ALGORITHM_EC) {
+            return "ECDSA";
+        } else if (algorithm == KM_ALGORITHM_AES) {
+            return "AES";
+        } else if (algorithm == KM_ALGORITHM_3DES) {
+            return "3DES";
+        } else if (algorithm == KM_ALGORITHM_HMAC) {
+            return "HMAC";
+        }
+        return "Unknown (" + algorithm + ")";
     }
     //keysize
     //digests
@@ -453,14 +485,18 @@ public class keyattestion {
     public static final int KM_EC_CURVE_P521 = 3;
     public static final int KM_EC_CURVE_CURVE_25519 = 4;
     public static String ecCurveToString(Integer ecCurve) {
-        return switch (ecCurve) {
-            case KM_EC_CURVE_P224 -> "secp224r1";
-            case KM_EC_CURVE_P256 -> "secp256r1";
-            case KM_EC_CURVE_P384 -> "secp384r1";
-            case KM_EC_CURVE_P521 -> "secp521r1";
-            case KM_EC_CURVE_CURVE_25519 -> "CURVE_25519";
-            default -> "unknown (" + ecCurve + ")";
-        };
+        if (ecCurve == KM_EC_CURVE_P224) {
+            return "secp224r1";
+        } else if (ecCurve == KM_EC_CURVE_P256) {
+            return "secp256r1";
+        } else if (ecCurve == KM_EC_CURVE_P384) {
+            return "secp384r1";
+        } else if (ecCurve == KM_EC_CURVE_P521) {
+            return "secp521r1";
+        } else if (ecCurve == KM_EC_CURVE_CURVE_25519) {
+            return "CURVE_25519";
+        }
+        return "unknown (" + ecCurve + ")";
     }
     //rsapublicexponent
     //mgfdigests
@@ -472,7 +508,94 @@ public class keyattestion {
     //originationexpiredatetime
     //usageexpiredatetime
     //usageCountLimit
-
+    //noAuthRequired
+    public static final int HW_AUTH_PASSWORD = 1 << 0;
+    public static final int HW_AUTH_BIOMETRIC = 1 << 1;
+    public static String userAuthTypeToString(int userAuthType) {
+        List<String> types = Lists.newArrayList();
+        if ((userAuthType & HW_AUTH_BIOMETRIC) != 0)
+            types.add("Biometric");
+        if ((userAuthType & HW_AUTH_PASSWORD) != 0)
+            types.add("Password");
+        return "[" + Joiner.on(", ").join(types) + "]";
+    }
+    //authTimeout
+    //allowWhileOnBody
+    //trustedUserPresenceReq
+    //trustedConfirmationReq
+    //unlockedDeviceReq
+    //allApplications
+    //applicationId
+    //creationDateTime
+    //origin
+    public static final int KM_ORIGIN_GENERATED = 0;
+    public static final int KM_ORIGIN_DERIVED = 1;
+    public static final int KM_ORIGIN_IMPORTED = 2;
+    public static final int KM_ORIGIN_UNKNOWN = 3;
+    public static final int KM_ORIGIN_SECURELY_IMPORTED = 4;
+    public static String originToString(int origin) {
+        if (origin == KM_ORIGIN_GENERATED) {
+            return "Generated";
+        } else if (origin == KM_ORIGIN_DERIVED) {
+            return "Derived";
+        } else if (origin == KM_ORIGIN_IMPORTED) {
+            return "Imported";
+        } else if (origin == KM_ORIGIN_UNKNOWN) {
+            return "Unknown (KM0)";
+        } else if (origin == KM_ORIGIN_SECURELY_IMPORTED) {
+            return "Securely Imported";
+        }
+        return "Unknown (" + origin + ")";
+    }
+    //rollbackResistant
+    //rootOfTrust
+    private static final int VERIFIED_BOOT_KEY_INDEX = 0;
+    private static final int DEVICE_LOCKED_INDEX = 1;
+    private static final int VERIFIED_BOOT_STATE_INDEX = 2;
+    private static final int VERIFIED_BOOT_HASH_INDEX = 3;
+    public String RootOfTrust(ASN1Encodable asn1Encodable) throws CertificateParsingException {
+        StringBuilder s = new StringBuilder();
+        if (!(asn1Encodable instanceof ASN1Sequence sequence)) {
+            throw new CertificateParsingException("Expected sequence for root of trust, found "
+                    + asn1Encodable.getClass().getName());
+        }
+        byte[] verifiedBootKey = getByteArrayFromAsn1(sequence.getObjectAt(VERIFIED_BOOT_KEY_INDEX));
+        boolean deviceLocked = getBooleanFromAsn1(sequence.getObjectAt(DEVICE_LOCKED_INDEX));
+        int verifiedBootState = getIntegerFromAsn1(sequence.getObjectAt(VERIFIED_BOOT_STATE_INDEX));
+        byte[] verifiedBootHash;
+        if (sequence.size() == 3){
+            verifiedBootHash = null;
+        }else{
+            verifiedBootHash = getByteArrayFromAsn1(sequence.getObjectAt(VERIFIED_BOOT_HASH_INDEX));
+        }
+        s.append("verifiedBootKey: ")
+         .append(BaseEncoding.base16().encode(verifiedBootKey))
+         .append("\ndeviceLocked: ")
+         .append(deviceLocked)
+         .append("\nverifiedBootState: ")
+         .append(verifiedBootStateToString(verifiedBootState));
+        if (verifiedBootHash != null) {
+            s.append("\nverifiedBootHash: ")
+             .append(BaseEncoding.base16().encode(verifiedBootHash));
+        }
+        return s.toString();
+    }
+    private static final int KM_VERIFIED_BOOT_VERIFIED = 0;
+    private static final int KM_VERIFIED_BOOT_SELF_SIGNED = 1;
+    private static final int KM_VERIFIED_BOOT_UNVERIFIED = 2;
+    private static final int KM_VERIFIED_BOOT_FAILED = 3;
+    public static String verifiedBootStateToString(int verifiedBootState) {
+        if (verifiedBootState == KM_VERIFIED_BOOT_VERIFIED) {
+            return "Verified";
+        } else if (verifiedBootState == KM_VERIFIED_BOOT_SELF_SIGNED) {
+            return "Self-signed";
+        } else if (verifiedBootState == KM_VERIFIED_BOOT_UNVERIFIED) {
+            return "Unverified";
+        } else if (verifiedBootState == KM_VERIFIED_BOOT_FAILED) {
+            return "Failed";
+        }
+        return "Unknown (" + verifiedBootState + ")";
+    }
 
 
 
@@ -538,6 +661,46 @@ public class keyattestion {
                 case KM_TAG_USAGE_COUNT_LIMIT & KEYMASTER_TAG_TYPE_MASK:
                     usageCountLimit = getIntegerFromAsn1(value);
                     break;
+                case KM_TAG_NO_AUTH_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
+                    noAuthRequired = true;
+                    break;
+                case KM_TAG_USER_AUTH_TYPE & KEYMASTER_TAG_TYPE_MASK:
+                    userAuthType = getIntegerFromAsn1(value);
+                    break;
+                case KM_TAG_AUTH_TIMEOUT & KEYMASTER_TAG_TYPE_MASK:
+                    authTimeout = getIntegerFromAsn1(value);
+                    break;
+                case KM_TAG_ALLOW_WHILE_ON_BODY & KEYMASTER_TAG_TYPE_MASK:
+                    allowWhileOnBody = true;
+                    break;
+                case KM_TAG_TRUSTED_USER_PRESENCE_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
+                    trustedUserPresenceReq = true;
+                    break;
+                case KM_TAG_TRUSTED_CONFIRMATION_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
+                    trustedConfirmationReq = true;
+                    break;
+                case KM_TAG_UNLOCKED_DEVICE_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
+                    unlockedDeviceReq = true;
+                    break;
+                case KM_TAG_ALL_APPLICATIONS & KEYMASTER_TAG_TYPE_MASK:
+                    allApplications = true;
+                    break;
+                case KM_TAG_APPLICATION_ID & KEYMASTER_TAG_TYPE_MASK:
+                    applicationId = getStringFromAsn1OctetStreamAssumingUTF8(value);
+                    break;
+                case KM_TAG_CREATION_DATETIME & KEYMASTER_TAG_TYPE_MASK:
+                    creationDateTime = getDateFromAsn1(value);
+                    break;
+                case KM_TAG_ORIGIN & KEYMASTER_TAG_TYPE_MASK:
+                    origin = getIntegerFromAsn1(value);
+                    break;
+                case KM_TAG_ROLLBACK_RESISTANT & KEYMASTER_TAG_TYPE_MASK:
+                    rollbackResistant = true;
+                    break;
+                case KM_TAG_ROOT_OF_TRUST & KEYMASTER_TAG_TYPE_MASK:
+                    rootOfTrust = RootOfTrust(value);
+                    break;
+
 
             }
         }
@@ -583,6 +746,47 @@ public class keyattestion {
         if (usageCountLimit != null) {
             s.append("\nUsage count limit: ").append(usageCountLimit);
         }
+        if (noAuthRequired != null) {
+            s.append("\nNo Auth Required");
+        }
+        if (userAuthType != null) {
+            s.append("\nAuth types: ").append(userAuthTypeToString(userAuthType));
+        }
+        if (authTimeout != null) {
+            s.append("\nAuth timeout: ").append(authTimeout);
+        }
+        if (allowWhileOnBody != null) {
+            s.append("\nAllow While On Body");
+        }
+        if (trustedUserPresenceReq != null) {
+            s.append("\nUser presence required");
+        }
+        if (trustedConfirmationReq != null) {
+            s.append("\nConfirmation required");
+        }
+        if (unlockedDeviceReq != null) {
+            s.append("\nUnlocked Device Required");
+        }
+        if (allApplications != null) {
+            s.append("\nAll Applications");
+        }
+        if (applicationId != null) {
+            s.append("\nApplication ID: ").append(applicationId);
+        }
+        if (creationDateTime != null) {
+            s.append("\nCreated: ").append(formatDate(creationDateTime));
+        }
+        if (origin != null) {
+            s.append("\nOrigin: ").append(originToString(origin));
+        }
+        if (rollbackResistant != null) {
+            s.append("\nRollback resistant");
+        }
+        if (rootOfTrust != null) {
+            s.append("\nRoot of Trust:\n");
+            s.append(rootOfTrust);
+        }
+
 
         return s.toString();
     }
