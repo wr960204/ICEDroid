@@ -111,23 +111,7 @@ public class certificate {
         }
         return null; // 找不到颁发者
     }
-//--------------------------------------------------------------------------------------------------------------------------------
-    private X509Certificate getAppSignatureCertificate(Context context) {
-        try {
-            String packageName = getPackageName(context.getClass());
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
-
-            Signature[] signatures = packageInfo.signatures;
-            byte[] certBytes = signatures[0].toByteArray();
-            return (X509Certificate) CertificateFactory.getInstance("X.509")
-                    .generateCertificate(new ByteArrayInputStream(certBytes));
-        } catch (Exception e) {
-            Log.e("CertUtils", "Error getting app certificate", e);
-            return null;
-        }
-    }
-
+//-----------------------------------------------证书链----------------------------------------------------------------
     @SuppressLint("StaticFieldLeak")
     public void validateAppCertificateChainSimple(Context context) {
         new AsyncTask<Void, Void, List<X509Certificate>>() {
@@ -136,11 +120,9 @@ public class certificate {
                 try {
                     X509Certificate leafCert = getAppSignatureCertificate(context);
                     if (leafCert == null) return null;
-
                     // 加载系统信任库
                     KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
                     keyStore.load(null, null);
-
                     // 构建证书缓存
                     Map<String, X509Certificate> certCache = new HashMap<>();
                     Enumeration<String> aliases = keyStore.aliases();
@@ -150,12 +132,10 @@ public class certificate {
                             certCache.put(x509Cert.getSubjectDN().getName(), x509Cert);
                         }
                     }
-
                     // 构建证书链
                     List<X509Certificate> chain = new ArrayList<>();
                     X509Certificate current = leafCert;
                     Set<X509Certificate> visited = new HashSet<>();
-
                     while (current != null && !visited.contains(current)) {
                         chain.add(current);
                         visited.add(current);
@@ -170,7 +150,6 @@ public class certificate {
                     return null;
                 }
             }
-
             @Override
             protected void onPostExecute(List<X509Certificate> certChain) {
                 StringBuilder result = new StringBuilder();
@@ -196,7 +175,6 @@ public class certificate {
                 }
                 System.out.println(result.toString());
             }
-
             private boolean isSelfSigned(X509Certificate cert) {
                 try {
                     cert.verify(cert.getPublicKey());
@@ -208,6 +186,21 @@ public class certificate {
         }.execute();
     }
 
+    private X509Certificate getAppSignatureCertificate(Context context) {
+        try {
+            String packageName = getPackageName(context.getClass());
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
+
+            Signature[] signatures = packageInfo.signatures;
+            byte[] certBytes = signatures[0].toByteArray();
+            return (X509Certificate) CertificateFactory.getInstance("X.509")
+                    .generateCertificate(new ByteArrayInputStream(certBytes));
+        } catch (Exception e) {
+            Log.e("CertUtils", "Error getting app certificate", e);
+            return null;
+        }
+    }
 
 
 

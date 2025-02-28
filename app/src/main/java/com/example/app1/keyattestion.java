@@ -36,6 +36,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.security.spec.ECGenParameterSpec;
+import java.text.DateFormat;
 import java.util.Arrays;
 import java.math.BigInteger;
 import java.util.Date;
@@ -59,6 +60,7 @@ public class keyattestion {
     public String checkcertchain() {
         StringBuilder KeyDescription = new StringBuilder("KeyDescription");
         StringBuilder AuthorizationList = new StringBuilder("AuthorizationList");
+        //-------------------------------生成证书链-------------------------------------------
         try {
             // 从 Android Keystore 中获取密钥
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
@@ -79,12 +81,13 @@ public class keyattestion {
                                 .build());
                 KeyPair keyPair = keyPairGenerator.generateKeyPair();
             }
-
-            Certificate[] certs = keyStore.getCertificateChain("ec_test_key");
-            X509Certificate x509Cert = (X509Certificate) certs[0];
+            //--------------------------------------获取证书---------------------------------------------------
+            Certificate[] certs = keyStore.getCertificateChain("ec_test_key");//证书链
+            X509Certificate x509Cert = (X509Certificate) certs[0];//获取含有1.3.6.1.4.1.11129.2.1.17extension的证书
+            //--------------------------------------解析证书---------------------------------------------------
             byte[] attestationExtensionBytes = x509Cert.getExtensionValue(ASN1_OID);
             ASN1Sequence seq = getAsn1SequenceFromBytes(attestationExtensionBytes);
-
+            //------------------KeyDescription-----------------------
             String attestationVersion = attestationVersionToString(getIntegerFromAsn1(seq.getObjectAt(ATTESTATION_VERSION_INDEX)));
             String attestationSecurityLevel = securityLevelToString(getIntegerFromAsn1(seq.getObjectAt(ATTESTATION_SECURITY_LEVEL_INDEX)));
             String keymasterVersion = keymasterVersionToString(getIntegerFromAsn1(seq.getObjectAt(KEYMASTER_VERSION_INDEX)));
@@ -103,6 +106,7 @@ public class keyattestion {
             if (CharMatcher.ascii().matchesAllOf(stringChallenge)) {
                 KeyDescription.append("\nattestationChallenge:").append(stringChallenge);
             } else {
+                assert attestationChallenge != null;
                 KeyDescription.append("\nattestationChallenge:").append(BaseEncoding.base64().encode(attestationChallenge));
             }
             if (uniqueId != null) {
@@ -110,13 +114,12 @@ public class keyattestion {
             }
 
             System.out.println(x509Cert);
-
+            System.out.println(KeyDescription.toString());
+            //------------------AuthorizationList-----------------------
             //AuthorizationList(seq.getObjectAt(SW_ENFORCED_INDEX));
             AuthorizationList.append(AuthorizationList(seq.getObjectAt(TEE_ENFORCED_INDEX)));
 
-            StringBuilder result = new StringBuilder();
-            result.append(KeyDescription).append("\n\n").append(AuthorizationList);
-            return result.toString();
+            return KeyDescription + "\n\n" + AuthorizationList;
 
         } catch (NoSuchAlgorithmException | CertificateException | IOException |
                  NoSuchProviderException |
@@ -126,16 +129,14 @@ public class keyattestion {
         }
         return "解析失败";
     }
-
+//---------------------------------------------------getdataFromAsn1------------------------------------------------
     public static byte[] getByteArrayFromAsn1(ASN1Encodable asn1Encodable)
             throws CertificateParsingException {
-        if (!(asn1Encodable instanceof DEROctetString)) {
+        if (!(asn1Encodable instanceof DEROctetString derOctectString)) {
             throw new CertificateParsingException("Expected DEROctetString");
         }
-        ASN1OctetString derOctectString = (ASN1OctetString) asn1Encodable;
         return derOctectString.getOctets();
     }
-
     public static int getIntegerFromAsn1(ASN1Encodable asn1Value)
             throws CertificateParsingException {
         if (asn1Value instanceof ASN1Integer) {
@@ -147,6 +148,15 @@ public class keyattestion {
                     "Integer value expected, " + asn1Value.getClass().getName() + " found.");
         }
     }
+    public static Long getLongFromAsn1(ASN1Encodable asn1Value) throws CertificateParsingException {
+        if (asn1Value instanceof ASN1Integer) {
+            return bigIntegerToLong(((ASN1Integer) asn1Value).getValue());
+        } else {
+            throw new CertificateParsingException(
+                    "Integer value expected, " + asn1Value.getClass().getName() + " found.");
+        }
+    }
+
     private static int bigIntegerToInt(BigInteger bigInt) throws CertificateParsingException {
         if (bigInt.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0
                 || bigInt.compareTo(BigInteger.ZERO) < 0) {
@@ -154,6 +164,18 @@ public class keyattestion {
         }
         return bigInt.intValue();
     }
+    private static long bigIntegerToLong(BigInteger bigInt) throws CertificateParsingException {
+        if (bigInt.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0
+                || bigInt.compareTo(BigInteger.ZERO) < 0) {
+            throw new CertificateParsingException("INTEGER out of bounds");
+        }
+        return bigInt.longValue();
+    }
+
+    public static Date getDateFromAsn1(ASN1Primitive value) throws CertificateParsingException {
+        return new Date(getLongFromAsn1(value));
+    }
+
 
     public static ASN1Sequence getAsn1SequenceFromBytes(byte[] bytes)
             throws CertificateParsingException {
@@ -199,38 +221,54 @@ public class keyattestion {
 
 //--------------------------------------------------KeyDescription---------------------------------------------------------
     public static String attestationVersionToString(int version) {
-        return switch (version) {
-            case 1 -> "Keymaster 2.0";
-            case 2 -> "Keymaster 3.0";
-            case 3 -> "Keymaster 4.0";
-            case 4 -> "Keymaster 4.1";
-            case 100 -> "KeyMint 1.0";
-            case 200 -> "KeyMint 2.0";
-            case 300 -> "KeyMint 3.0";
-            default -> "Unknown (" + version + ")";
-        };
+        if (version == 1) {
+            return "Keymaster 2.0";
+        } else if (version == 2) {
+            return "Keymaster 3.0";
+        } else if (version == 3) {
+            return "Keymaster 4.0";
+        } else if (version == 4) {
+            return "Keymaster 4.1";
+        } else if (version == 100) {
+            return "KeyMint 1.0";
+        } else if (version == 200) {
+            return "KeyMint 2.0";
+        } else if (version == 300) {
+            return "KeyMint 3.0";
+        }
+        return "Unknown (" + version + ")";
     }
     public static String keymasterVersionToString(int version) {
-        return switch (version) {
-            case 0 -> "Keymaster 0.2 or 0.3";
-            case 1 -> "Keymaster 1.0";
-            case 2 -> "Keymaster 2.0";
-            case 3 -> "Keymaster 3.0";
-            case 4 -> "Keymaster 4.0";
-            case 41 -> "Keymaster 4.1";
-            case 100 -> "KeyMint 1.0";
-            case 200 -> "KeyMint 2.0";
-            case 300 -> "KeyMint 3.0";
-            default -> "Unknown (" + version + ")";
-        };
+        if (version == 0) {
+            return "Keymaster 0.2 or 0.3";
+        } else if (version == 1) {
+            return "Keymaster 1.0";
+        } else if (version == 2) {
+            return "Keymaster 2.0";
+        } else if (version == 3) {
+            return "Keymaster 3.0";
+        } else if (version == 4) {
+            return "Keymaster 4.0";
+        } else if (version == 41) {
+            return "Keymaster 4.1";
+        } else if (version == 100) {
+            return "KeyMint 1.0";
+        } else if (version == 200) {
+            return "KeyMint 2.0";
+        } else if (version == 300) {
+            return "KeyMint 3.0";
+        }
+        return "Unknown (" + version + ")";
     }
     public static String securityLevelToString(int attestationSecurityLevel) {
-        return switch (attestationSecurityLevel) {
-            case 0 -> "Software";
-            case 1 -> "TEE";
-            case 2 -> "StrongBox";
-            default -> "Unknown (" + attestationSecurityLevel + ")";
-        };
+        if (attestationSecurityLevel == 0) {
+            return "Software";
+        } else if (attestationSecurityLevel == 1) {
+            return "TEE";
+        } else if (attestationSecurityLevel == 2) {
+            return "StrongBox";
+        }
+        return "Unknown (" + attestationSecurityLevel + ")";
     }
 //--------------------------------------------------AuthorizationList---------------------------------------------------------
 // Keymaster tag classes
@@ -293,7 +331,7 @@ public class keyattestion {
     public static final int KM_TAG_DEVICE_UNIQUE_ATTESTATION = KM_BOOL | 720;
     public static final int KM_TAG_IDENTITY_CREDENTIAL_KEY = KM_BOOL | 721;
     public static final int KM_TAG_ATTESTATION_ID_SECOND_IMEI = KM_BYTES | 723;
-
+    //--------------------------------tag---------------------------------------
     private Integer securityLevel;
     private Set<Integer> purposes;
     private Integer algorithm;
@@ -339,7 +377,7 @@ public class keyattestion {
     private Boolean identityCredentialKey;
     private String secondImei;
 
-
+    //purpose
     public static final int KM_PURPOSE_ENCRYPT = 0;
     public static final int KM_PURPOSE_DECRYPT = 1;
     public static final int KM_PURPOSE_SIGN = 2;
@@ -357,6 +395,85 @@ public class keyattestion {
             .put(KM_PURPOSE_AGREE_KEY, "AGREE KEY")
             .put(KM_PURPOSE_ATTEST_KEY, "ATTEST KEY")
             .build();
+    //algorithm
+    public static final int KM_ALGORITHM_RSA = 1;
+    public static final int KM_ALGORITHM_EC = 3;
+    public static final int KM_ALGORITHM_AES = 32;
+    public static final int KM_ALGORITHM_3DES = 33;
+    public static final int KM_ALGORITHM_HMAC = 128;
+    public static String algorithmToString(int algorithm) {
+        return switch (algorithm) {
+            case KM_ALGORITHM_RSA -> "RSA";
+            case KM_ALGORITHM_EC -> "ECDSA";
+            case KM_ALGORITHM_AES -> "AES";
+            case KM_ALGORITHM_3DES -> "3DES";
+            case KM_ALGORITHM_HMAC -> "HMAC";
+            default -> "Unknown (" + algorithm + ")";
+        };
+    }
+    //keysize
+    //digests
+    public static final int KM_DIGEST_NONE = 0;
+    public static final int KM_DIGEST_MD5 = 1;
+    public static final int KM_DIGEST_SHA1 = 2;
+    public static final int KM_DIGEST_SHA_2_224 = 3;
+    public static final int KM_DIGEST_SHA_2_256 = 4;
+    public static final int KM_DIGEST_SHA_2_384 = 5;
+    public static final int KM_DIGEST_SHA_2_512 = 6;
+    private static final ImmutableMap<Integer, String> digestMap = ImmutableMap
+            .<Integer, String>builder()
+            .put(KM_DIGEST_NONE, KeyProperties.DIGEST_NONE)
+            .put(KM_DIGEST_MD5, KeyProperties.DIGEST_MD5)
+            .put(KM_DIGEST_SHA1, KeyProperties.DIGEST_SHA1)
+            .put(KM_DIGEST_SHA_2_224, KeyProperties.DIGEST_SHA224)
+            .put(KM_DIGEST_SHA_2_256, KeyProperties.DIGEST_SHA256)
+            .put(KM_DIGEST_SHA_2_384, KeyProperties.DIGEST_SHA384)
+            .put(KM_DIGEST_SHA_2_512, KeyProperties.DIGEST_SHA512)
+            .build();
+    //paddingmodes
+    public static final int KM_PAD_NONE = 1;
+    public static final int KM_PAD_RSA_OAEP = 2;
+    public static final int KM_PAD_RSA_PSS = 3;
+    public static final int KM_PAD_RSA_PKCS1_1_5_ENCRYPT = 4;
+    public static final int KM_PAD_RSA_PKCS1_1_5_SIGN = 5;
+    public static final int KM_PAD_PKCS7 = 64;
+    private static final ImmutableMap<Integer, String> paddingMap = ImmutableMap
+            .<Integer, String>builder()
+            .put(KM_PAD_NONE, KeyProperties.ENCRYPTION_PADDING_NONE)
+            .put(KM_PAD_RSA_OAEP, KeyProperties.ENCRYPTION_PADDING_RSA_OAEP)
+            .put(KM_PAD_RSA_PSS, KeyProperties.SIGNATURE_PADDING_RSA_PSS)
+            .put(KM_PAD_RSA_PKCS1_1_5_ENCRYPT, KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+            .put(KM_PAD_RSA_PKCS1_1_5_SIGN, KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
+            .put(KM_PAD_PKCS7, KeyProperties.ENCRYPTION_PADDING_PKCS7)
+            .build();
+    //eccurve
+    public static final int KM_EC_CURVE_P224 = 0;
+    public static final int KM_EC_CURVE_P256 = 1;
+    public static final int KM_EC_CURVE_P384 = 2;
+    public static final int KM_EC_CURVE_P521 = 3;
+    public static final int KM_EC_CURVE_CURVE_25519 = 4;
+    public static String ecCurveToString(Integer ecCurve) {
+        return switch (ecCurve) {
+            case KM_EC_CURVE_P224 -> "secp224r1";
+            case KM_EC_CURVE_P256 -> "secp256r1";
+            case KM_EC_CURVE_P384 -> "secp384r1";
+            case KM_EC_CURVE_P521 -> "secp521r1";
+            case KM_EC_CURVE_CURVE_25519 -> "CURVE_25519";
+            default -> "unknown (" + ecCurve + ")";
+        };
+    }
+    //rsapublicexponent
+    //mgfdigests
+    //rollbackresistance
+    //activedatetime
+    public static String formatDate(Date date) {
+        return DateFormat.getDateTimeInstance().format(date);
+    }
+    //originationexpiredatetime
+    //usageexpiredatetime
+    //usageCountLimit
+
+
 
 
     public String AuthorizationList(ASN1Encodable asn1Encodable) throws CertificateParsingException {
@@ -382,14 +499,94 @@ public class keyattestion {
                 case KM_TAG_PURPOSE & KEYMASTER_TAG_TYPE_MASK:
                     purposes = getIntegersFromAsn1Set(value);
                     break;
+                case KM_TAG_ALGORITHM & KEYMASTER_TAG_TYPE_MASK:
+                    algorithm = getIntegerFromAsn1(value);
+                    break;
+                case KM_TAG_KEY_SIZE & KEYMASTER_TAG_TYPE_MASK:
+                    keySize = getIntegerFromAsn1(value);
+                    break;
+                case KM_TAG_DIGEST & KEYMASTER_TAG_TYPE_MASK:
+                    digests = getIntegersFromAsn1Set(value);
+                    break;
+                case KM_TAG_PADDING & KEYMASTER_TAG_TYPE_MASK:
+                    paddingModes = getIntegersFromAsn1Set(value);
+                    break;
+                case KM_TAG_EC_CURVE & KEYMASTER_TAG_TYPE_MASK:
+                    ecCurve = getIntegerFromAsn1(value);
+                    break;
+                case KM_TAG_RSA_PUBLIC_EXPONENT & KEYMASTER_TAG_TYPE_MASK:
+                    rsaPublicExponent = getLongFromAsn1(value);
+                    break;
+                case KM_TAG_RSA_OAEP_MGF_DIGEST & KEYMASTER_TAG_TYPE_MASK:
+                    mgfDigests = getIntegersFromAsn1Set(value);
+                    break;
+                case KM_TAG_ROLLBACK_RESISTANCE & KEYMASTER_TAG_TYPE_MASK:
+                    rollbackResistance = true;
+                    break;
+                case KM_TAG_EARLY_BOOT_ONLY & KEYMASTER_TAG_TYPE_MASK:
+                    earlyBootOnly = true;
+                    break;
+                case KM_TAG_ACTIVE_DATETIME & KEYMASTER_TAG_TYPE_MASK:
+                    activeDateTime = getDateFromAsn1(value);
+                    break;
+                case KM_TAG_ORIGINATION_EXPIRE_DATETIME & KEYMASTER_TAG_TYPE_MASK:
+                    originationExpireDateTime = getDateFromAsn1(value);
+                    break;
+                case KM_TAG_USAGE_EXPIRE_DATETIME & KEYMASTER_TAG_TYPE_MASK:
+                    usageExpireDateTime = getDateFromAsn1(value);
+                    break;
+                case KM_TAG_USAGE_COUNT_LIMIT & KEYMASTER_TAG_TYPE_MASK:
+                    usageCountLimit = getIntegerFromAsn1(value);
+                    break;
+
             }
         }
         if (purposes != null && !purposes.isEmpty()) {
             s.append("\nPurposes: ").append(transform(purposes, forMap(purposeMap, "Unknown")));
         }
+        if (algorithm != null) {
+            s.append("\nAlgorithm: ").append(algorithmToString(algorithm));
+        }
+        if (keySize != null) {
+            s.append("\nKeySize: ").append(keySize);
+        }
+        if (digests != null && !digests.isEmpty()) {
+            s.append("\nDigests: ").append(transform(digests, forMap(digestMap, "Unknown")));
+        }
+        if (paddingModes != null && !paddingModes.isEmpty()) {
+            s.append("\nPadding modes: ").append(transform(paddingModes, forMap(paddingMap, "Unknown")));
+        }
+        if (ecCurve != null) {
+            s.append("\nEC Curve: ").append(ecCurveToString(ecCurve));
+        }
+        if (rsaPublicExponent != null) {
+            s.append("\nRSA exponent: ").append(rsaPublicExponent);
+        }
+        if (mgfDigests != null && !mgfDigests.isEmpty()) {
+            s.append("\nRsa Oaep Mgf Digest: ").append(transform(digests, forMap(digestMap, "Unknown")));
+        }
+        if (rollbackResistance != null) {
+            s.append("\nRollback resistance");
+        }
+        if (earlyBootOnly != null) {
+            s.append("\nEarly boot only");
+        }
+        if (activeDateTime != null) {
+            s.append("\nActive: ").append(formatDate(activeDateTime));
+        }
+        if (originationExpireDateTime != null) {
+            s.append("\nOrigination expire: ").append(formatDate(originationExpireDateTime));
+        }
+        if (usageExpireDateTime != null) {
+            s.append("\nUsage expire: ").append(formatDate(usageExpireDateTime));
+        }
+        if (usageCountLimit != null) {
+            s.append("\nUsage count limit: ").append(usageCountLimit);
+        }
+
         return s.toString();
     }
-    //--------------------------------tag---------------------------------------
+
 
 
 
