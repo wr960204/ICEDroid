@@ -299,9 +299,8 @@ public class MainActivity extends AppCompatActivity {
         Button button13 = findViewById(R.id.button13);
         button13.setOnClickListener(view -> {
 
-            keyattestion ka = new keyattestion();
-            String c = ka.checkcertchain();
-            s.append(c);
+            result rs = new result();
+            s.append(rs.keyattestion());
 
             checkSign();
             startScheduledTask();

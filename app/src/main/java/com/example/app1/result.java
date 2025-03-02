@@ -352,6 +352,11 @@ public class result {
 
         return t.toString();
     }
+    //------------------------------------------密钥认证----------------------------------------------------------
+    public String keyattestion(){
+        keyattestion ka = new keyattestion();
+        return ka.checkcertchain();
+    }
 
 
 }
