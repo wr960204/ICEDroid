@@ -25,7 +25,8 @@ import java.security.spec.ECGenParameterSpec;
 
 public class keyattestion {
     static final String ASN1_OID = "1.3.6.1.4.1.11129.2.1.17";
-
+    StringBuilder karesult = new StringBuilder("KeyAttestion\n");
+    private boolean isdevicelocked;
     public String checkcertchain() {
         //-------------------------------生成证书链-------------------------------------------
         try {
@@ -49,6 +50,18 @@ public class keyattestion {
             }
             //--------------------------------------获取证书---------------------------------------------------
             Certificate[] certs = keyStore.getCertificateChain("ec_test_key");//证书链
+            StringBuilder certchain = new StringBuilder("证书链\n---------------------------------\n");
+            for(Certificate cert : certs){
+                X509Certificate x509c = (X509Certificate) cert;
+                String subjectDN = x509c.getSubjectDN().getName();  // 使用者
+                String issuerDN = x509c.getIssuerDN().getName();    // 颁发者
+                String validity = x509c.getNotBefore() + " - " + x509c.getNotAfter(); // 有效期
+
+                certchain.append("Subject:").append(subjectDN).append("\n");
+                certchain.append("Issuer:").append(issuerDN).append("\n");
+                certchain.append("Validity:").append(validity).append("\n");
+                certchain.append("---------------------------------").append("\n");
+            }
             X509Certificate x509Cert = (X509Certificate) certs[0];//获取含有1.3.6.1.4.1.11129.2.1.17extension的证书
             //--------------------------------------解析证书---------------------------------------------------
             byte[] attestationExtensionBytes = x509Cert.getExtensionValue(ASN1_OID);
@@ -59,7 +72,9 @@ public class keyattestion {
             //------------------AuthorizationList-----------------------
             keyauthorizationlist ka = new keyauthorizationlist();
             String AuthorizationList = ka.AuthorizationList(seq);
-            return KeyDescription + "\n\n" + AuthorizationList;
+            isdevicelocked = ka.isdevicelocked;
+            karesult.append(certchain).append("\n\n").append(KeyDescription).append("\n\n").append(AuthorizationList);
+            return karesult.toString();
         } catch (NoSuchAlgorithmException | CertificateException | IOException |
                  NoSuchProviderException |
                  InvalidAlgorithmParameterException |
@@ -67,6 +82,9 @@ public class keyattestion {
             Log.w("checkcertchainException", e.getMessage(),e);
         }
         return "解析失败";
+    }
+    public boolean isDeviceLocked(){
+        return isdevicelocked;
     }
 //---------------------------------------------------getdataFromAsn1------------------------------------------------
     public static ASN1Sequence getAsn1SequenceFromBytes(byte[] bytes)

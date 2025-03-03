@@ -144,8 +144,8 @@ public class rootcheck {
         }
     }
     //检测bootloader
-    public boolean isBootloaderUnlocked() {
-        boolean isUnlocked = false;
+    public boolean isBootloaderLocked() {
+        boolean isLocked = true;
         try {
             Process process = Runtime.getRuntime().exec("getprop ro.boot.verifiedbootstate");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -154,7 +154,7 @@ public class rootcheck {
                 Log.d("BootloaderChecker", "Bootloader state: " + line);
                 // "orange" 表示Bootloader解锁; "green" 表示Bootloader锁定
                 if ("orange".equalsIgnoreCase(line)) {
-                    isUnlocked = true;
+                    isLocked = false;
                 }
             }
             reader.close();
@@ -162,7 +162,8 @@ public class rootcheck {
         } catch (Exception e) {
             Log.w("BootloaderChecker", "Error checking bootloader status", e);
         }
-        return isUnlocked;
+        keyattestion ka = new keyattestion();
+        return isLocked & ka.isDeviceLocked();
     }
     //检测TEE状态
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)

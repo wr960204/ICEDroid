@@ -88,6 +88,9 @@ public class keyauthorizationlist {
         setAuthorizationList(seq.getObjectAt(TEE_ENFORCED_INDEX));
         return authorizationListToString();
     }
+
+    public boolean isdevicelocked;
+
     private void setAuthorizationList(ASN1Encodable asn1Encodable) throws CertificateParsingException {
         if (!(asn1Encodable instanceof ASN1Sequence sequence)) {
             throw new CertificateParsingException("Expected sequence for authorization list, found " + asn1Encodable.getClass().getName());
@@ -536,6 +539,7 @@ public class keyauthorizationlist {
         }
         byte[] verifiedBootKey = getByteArrayFromAsn1(sequence.getObjectAt(VERIFIED_BOOT_KEY_INDEX));
         boolean deviceLocked = getBooleanFromAsn1(sequence.getObjectAt(DEVICE_LOCKED_INDEX));
+        isdevicelocked = deviceLocked;
         int verifiedBootState = getIntegerFromAsn1(sequence.getObjectAt(VERIFIED_BOOT_STATE_INDEX));
         byte[] verifiedBootHash;
         if (sequence.size() == 3){
@@ -590,16 +594,15 @@ public class keyauthorizationlist {
         int noOfInfos = packageInfos.size();
         int i = 1;
         for (String info : packageInfos) {
-            sb.append("Package info ").append(i++).append("/").append(noOfInfos).append(":\n");
+            sb.append("\tPackage info ").append(i++).append("/").append(noOfInfos).append(":\n\t");
             sb.append(info);
             sb.append('\n');
         }
-        sb.append('\n');
         i = 1;
         int noOfSigs = signatureDigests.size();
         for (byte[] sig : signatureDigests) {
-            sb.append("Certificate sha256 digest ").append(i++).append("/").append(noOfSigs).append(":");
-            sb.append("\t").append(BaseEncoding.base16().encode(sig));
+            sb.append("\tCertificate sha256 digest ").append(i++).append("/").append(noOfSigs).append(":\n");
+            sb.append(BaseEncoding.base16().encode(sig));
             sb.append('\n');
         }
         return sb.toString();

@@ -63,11 +63,11 @@ public class result {
             s.append("\n检查SELinux状态:未知");
         }
         //检查bootloader
-        if (rc.isBootloaderUnlocked()){
-            s.append("\n检查Bootloader状态:异常");
+        if (rc.isBootloaderLocked()){
+            s.append("\n检查Bootloader状态:正常");
             flag = true;
         }else {
-            s.append("\n检查Bootloader状态:正常");
+            s.append("\n检查Bootloader状态:异常");
         }
         //检查TEE
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
