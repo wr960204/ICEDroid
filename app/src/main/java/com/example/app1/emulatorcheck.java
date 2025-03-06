@@ -46,6 +46,7 @@ public class emulatorcheck {
                 }
                 assert value != null;
                 if (value.contains("x86")) {
+                    System.out.println(value);
                     flag = true;
                 }
             }

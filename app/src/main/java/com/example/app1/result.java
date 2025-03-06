@@ -65,9 +65,9 @@ public class result {
         //检查bootloader
         if (rc.isBootloaderLocked()){
             s.append("\n检查Bootloader状态:正常");
-            flag = true;
         }else {
             s.append("\n检查Bootloader状态:异常");
+            flag = true;
         }
         //检查TEE
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -243,14 +243,19 @@ public class result {
         StringBuilder s = new StringBuilder("hook检测：");
         //java层
         String cf = hc.checkfrida();
+        String cx = hc.checkxposed();
         //native层
         String jc = j.check();
         String jm = j.mapscheck();
+        String jp = j.parentscheck();
+        //关闭跟踪进程
+        String k = j.coursecheck();
         //合并结果
         s.append("\nJava层检测：\n");
-        s.append(cf).append("\n");
+        s.append(cf).append("\n").append(cx).append("\n");
         s.append("\nnative层检测：\n");
-        s.append(jc).append("\n").append(jm).append("\n");
+        s.append(jc).append("\n").append(jm).append("\n").append(jp).append("\n");
+        s.append("\n").append(k);
 
         return s.toString();
     }
@@ -347,8 +352,9 @@ public class result {
         String an = appname(context);
         String ct = certinfo();
         String df = devicefeatures(context);
+        String ka = keyattestion();
 
-        t.append(rc).append(ec).append(fc).append(hc).append(tc).append(an).append(ct).append(df);
+        t.append(rc).append(ec).append(fc).append(hc).append(tc).append(an).append(ct).append(df).append(ka);
 
         return t.toString();
     }

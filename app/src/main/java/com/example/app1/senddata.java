@@ -4,30 +4,35 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class senddata {
-    public void sendDataToServer(String data) {
+    String murl = "http://192.168.31.206:8000/learn/receive_file_content/";
+    public void sendDataToServer(String data) throws JSONException {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .build();
 
-        RequestBody body = new FormBody.Builder()
-                .add("payload", data)
-                .build();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("content", data);
+
+        RequestBody body = RequestBody.create(MediaType.get("application/json"), String.valueOf(jsonObject));
 
         Request request = new Request.Builder()
-                .url("http://119.29.243.226:8000/learn/receive_file_content/")
+                .url(murl)
                 .post(body)
                 .build();
 

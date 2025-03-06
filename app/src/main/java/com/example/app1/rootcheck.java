@@ -82,19 +82,19 @@ public class rootcheck {
     }
     //检查分区读写模式
     public boolean checkMountInfo() {
+        System.out.println("-----------------------");
         try {
             Process process = Runtime.getRuntime().exec("mount");
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = in.readLine())!= null) {
-
                 if (line.contains("system") && line.contains("rw")) {
-
-
+                    System.out.println("-----------------------");
                     return true; // /system分区被挂载为读写模式，可能是Root设备
                 }
             }
         } catch (Exception e) {
+
             return false;
         }
         return false;
@@ -223,6 +223,9 @@ public class rootcheck {
         Set<String> valuesSet = new HashSet<>();
         for (String entry : data) {
             // 将字符串按冒号分割，确保有两个部分
+            if(entry == null){
+                continue;
+            }
             String[] parts = entry.split(":", 2);
             // 如果分割成功，添加冒号后的值到集合中
             if (parts.length == 2) {

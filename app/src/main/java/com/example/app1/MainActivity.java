@@ -15,6 +15,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.concurrent.Executors;
@@ -278,15 +280,21 @@ public class MainActivity extends AppCompatActivity {
             filewr fl = new filewr();
             senddata sd = new senddata();
 
+            StringBuilder send = new StringBuilder();
             String fr = fl.readFromAppSpecificFile(this,"check.txt");
-            sd.sendDataToServer("2025.2.23android传输测试");
+            send.append(fr);
+            try {
+                sd.sendDataToServer(fr);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
 
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",fr);
+            intent.putExtra("s",send.toString());
             startActivity(intent);
         });
 
@@ -320,10 +328,10 @@ public class MainActivity extends AppCompatActivity {
     private void checkSign(){
         if(signCheck()) {
             //TODO 签名正常
-            s.append("\n签名校验成功");
+            s.append("\n\n签名校验成功");
         }else{
             //TODO 签名不正确
-            s.append("\n签名校验失败");
+            s.append("\n\n签名校验失败");
         }
     }
     private boolean signCheck(){

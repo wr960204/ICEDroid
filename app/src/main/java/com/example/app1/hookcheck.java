@@ -1,6 +1,7 @@
 package com.example.app1;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
@@ -18,6 +19,15 @@ public class hookcheck {
             s.append("检测到frida");
         }
         s.append("未检测到frida");
+        return s.toString();
+    }
+
+    public String checkxposed(){
+        StringBuilder s = new StringBuilder();
+        if(hasReadProcMaps("xposed") | checkXposedModules()){
+            s.append("检测到xposed");
+        }
+        s.append("未检测到xposed");
         return s.toString();
     }
 
@@ -87,6 +97,12 @@ public class hookcheck {
             Log.e(TAG, "读取文件失败: " + e.getMessage());
         }
         return stringBuilder.toString().trim(); // 去掉多余的换行符
+    }
+
+    public boolean checkXposedModules() {
+        String xposedDir = "/data/data/de.robv.android.xposed.installer";
+        File dir = new File(xposedDir);
+        return dir.exists(); // 检查Xposed安装目录是否存在
     }
 }
 

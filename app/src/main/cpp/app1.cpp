@@ -12,6 +12,7 @@
 #include <linux/in.h>
 #include <sys/endian.h>
 #include <string.h>
+#include <fcntl.h>
 
 
 #include "com_example_app1_fingerprintjni.h"
@@ -258,8 +259,8 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_check(JNIEnv *env
 };
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_mapscheck(JNIEnv * env, jobject){
     char line[512];
-    const char* result1 = "检测到frida特征文件";
-    const char* result2 = "未检测到frida特征文件";
+    const char* result1 = "检测到hook框架特征文件";
+    const char* result2 = "未检测到hook框架特征文件";
     const char* result3 = "系统状态异常";
     // 打开当前进程的内存映射文件/proc/self/maps进行读取
     FILE* fp = fopen("/proc/self/maps", "r");
@@ -267,7 +268,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_mapscheck(JNIEnv 
         // 如果文件成功打开，循环读取每一行
         while (fgets(line, sizeof(line), fp)) {
             // 使用strstr函数检查当前行是否包含"frida"字符串
-            if (strstr(line, "frida") || strstr(line, "gadget")) {
+            if (strstr(line, "frida") || strstr(line, "gadget") || strstr(line, "xposed")) {
                 // 如果找到了"frida"，关闭文件并返回true，表示检测到了恶意库
                 fclose(fp);
                 jstring jResult = (*env).NewStringUTF(result1);
@@ -287,6 +288,77 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_mapscheck(JNIEnv 
     return jResult; // No evil library detected.
 };
 
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_parentscheck(JNIEnv * env, jobject){
+    const char* result1 = "打开文件失败";
+    const char* result2 = "读取文件失败";
+    const char* result3 = "父进程cmdline没有zygote子串";
+    const char* result4 = "未检测到hook痕迹";
+    // 设置buf
+    char strPpidCmdline[0x100] = { 0};
+    snprintf(strPpidCmdline, sizeof(strPpidCmdline), "/proc/%d/cmdline", getppid());
+    // 打开文件
+    int file = open(strPpidCmdline, O_RDONLY);
+    if (file < 0) {
+        return (*env).NewStringUTF(result1);
+    }
+    // 文件内容读入内存
+    memset(strPpidCmdline, 0, sizeof(strPpidCmdline));
+    ssize_t ret = read(file, strPpidCmdline, sizeof(strPpidCmdline));
+    if (-1 == ret) {
+        return (*env).NewStringUTF(result2);
+    }
+    // 没找到返回0
+    char* sRet = strstr(strPpidCmdline, "zygote");
+    if (NULL == sRet) {
+        // 执行到这里，判定为调试状态
+        return (*env).NewStringUTF(result3);
+    }
+    return (*env).NewStringUTF(result4);
+}
+
+
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_coursecheck(JNIEnv * env, jobject){
+    const char* result1 = "结束跟踪进程";
+    const char* result2 = "未找到跟踪进程";
+    const int bufsize = 1024;
+    char filename[bufsize];
+    char line[bufsize];
+    char name[bufsize];
+    char nameline[bufsize];
+    int pid = getpid();
+    //先读取Tracepid的值
+    sprintf(filename, "/proc/%d/status", pid);
+    FILE *fd=fopen(filename,"r");
+    if(fd!=NULL)
+    {
+        while(fgets(line,bufsize,fd))
+        {
+            if(strstr(line,"frida")!=NULL || strstr(line,"xposed")!=NULL)
+            {
+                int statue =atoi(&line[10]);
+                if(statue!=0)
+                {
+                    sprintf(name,"/proc/%d/cmdline",statue);
+                    FILE *fdname = fopen(name,"r");
+                    if(fdname!= NULL)
+                    {
+                        while(fgets(nameline,bufsize,fdname))
+                        {
+                            if(strstr(nameline,"android_server")!=NULL)
+                            {
+                                kill(pid,SIGKILL);
+                                return (*env).NewStringUTF(result1);
+                            }
+                        }
+                    }
+                    fclose(fdname);
+                }
+            }
+        }
+    }
+    fclose(fd);
+    return (*env).NewStringUTF(result2);
+}
 //-----------------------------------------------获取已安装应用------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_getappnames(JNIEnv * env, jobject ){
     //获取Activity Thread的实例对象

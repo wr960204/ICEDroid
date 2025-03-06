@@ -16,6 +16,10 @@ public class fingerprintjni {
 
     public native String mapscheck();
 
+    public native String coursecheck();
+
+    public native String parentscheck();
+
     public native String getappnames();
 
     public native String getcertificate();
