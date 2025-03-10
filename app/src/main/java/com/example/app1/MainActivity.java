@@ -15,8 +15,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.concurrent.Executors;
@@ -24,8 +22,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-    StringBuilder s = new StringBuilder("检测开始\n");
-
+    StringBuilder s = new StringBuilder();
+    result rs = new result();
+    boolean isdangerous;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
         Button button1 = findViewById(R.id.button1);
         button1.setOnClickListener(view -> {
 
-            result rs = new result();
             try {
                 s.append(rs.rootCheck());
+                isdangerous = rs.isdangerous(this);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -51,78 +50,115 @@ public class MainActivity extends AppCompatActivity {
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s.toString());
+            String buttonText = button1.getText().toString();
+            intent.putExtra("s", s.toString());
+            intent.putExtra("btn", buttonText);
+            intent.putExtra("isdangerous",isdangerous);
             startActivity(intent);
 
-            s.delete(5,s.length());
+            s.delete(0, s.length());
         });
 //------------------------------------------模拟器检测---------------------------------------------------
         Button button2 = findViewById(R.id.button2);
         button2.setOnClickListener(view -> {
 
-            result rs = new result();
             s.append(rs.emulatorCheck(this));
-            checkSign();
+            try {
+                isdangerous = rs.isdangerous(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
+            checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s.toString());
+            String buttonText = button2.getText().toString();
+            intent.putExtra("s", s.toString());
+            intent.putExtra("btn", buttonText);
+            intent.putExtra("isdangerous",isdangerous);
             startActivity(intent);
 
-            s.delete(5,s.length());
+            s.delete(0, s.length());
         });
 //------------------------------------------指纹检测---------------------------------------------------
         Button button3 = findViewById(R.id.button3);
         button3.setOnClickListener(view -> {
 
-            result rs = new result();
             s.append(rs.checkFingerPrint(this));
+            try {
+                isdangerous = rs.isdangerous(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s.toString());
+            String buttonText = button3.getText().toString();
+            intent.putExtra("s", s.toString());
+            intent.putExtra("btn", buttonText);
+            intent.putExtra("isdangerous",isdangerous);
             startActivity(intent);
 
-            s.delete(5,s.length());
+            s.delete(0, s.length());
         });
 //------------------------------------------hook检测---------------------------------------------------
         Button button4 = findViewById(R.id.button4);
         button4.setOnClickListener(view -> {
 
-            result rs = new result();
             s.append(rs.checkhook());
+            try {
+                isdangerous = rs.isdangerous(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s.toString());
+            String buttonText = button4.getText().toString();
+            intent.putExtra("s", s.toString());
+            intent.putExtra("btn", buttonText);
+            intent.putExtra("isdangerous",isdangerous);
             startActivity(intent);
 
-            s.delete(5,s.length());
+            s.delete(0, s.length());
         });
 //------------------------------------------native检测---------------------------------------------------
         Button button5 = findViewById(R.id.button5);
         button5.setOnClickListener(view -> {
 
-            result rs = new result();
             s.append(rs.fingerprintjni()).append("\n");
+            try {
+                isdangerous = rs.isdangerous(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s.toString());
+            String buttonText = button5.getText().toString();
+            intent.putExtra("s", s.toString());
+            intent.putExtra("btn", buttonText);
+            intent.putExtra("isdangerous",isdangerous);
             startActivity(intent);
 
-            s.delete(5,s.length());
+            s.delete(0, s.length());
+        });
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
         });
 //------------------------------------------历史记录---------------------------------------------------
         Button button6 = findViewById(R.id.button6);
@@ -130,15 +166,25 @@ public class MainActivity extends AppCompatActivity {
 
             filewr fl = new filewr();
             //String fr = fl.bufferRead("a.txt");
-            String fr = fl.readFromAppSpecificFile(this,"check.txt");
+            String fr = fl.readFromAppSpecificFile(this, "check.txt");
+            try {
+                isdangerous = rs.isdangerous(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",fr);
+            String buttonText = button6.getText().toString();
+            intent.putExtra("s", fr);
+            intent.putExtra("btn", buttonText);
+            intent.putExtra("isdangerous",isdangerous);
             startActivity(intent);
+
+            s.delete(0, s.length());
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -151,18 +197,25 @@ public class MainActivity extends AppCompatActivity {
         Button button7 = findViewById(R.id.button7);
         button7.setOnClickListener(view -> {
 
-            result rs = new result();
             s.append(rs.test(this));
+            try {
+                isdangerous = rs.isdangerous(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s.toString());
+            String buttonText = button7.getText().toString();
+            intent.putExtra("s", s.toString());
+            intent.putExtra("btn", buttonText);
+            intent.putExtra("isdangerous",isdangerous);
             startActivity(intent);
 
-            s.delete(5,s.length());
+            s.delete(0, s.length());
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -175,18 +228,25 @@ public class MainActivity extends AppCompatActivity {
         Button button8 = findViewById(R.id.button8);
         button8.setOnClickListener(view -> {
 
-            result rs = new result();
             s.append(rs.appname(this));
+            try {
+                isdangerous = rs.isdangerous(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s.toString());
+            String buttonText = button8.getText().toString();
+            intent.putExtra("s", s.toString());
+            intent.putExtra("btn", buttonText);
+            intent.putExtra("isdangerous",isdangerous);
             startActivity(intent);
 
-            s.delete(5,s.length());
+            s.delete(0, s.length());
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -199,21 +259,25 @@ public class MainActivity extends AppCompatActivity {
         Button button9 = findViewById(R.id.button9);
         button9.setOnClickListener(view -> {
 
-            result rs = new result();
             s.append(rs.certinfo());
+            try {
+                isdangerous = rs.isdangerous(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s.toString());
+            String buttonText = button9.getText().toString();
+            intent.putExtra("s", s.toString());
+            intent.putExtra("btn", buttonText);
+            intent.putExtra("isdangerous",isdangerous);
             startActivity(intent);
 
-            certificate cf = new certificate();
-            cf.validateAppCertificateChainSimple(this);
-
-            s.delete(5,s.length());
+            s.delete(0, s.length());
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -226,33 +290,9 @@ public class MainActivity extends AppCompatActivity {
         Button button10 = findViewById(R.id.button10);
         button10.setOnClickListener(view -> {
 
-            result rs = new result();
             s.append(rs.devicefeatures(this));
-
-            checkSign();
-            startScheduledTask();
-            setDailyAlarm();
-
-            Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s.toString());
-            startActivity(intent);
-
-            s.delete(5,s.length());
-        });
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
-//------------------------------------------汇总---------------------------------------------
-        Button button11 = findViewById(R.id.button11);
-        button11.setOnClickListener(view -> {
-
-            result rs = new result();
             try {
-                s.append(rs.total(this));
+                isdangerous = rs.isdangerous(this);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -262,40 +302,13 @@ public class MainActivity extends AppCompatActivity {
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s.toString());
+            String buttonText = button10.getText().toString();
+            intent.putExtra("s", s.toString());
+            intent.putExtra("btn", buttonText);
+            intent.putExtra("isdangerous",isdangerous);
             startActivity(intent);
 
-            s.delete(5,s.length());
-        });
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-//------------------------------------------传输数据---------------------------------------------
-        Button button12 = findViewById(R.id.button12);
-        button12.setOnClickListener(view -> {
-
-            filewr fl = new filewr();
-            senddata sd = new senddata();
-
-            StringBuilder send = new StringBuilder();
-            String fr = fl.readFromAppSpecificFile(this,"check.txt");
-            send.append(fr);
-            try {
-                sd.sendDataToServer(fr);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-
-            checkSign();
-            startScheduledTask();
-            setDailyAlarm();
-
-            Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",send.toString());
-            startActivity(intent);
+            s.delete(0, s.length());
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -304,26 +317,66 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 //------------------------------------------密钥认证---------------------------------------------
-        Button button13 = findViewById(R.id.button13);
-        button13.setOnClickListener(view -> {
+        Button button11 = findViewById(R.id.button11);
+        button11.setOnClickListener(view -> {
 
-            result rs = new result();
             s.append(rs.keyattestion());
+            try {
+                isdangerous = rs.isdangerous(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             checkSign();
             startScheduledTask();
             setDailyAlarm();
 
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.putExtra("s",s.toString());
+            String buttonText = button11.getText().toString();
+            intent.putExtra("s", s.toString());
+            intent.putExtra("btn", buttonText);
+            intent.putExtra("isdangerous",isdangerous);
             startActivity(intent);
 
-            s.delete(5,s.length());
+            s.delete(0, s.length());
         });
 
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+//------------------------------------------汇总---------------------------------------------
+        Button button12 = findViewById(R.id.button12);
+        button12.setOnClickListener(view -> {
 
+            try {
+                s.append(rs.total(this));
+                isdangerous = rs.isdangerous(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            checkSign();
+            startScheduledTask();
+            setDailyAlarm();
+
+            Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+            String buttonText = button12.getText().toString();
+            intent.putExtra("s", s.toString());
+            intent.putExtra("btn", buttonText);
+            intent.putExtra("isdangerous",isdangerous);
+            startActivity(intent);
+
+            s.delete(0, s.length());
+        });
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
     }
-
     //-----------------------------------------------签名校验------------------------------------------------------
     private void checkSign(){
         if(signCheck()) {

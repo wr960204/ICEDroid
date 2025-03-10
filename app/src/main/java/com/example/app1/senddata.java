@@ -19,7 +19,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class senddata {
-    String murl = "http://192.168.31.206:8000/learn/receive_file_content/";
+    String mip = "192.168.31.206";
+    String txyip = "101.33.208.98";
+    String murl = "http://" + txyip + ":8000/learn/receive_file_content/";
     public void sendDataToServer(String data) throws JSONException {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)

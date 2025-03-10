@@ -12,11 +12,13 @@ import java.util.List;
 import java.util.Set;
 
 public class result {
+    private boolean isroot;
+    private boolean isemulator;
     //-----------------------------------------------ROOT检测------------------------------------------------------
     public String rootCheck() throws IOException {
         rootcheck rc = new rootcheck();
 
-        StringBuilder s = new StringBuilder("root检测:");
+        StringBuilder s = new StringBuilder("★root检测★");
         boolean flag = false;
         //检查SU命令
         if (rc.checkSuCommand()){
@@ -87,9 +89,11 @@ public class result {
         }
 
         if (flag){
-            s.append("\n\n可能已root\n");
+            s.append("\n\n可能已root\n\n");
+            isroot = true;
         }else {
-            s.append("\n\n可能未root\n");
+            s.append("\n\n可能未root\n\n");
+            isroot = false;
         }
 
         return s.toString();
@@ -100,7 +104,7 @@ public class result {
     public String emulatorCheck(Context context){
         emulatorcheck ec = new emulatorcheck();
 
-        StringBuilder s = new StringBuilder("模拟器检测：");
+        StringBuilder s = new StringBuilder("★模拟器检测★");
         boolean flag = false;
         //检查设备指纹
         if (ec.checkfingerprint()){
@@ -146,9 +150,11 @@ public class result {
         }
 
         if (flag){
-            s.append("\n\n可能是模拟器\n");
+            s.append("\n\n可能是模拟器\n\n");
+            isemulator = true;
         }else {
-            s.append("\n\n可能是真机\n");
+            s.append("\n\n可能是真机\n\n");
+            isemulator = false;
         }
 
         return s.toString();
@@ -159,7 +165,7 @@ public class result {
         fingerprint fp = new fingerprint();
         fingerprintjni j = new fingerprintjni();
 
-        StringBuilder s = new StringBuilder("设备指纹检测：");
+        StringBuilder s = new StringBuilder("★设备指纹检测★");
         //java层
         String dev =fp.getDeviceID(context.getContentResolver());
         String net = fp.getLocalMacAddress();
@@ -210,7 +216,7 @@ public class result {
             //对比结果
             if(!value1.equals(value2)){
                 String r = key1 + "：\n" + value1 +"\n" + value2 +"\n";
-                result.append(r);
+                result.append(r).append("\n");
             }
         }
         return result;
@@ -240,7 +246,7 @@ public class result {
         hookcheck hc = new hookcheck();
         fingerprintjni j = new fingerprintjni();
 
-        StringBuilder s = new StringBuilder("hook检测：");
+        StringBuilder s = new StringBuilder("★hook检测★");
         //java层
         String cf = hc.checkfrida();
         String cx = hc.checkxposed();
@@ -255,7 +261,7 @@ public class result {
         s.append(cf).append("\n").append(cx).append("\n");
         s.append("\nnative层检测：\n");
         s.append(jc).append("\n").append(jm).append("\n").append(jp).append("\n");
-        s.append("\n").append(k);
+        s.append("\n").append(k).append("\n\n");
 
         return s.toString();
     }
@@ -265,14 +271,14 @@ public class result {
     public String fingerprintjni(){
         fingerprintjni j = new fingerprintjni();
 
-        StringBuilder s = new StringBuilder("native层检测：\n");
-        String fingerprint = "系统指纹：" + j.fingerprint() + "\n";
+        StringBuilder s = new StringBuilder("★native层检测★");
+        String fingerprint = "\n系统指纹：" + j.fingerprint() + "\n";
         String netaddress = "\n网络地址：\n" + j.netfp() + "\n";
         String hookcheck = "\nhook检测：\n" + j.check() + "\n" + j.mapscheck() + "\n";
         String appnames = "\n检测已安装应用：\n" + j.getappnames() + "\n";
         String cert = "\n检测CA证书：\n" + j.getcertificate() + "\n";
         String features = "\n检测支持软硬件：\n" + j.getdevicefeatures() + "\n";
-        s.append(fingerprint).append(netaddress).append(hookcheck).append(appnames).append(cert).append(features);
+        s.append(fingerprint).append(netaddress).append(hookcheck).append(appnames).append(cert).append(features).append("\n");
 
         return s.toString();
     }
@@ -281,10 +287,10 @@ public class result {
     public String test(Context context){
         fptest fp = new fptest();
 
-        StringBuilder fs = new StringBuilder("test：\n");
+        StringBuilder fs = new StringBuilder("★test★");
         List<String> p = fp.getProperties(context);
         for (String property : p){
-            fs.append(property).append("\n");
+            fs.append("\n").append(property).append("\n\n");
         }
 
         return fs.toString();
@@ -295,7 +301,7 @@ public class result {
         appname an = new appname();
         fingerprintjni j = new fingerprintjni();
 
-        StringBuilder name = new StringBuilder("获取已安装应用：");
+        StringBuilder name = new StringBuilder("★获取已安装应用★");
         //java层
         String javaan = an.getAllAppNames(context);
         //native层
@@ -303,6 +309,7 @@ public class result {
         //合并结果
         name.append("\njava层检测：\n").append(javaan);
         name.append("\nnative层检测：\n").append(nativean);
+        name.append("\n");
 
         return name.toString();
     }
@@ -312,7 +319,7 @@ public class result {
         certificate c = new certificate();
         fingerprintjni j = new fingerprintjni();
 
-        StringBuilder cert = new StringBuilder("获取CA证书：");
+        StringBuilder cert = new StringBuilder("★获取CA证书★");
         //java层
         String jc = c.listInstalledCertificates();
         //native层
@@ -320,6 +327,7 @@ public class result {
         //合并结果
         cert.append("\njava层检测：\n").append(jc);
         cert.append("\nnative层检测：\n").append(nc);
+        cert.append("\n");
 
         return cert.toString();
     }
@@ -329,7 +337,7 @@ public class result {
         devicesfeatures df = new devicesfeatures();
         fingerprintjni j = new fingerprintjni();
 
-        StringBuilder features = new StringBuilder("获取支持软硬件：");
+        StringBuilder features = new StringBuilder("★获取支持软硬件★");
         //java层
         String jf = df.features(context);
         //native层
@@ -337,10 +345,15 @@ public class result {
         //合并结果
         features.append("\njava层检测：\n").append(jf);
         features.append("\nnative层检测：\n").append(nf);
+        features.append("\n");
 
         return features.toString();
     }
-
+    //------------------------------------------密钥认证----------------------------------------------------------
+    public String keyattestion(){
+        keyattestion ka = new keyattestion();
+        return ka.checkcertchain();
+    }
     //------------------------------------------汇总----------------------------------------------------------
     public String total(Context context) throws IOException {
         StringBuilder t = new StringBuilder();
@@ -358,11 +371,10 @@ public class result {
 
         return t.toString();
     }
-    //------------------------------------------密钥认证----------------------------------------------------------
-    public String keyattestion(){
-        keyattestion ka = new keyattestion();
-        return ka.checkcertchain();
+
+    public boolean isdangerous(Context context) throws IOException {
+        rootCheck();
+        emulatorCheck(context);
+        return isroot||isemulator;
     }
-
-
 }

@@ -25,7 +25,7 @@ import java.security.spec.ECGenParameterSpec;
 
 public class keyattestion {
     static final String ASN1_OID = "1.3.6.1.4.1.11129.2.1.17";
-    StringBuilder karesult = new StringBuilder("KeyAttestion\n");
+    StringBuilder karesult = new StringBuilder("★KeyAttestion★\n");
     private boolean isdevicelocked;
     public String checkcertchain() {
         //-------------------------------生成证书链-------------------------------------------
