@@ -12,14 +12,13 @@ import java.util.List;
 import java.util.Set;
 
 public class result {
-    private boolean isroot;
-    private boolean isemulator;
+    private String risklevel;
+    boolean flag;
     //-----------------------------------------------ROOT检测------------------------------------------------------
     public String rootCheck() throws IOException {
         rootcheck rc = new rootcheck();
 
         StringBuilder s = new StringBuilder("★root检测★");
-        boolean flag = false;
         //检查SU命令
         if (rc.checkSuCommand()){
             s.append("\n检查SU命令:执行成功");
@@ -89,11 +88,9 @@ public class result {
         }
 
         if (flag){
-            s.append("\n\n可能已root\n\n");
-            isroot = true;
+            s.append("\n\n可能已root\n");
         }else {
-            s.append("\n\n可能未root\n\n");
-            isroot = false;
+            s.append("\n\n可能未root\n");
         }
 
         return s.toString();
@@ -150,12 +147,35 @@ public class result {
         }
 
         if (flag){
-            s.append("\n\n可能是模拟器\n\n");
-            isemulator = true;
+            s.append("\n\n可能是模拟器\n");
         }else {
-            s.append("\n\n可能是真机\n\n");
-            isemulator = false;
+            s.append("\n\n可能是真机\n");
         }
+
+        return s.toString();
+    }
+
+    //-----------------------------------------------hook检测方法------------------------------------------------------
+    public String checkhook(){
+        hookcheck hc = new hookcheck();
+        fingerprintjni j = new fingerprintjni();
+
+        StringBuilder s = new StringBuilder("★hook检测★");
+        //java层
+        String cf = hc.checkfrida();
+        String cx = hc.checkxposed();
+        //native层
+        String jc = j.check();
+        String jm = j.mapscheck();
+        String jp = j.parentscheck();
+        //关闭跟踪进程
+        String k = j.coursecheck();
+        //合并结果
+        s.append("\nJava层检测：\n");
+        s.append(cf).append("\n").append(cx).append("\n");
+        s.append("\nnative层检测：\n");
+        s.append(jc).append("\n").append(jm).append("\n").append(jp).append("\n");
+        s.append("\n").append(k).append("\n");
 
         return s.toString();
     }
@@ -241,32 +261,6 @@ public class result {
         return valuesSet.size() == 1;
     }
 
-    //-----------------------------------------------hook检测方法------------------------------------------------------
-    public String checkhook(){
-        hookcheck hc = new hookcheck();
-        fingerprintjni j = new fingerprintjni();
-
-        StringBuilder s = new StringBuilder("★hook检测★");
-        //java层
-        String cf = hc.checkfrida();
-        String cx = hc.checkxposed();
-        //native层
-        String jc = j.check();
-        String jm = j.mapscheck();
-        String jp = j.parentscheck();
-        //关闭跟踪进程
-        String k = j.coursecheck();
-        //合并结果
-        s.append("\nJava层检测：\n");
-        s.append(cf).append("\n").append(cx).append("\n");
-        s.append("\nnative层检测：\n");
-        s.append(jc).append("\n").append(jm).append("\n").append(jp).append("\n");
-        s.append("\n").append(k).append("\n\n");
-
-        return s.toString();
-    }
-
-
     //-----------------------------------------------native检测方法------------------------------------------------------
     public String fingerprintjni(){
         fingerprintjni j = new fingerprintjni();
@@ -290,7 +284,7 @@ public class result {
         StringBuilder fs = new StringBuilder("★test★");
         List<String> p = fp.getProperties(context);
         for (String property : p){
-            fs.append("\n").append(property).append("\n\n");
+            fs.append("\n").append(property);
         }
 
         return fs.toString();
@@ -359,22 +353,28 @@ public class result {
         StringBuilder t = new StringBuilder();
         String rc = rootCheck();
         String ec = emulatorCheck(context);
-        String fc = checkFingerPrint(context);
         String hc = checkhook();
+        String fc = checkFingerPrint(context);
         String tc = test(context);
         String an = appname(context);
         String ct = certinfo();
         String df = devicefeatures(context);
         String ka = keyattestion();
 
-        t.append(rc).append(ec).append(fc).append(hc).append(tc).append(an).append(ct).append(df).append(ka);
+        t.append(rc).append(ec).append(hc).append(fc).append(tc).append(an).append(ct).append(df).append(ka);
 
         return t.toString();
     }
 
-    public boolean isdangerous(Context context) throws IOException {
+    public String isdangerous(Context context) throws IOException {
         rootCheck();
         emulatorCheck(context);
-        return isroot||isemulator;
+        if (flag){
+            risklevel = "风险";
+        }else {
+            risklevel = "安全";
+        }
+        return risklevel;
     }
+
 }

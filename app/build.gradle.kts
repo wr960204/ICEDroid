@@ -31,6 +31,11 @@ android {
             )
         }
     }
+
+    buildFeatures {
+        prefab = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -38,9 +43,10 @@ android {
     externalNativeBuild {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.22.1"
+            version = "3.31.0"
         }
     }
+
 
 }
 
@@ -61,6 +67,7 @@ dependencies {
     //noinspection GradleDependency
     implementation (libs.okhttp)
     implementation ("org.bouncycastle:bcprov-jdk18on:1.76")
+    implementation (libs.xposeddetector)
     
     /*
 
