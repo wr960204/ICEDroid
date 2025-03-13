@@ -64,6 +64,8 @@ dependencies {
     implementation (libs.cbor)
     implementation (libs.dev.core.ktx)
 
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
+
     //noinspection GradleDependency
     implementation (libs.okhttp)
     implementation ("org.bouncycastle:bcprov-jdk18on:1.76")

@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.darvin.security.detectfrada;
 
 public class MainActivity extends AppCompatActivity {
     result rs = new result();
@@ -115,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } else if (position == 2) {// "查看记录"
                     getrecord();
+
                 } else if (position == 3) {// "更新内部文件"
                     try {
                         updateInternalFiles();
@@ -129,6 +131,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } else if (position == 5) {// "传输数据"
                     senddata();
+                }
+                else if (position == 6) {// "传输数据"
+                    detectfrada df = new detectfrada();
+                    df.detectf();
                 }
                 // 选择操作后将 Spinner 重置回第一个选项
                 menu.setSelection(0);
