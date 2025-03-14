@@ -12,6 +12,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
@@ -33,13 +34,17 @@ public class keyattestion {
             // 从 Android Keystore 中获取密钥
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
+            System.out.println(keyStore.containsAlias("ec_key"));
+            System.out.println(keyStore.containsAlias("rsa_test_key"));
+            System.out.println(keyStore.containsAlias("ec_test_key"));
             // 生成一个非对称密钥对（RSA）如果还没有的话
-            if (!keyStore.containsAlias("ec_test_key")) {
+            if (!keyStore.containsAlias("ec_key")) {
+                System.out.println("开始生成密钥");
                 KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(
                         KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore");
                 keyPairGenerator.initialize(
                         new KeyGenParameterSpec.Builder(
-                                "ec_test_key",
+                                "ec_key",
                                 KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY)
                                 .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
                                 .setDigests(KeyProperties.DIGEST_SHA256,
@@ -47,10 +52,22 @@ public class keyattestion {
                                         KeyProperties.DIGEST_SHA512)
                                 .setAttestationChallenge("hello world".getBytes(StandardCharsets.UTF_8))
                                 .build());
+                KeyPair keyPair = keyPairGenerator.generateKeyPair();
+                if(keyStore.containsAlias("ec_key")){
+                    System.out.println("密钥生成成功");
+                }else {
+                    System.out.println("密钥生成失败");
+                }
+
             }
             //--------------------------------------获取证书---------------------------------------------------
-            Certificate[] certs = keyStore.getCertificateChain("ec_test_key");//证书链
+            Certificate[] certs = keyStore.getCertificateChain("ec_key");//证书链
             StringBuilder certchain = new StringBuilder("证书链\n---------------------------------\n");
+            if (certs == null) {
+                Log.e("KeyAttestation", "Certificate chain is null");
+                // 根据需要返回错误状态或使用默认值
+                return "Certificate chain is null";
+            }
             for(Certificate cert : certs){
                 X509Certificate x509c = (X509Certificate) cert;
                 String subjectDN = x509c.getSubjectDN().getName();  // 使用者

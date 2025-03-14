@@ -1,6 +1,5 @@
 package com.example.app1;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -26,8 +25,6 @@ import java.util.Calendar;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import com.darvin.security.detectfrada;
 
 public class MainActivity extends AppCompatActivity {
     result rs = new result();
@@ -131,10 +128,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } else if (position == 5) {// "传输数据"
                     senddata();
-                }
-                else if (position == 6) {// "传输数据"
-                    detectfrada df = new detectfrada();
-                    df.detectf();
+                } else if (position == 6) {// "detectfrida"
+                    Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+                    intent.putExtra("detectfrida",true);
+                    intent.putExtra("btn", "detectfrida");
+                    intent.putExtra("s", "相关检测结果请查看logcat");
+                    startActivity(intent);
+
+                } else if (position == 7) {// "magiskkiller"
+                    Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+                    intent.putExtra("magiskkiller",true);
+                    intent.putExtra("btn", "magiskkiller");
+                    startActivity(intent);
                 }
                 // 选择操作后将 Spinner 重置回第一个选项
                 menu.setSelection(0);
@@ -150,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
         result rs = new result();
         Intent intent = new Intent(MainActivity.this, MainActivity2.class);
         intent.putExtra("s", rs.total(this));
+        intent.putExtra("btn", "获取完整检测结果");
         startActivity(intent);
     }
     private void getrecord() {
@@ -159,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(MainActivity.this, MainActivity2.class);
         intent.putExtra("s", fr);
+        intent.putExtra("btn", "查看记录");
         startActivity(intent);
     }
     private void updateInternalFiles() throws IOException {
