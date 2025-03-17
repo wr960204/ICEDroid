@@ -13,9 +13,15 @@
 #include <sys/endian.h>
 #include <string.h>
 #include <fcntl.h>
-
+#include <sys/wait.h>
+#include <android/log.h>
+#include <pthread.h>
+#include <sstream>
 
 #include "com_example_app1_fingerprintjni.h"
+
+#define TAG "nativecheck"
+#define LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,TAG,__VA_ARGS__)
 
 //-----------------------------------------------设备指纹检测------------------------------------------------------
 #ifdef __cplusplus
@@ -211,7 +217,326 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_netfp(JNIEnv * en
     jstring jResult = (*env).NewStringUTF(result);
     return jResult;
  };
+//-----------------------------------------------模拟器检测方法------------------------------------------------------
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_qemubkpt(JNIEnv * env, jobject){
+    const char* result1 = "正常";
+    const char* result2 = "异常";
+    // 内部函数：处理SIGTRAP信号
+    auto handler_sigtrap = [](int signo) {
+        exit(-1);
+    };
+    // 内部函数：处理SIGBUS信号
+    auto handler_sigbus = [](int signo) {
+        exit(-1);
+    };
+    // 内部函数：设置信号捕获
+    auto setupSigTrap = [&handler_sigtrap, &handler_sigbus]() {
+        // BKPT throws SIGTRAP on nexus 5 / oneplus one (and most devices)
+        signal(SIGTRAP, handler_sigtrap);
+        // BKPT throws SIGBUS on nexus 4
+        signal(SIGBUS, handler_sigbus);
+    };
+    // 内部函数：尝试执行断点指令
+    auto tryBKPT = []() {
+        __builtin_trap();
+    };
+    // 主检测逻辑
+    LOGD("qemubkpt");
+    pid_t child = fork();
+    int child_status, status = 0;
+    if(child == 0) {
+        // 子进程中设置信号处理并触发BKPT指令
+        setupSigTrap();
+        tryBKPT();
+    } else if(child == -1) {
+        // fork失败
+        status = -1;
+    } else {
+        // 父进程监控子进程
+        int timeout = 0;
+        int i = 0;
+        while (waitpid(child, &child_status, WNOHANG) == 0) {
+            sleep(1);
+            // 超时检查 - 通常模拟器会导致子进程冻结
+            if(i++ == 1) {
+                timeout = 1;
+                break;
+            }
+        }
+        if(timeout == 1) {
+            // 进程超时 - 可能是模拟设备，子进程已冻结
+            status = 1;
+        }
+        if (WIFEXITED(child_status)) {
+            // 正常退出 - 很可能是真实设备
+            status = 0;
+        } else {
+            // 非正常退出 - 很可能是模拟器
+            status = 2;
+        }
+        // 确保子进程已终止
+        kill(child, SIGKILL);
+    }
+    if(status > 0){
+        return (*env).NewStringUTF(result2);
+    }
+    return (*env).NewStringUTF(result1);
+}
 
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_executespeed(JNIEnv * env, jobject){
+    const char* result1 = "正常";
+    const char* result2 = "异常";
+    volatile int global_value = 0;
+    int count[100] = {0};
+    char count_string[1024] = "";
+    bool thread_ready = false;
+    bool start_testing = false;
+
+    // 创建互斥锁和条件变量
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+    pthread_mutex_init(&mutex, NULL);
+    pthread_cond_init(&cond, NULL);
+
+    // 线程参数结构体
+    struct ThreadOneData {
+        volatile int* global_value;
+        bool* thread_ready;
+        bool* start_testing;
+        pthread_mutex_t* mutex;
+        pthread_cond_t* cond;
+    };
+
+    struct ThreadTwoData {
+        volatile int* global_value;
+        int* count;
+        bool* start_testing;
+        pthread_mutex_t* mutex;
+        pthread_cond_t* cond;
+    };
+
+    // 线程一函数
+    auto thread_one_func = [](void* arg) -> void* {
+        auto* data = static_cast<ThreadOneData*>(arg);
+
+        pthread_mutex_lock(data->mutex);
+        *data->thread_ready = true;
+        pthread_cond_signal(data->cond);
+
+        // 等待线程二准备好
+        while(!*data->start_testing) {
+            pthread_cond_wait(data->cond, data->mutex);
+        }
+        pthread_mutex_unlock(data->mutex);
+
+        // 执行循环逻辑
+        *data->global_value = 1;
+
+        // 架构检测
+        #if defined(__arm__)
+            __asm__ __volatile__(
+                "mov r0, %0\n"
+                "mov r1, #1\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                :
+                : "r" (data->global_value)
+                : "r0", "r1", "memory"
+            );
+        #elif defined(__aarch64__)
+            // ARM64版本
+            __asm__ __volatile__(
+                "mov x0, %0\n"
+                "mov w1, #1\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                "add w1, w1, #1\n" "str w1, [x0]\n"
+                :
+                : "r" (data->global_value)
+                : "x0", "x1", "memory"
+            );
+        #else
+            // 非ARM架构的备选方案
+            for(int i=2; i<=32; i++) {
+                *data->global_value = i;
+            }
+        #endif
+
+        return nullptr;
+    };
+
+    // 线程二函数
+    auto thread_two_func = [](void* arg) -> void* {
+        auto* data = static_cast<ThreadTwoData*>(arg);
+
+        pthread_mutex_lock(data->mutex);
+        *data->start_testing = true;
+        pthread_cond_broadcast(data->cond);
+        pthread_mutex_unlock(data->mutex);
+
+        // 采样过程
+        const int SAMPLE_COUNT = 50000; // 增加采样次数提高准确性
+        for(int i=0; i<SAMPLE_COUNT; i++) {
+            int value = *data->global_value;
+            if(value >= 0 && value <= 99) {
+                data->count[value]++;
+            }
+        }
+
+        return nullptr;
+    };
+
+    // 准备线程数据
+    ThreadOneData data1 = {
+        &global_value, &thread_ready, &start_testing,
+        &mutex, &cond
+    };
+
+    ThreadTwoData data2 = {
+        &global_value, count, &start_testing,
+        &mutex, &cond
+    };
+
+    // 创建线程
+    pthread_t pt[2];
+    pthread_create(&pt[0], NULL,
+                 (void* (*)(void*))thread_one_func, &data1);
+    pthread_create(&pt[1], NULL,
+                 (void* (*)(void*))thread_two_func, &data2);
+
+    // 等待线程完成
+    pthread_join(pt[0], NULL);
+    pthread_join(pt[1], NULL);
+
+    // 生成结果
+    for(int j = 0; j < 100; j++) {
+        char buffer[16];
+        sprintf(buffer, "%d", count[j]);
+        strcat(count_string, buffer);
+
+        if(j < 99) {
+            strcat(count_string, ",");   // 直接使用 strcat
+        }
+    }
+    LOGD("%s",count_string);
+    const int TOTAL_SAMPLES = 50000; // 预期的总样本数
+
+    // 1. 计算分布特征
+    int value_at_0 = count[0];
+    int value_at_32 = count[32]; // 模拟器常见的第二峰值
+    int middle_values = 0;       // 中间值的数量 (模拟器通常很少)
+    int other_values = 0;        // 其他值的数量
+
+    // 计算各区间的值
+    for(int i=1; i<=31; i++) {
+        middle_values += count[i];
+    }
+    for(int i=33; i<100; i++) {
+        other_values += count[i];
+    }
+    // 2. 计算特征得分
+    double score = 0.0;
+    // 特征1: 32位置是否有显著峰值 (模拟器特征)
+    if (value_at_32 > TOTAL_SAMPLES * 0.1) { // 超过10%的样本在32位置
+        score += 40.0;
+    }
+    // 特征2: 中间区域的值特别少 (模拟器特征)
+    if (middle_values < 100) {
+        score += 30.0;
+    }
+    // 特征3: 0位置的值比例 (两者都会有，但分布不同)
+    double zero_ratio = (double)value_at_0 / TOTAL_SAMPLES;
+    if (zero_ratio > 0.9) { // 90%以上的样本都在0位置 (真机特征)
+        score -= 30.0;
+    } else if (zero_ratio < 0.4) { // 0位置样本低于40% (强烈的模拟器特征)
+        score += 40.0;
+    } else if (zero_ratio < 0.7) { // 0位置样本低于70% (可能是模拟器)
+        score += 20.0;
+    }
+    // 特征4: 二值分布检查 (主要集中在0和32两个位置是模拟器特征)
+    if (value_at_0 + value_at_32 > TOTAL_SAMPLES * 0.95 &&
+        value_at_32 > TOTAL_SAMPLES * 0.2) {
+        score += 30.0;
+    }
+    // 特征5: 其他位置的散点 (真机可能会有一些散点)
+    if (other_values > 0 && other_values < 100) {
+        score -= 15.0;
+    }
+    // 3. 根据得分判断
+    bool is_emulator = (score >= 50.0);
+    // 添加详细信息到结果字符串
+    char detail[256];
+    snprintf(detail, sizeof(detail),
+             " [Score:%.1f, Zero:%.1f%%, At32:%.1f%%, EmulatorProb:%s]",
+             score,
+             (double)value_at_0 / TOTAL_SAMPLES * 100.0,
+             (double)value_at_32 / TOTAL_SAMPLES * 100.0,
+             is_emulator ? "High" : "Low");
+    strcat(count_string, detail);
+    LOGD("%s",count_string);
+    // 清理资源
+    pthread_mutex_destroy(&mutex);
+    pthread_cond_destroy(&cond);
+    // 返回结果
+    return (*env).NewStringUTF(is_emulator ? result2 : result1);
+}
 //-----------------------------------------------hook检测方法------------------------------------------------------
 JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_check(JNIEnv *env, jobject){
     const char* result1 = "检测到frida服务器端口";

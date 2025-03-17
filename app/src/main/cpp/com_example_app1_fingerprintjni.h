@@ -33,6 +33,22 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_netfp
 
 /*
  * Class:     com_example_app1_fingerprintjni
+ * Method:    qemubkpt
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_qemubkpt
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_example_app1_fingerprintjni
+ * Method:    executespeed
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_executespeed
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_example_app1_fingerprintjni
  * Method:    check
  * Signature: ()Ljava/lang/String;
  */

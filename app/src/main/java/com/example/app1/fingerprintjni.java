@@ -12,6 +12,10 @@ public class fingerprintjni {
 
     public native String netfp();
 
+    public native String qemubkpt();
+
+    public native String executespeed();
+
     public native String check();
 
     public native String mapscheck();

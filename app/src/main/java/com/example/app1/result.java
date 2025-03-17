@@ -100,6 +100,7 @@ public class result {
     //-----------------------------------------------模拟器检测------------------------------------------------------
     public String emulatorCheck(Context context){
         emulatorcheck ec = new emulatorcheck();
+        fingerprintjni fj = new fingerprintjni();
 
         StringBuilder s = new StringBuilder("★模拟器检测★");
         boolean flag = false;
@@ -145,6 +146,13 @@ public class result {
         }else {
             s.append("\n检查电池状态:正常");
         }
+
+        s.append("\n检查子进程退出状态：").append(fj.qemubkpt());
+        if (fj.qemubkpt().equals("异常")){
+            flag = true;
+        }
+
+        s.append("\n检查指令执行速度：").append(fj.executespeed());
 
         if (flag){
             s.append("\n\n可能是模拟器\n");
