@@ -12,8 +12,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.darvin.security.detectfrida;
-
 import top.canyie.magiskkiller.killmagisk;
+import io.github.vvb2060.xposeddetector.xposeddetector;
 
 public class MainActivity2 extends AppCompatActivity {
 
@@ -26,23 +26,30 @@ public class MainActivity2 extends AppCompatActivity {
         Intent intent = getIntent();
 
 //------------------------------------------aar---------------------------------------------------
-        if (intent.getBooleanExtra("magiskkiller",false)){
+        if (intent.getBooleanExtra("detectfrida",false)){
+            detectfrida df = new detectfrida();
+            df.detectf();
+        } else if (intent.getBooleanExtra("magiskkiller",false)) {
             killmagisk km = new killmagisk(MainActivity2.this);
 
             km.setViews(findViewById(R.id.text));
             km.startDetection();
-        } else if (intent.getBooleanExtra("detectfrida",false)) {
-            detectfrida df = new detectfrida();
-            df.detectf();
+        } else if (intent.getBooleanExtra("xposeddetector",false)) {
+            xposeddetector xd = new xposeddetector(this);
+
+            xd.setViews(findViewById(R.id.text));
+            xd.detectxposed();
         }
+
+
 //------------------------------------------文本---------------------------------------------------
 
         String btn = intent.getStringExtra("btn");
         String s = intent.getStringExtra("s");
         TextView title = findViewById(R.id.title);
-        TextView textView1 = findViewById(R.id.text);
+        TextView textView = findViewById(R.id.text);
         title.setText(btn);
-        textView1.setText(s);
+        textView.setText(s);
 //------------------------------------------返回---------------------------------------------------
         Button button = findViewById(R.id.button);
         button.setOnClickListener(view -> finish());

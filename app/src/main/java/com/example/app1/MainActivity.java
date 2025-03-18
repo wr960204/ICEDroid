@@ -134,13 +134,18 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("btn", "detectfrida");
                     intent.putExtra("s", "相关检测结果请查看logcat");
                     startActivity(intent);
-
                 } else if (position == 7) {// "magiskkiller"
                     Intent intent = new Intent(MainActivity.this, MainActivity2.class);
                     intent.putExtra("magiskkiller",true);
                     intent.putExtra("btn", "magiskkiller");
                     startActivity(intent);
+                } else if (position == 8) {// "xposeddetector"
+                    Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+                    intent.putExtra("xposeddetector",true);
+                    intent.putExtra("btn", "xposeddetector");
+                    startActivity(intent);
                 }
+
                 // 选择操作后将 Spinner 重置回第一个选项
                 menu.setSelection(0);
             }
