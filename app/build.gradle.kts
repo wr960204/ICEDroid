@@ -47,6 +47,12 @@ android {
         }
     }
 
+    packagingOptions {
+        jniLibs {
+            pickFirsts.add("lib/*/libvvb2060.so")
+        }
+    }
+
 
 }
 
@@ -70,18 +76,5 @@ dependencies {
     implementation (libs.okhttp)
     implementation ("org.bouncycastle:bcprov-jdk18on:1.76")
     implementation (libs.xposeddetector)
-    
-    /*
 
-    //implementation ("dev.rikka.rikkax.material:material:1.6.6")
-    implementation ("dev.rikka.rikkax.html:html-ktx:1.1.2")
-    implementation ("dev.rikka.rikkax.recyclerview:recyclerview-adapter:1.3.0")
-    implementation ("dev.rikka.rikkax.widget:borderview:1.1.0")
-
-    implementation ("com.google.android.material:material:1.10.0")
-
-    implementation ("androidx.core:core-ktx:1.12.0")
-    implementation ("androidx.fragment:fragment-ktx:1.6.2")
-    implementation ("androidx.recyclerview:recyclerview:1.3.2")
-    */
 }

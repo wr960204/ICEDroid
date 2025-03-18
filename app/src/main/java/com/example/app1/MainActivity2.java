@@ -15,6 +15,7 @@ import com.darvin.security.detectfrida;
 import top.canyie.magiskkiller.killmagisk;
 import io.github.vvb2060.xposeddetector.xposeddetector;
 
+
 public class MainActivity2 extends AppCompatActivity {
 
     @Override
@@ -30,7 +31,7 @@ public class MainActivity2 extends AppCompatActivity {
             detectfrida df = new detectfrida();
             df.detectf();
         } else if (intent.getBooleanExtra("magiskkiller",false)) {
-            killmagisk km = new killmagisk(MainActivity2.this);
+            killmagisk km = new killmagisk(this);
 
             km.setViews(findViewById(R.id.text));
             km.startDetection();
