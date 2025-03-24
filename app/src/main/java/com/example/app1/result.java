@@ -369,7 +369,7 @@ public class result {
         String df = devicefeatures(context);
         String ka = keyattestion();
 
-        t.append(rc).append(ec).append(hc).append(fc).append(tc).append(an).append(ct).append(df).append(ka);
+        t.append(rc).append(ec).append(hc).append(fc).append(tc).append(an).append(df).append(ka);
 
         return t.toString();
     }

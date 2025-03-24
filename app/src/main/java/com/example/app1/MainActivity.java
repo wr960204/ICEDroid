@@ -176,21 +176,27 @@ public class MainActivity extends AppCompatActivity {
     private void updateInternalFiles() throws IOException {
         result rs = new result();
         filewr fl = new filewr();
+
         fl.writeToAppSpecificFile(this, "check.txt",rs.total(this));
         Toast.makeText(this,"保存成功",Toast.LENGTH_LONG).show();
     }
     private void updateExternalStorage() throws IOException {
         result rs = new result();
         filewr fl = new filewr();
-        fl.bufferSave(rs.total(this),"a.txt");
-        Toast.makeText(this,"保存成功",Toast.LENGTH_LONG).show();
+        try {
+            fl.bufferSave(rs.total(this),"a.txt");
+            Toast.makeText(this,"保存成功",Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Toast.makeText(this,"保存失败",Toast.LENGTH_LONG).show();
+            throw new RuntimeException(e);
+        }
+
     }
     private void senddata() {
         result rs = new result();
         senddata sd = new senddata();
         try {
-            sd.sendDataToServer(rs.total(this));
-            Toast.makeText(this,"上传成功",Toast.LENGTH_LONG).show();
+            sd.sendDataToServer(this ,rs.total(this));
         } catch (JSONException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -210,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
         //自建密钥库签名
         String sc_myappkey = "4D:DD:19:7F:A2:A2:59:77:0F:F1:3A:EB:FE:DD:26:A4:C1:8A:80:AA";
 
-        signcheck signCheck = new signcheck(this, sc_default);
+        signcheck signCheck = new signcheck(this, sc_myappkey);
         return signCheck.check();
     }
     //定时校验

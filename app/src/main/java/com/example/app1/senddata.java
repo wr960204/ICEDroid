@@ -1,6 +1,9 @@
 package com.example.app1;
 
+import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -22,7 +25,7 @@ public class senddata {
     String mip = "192.168.31.206";
     String txyip = "101.33.208.98";
     String murl = "http://" + txyip + ":8000/learn/receive_file_content/";
-    public void sendDataToServer(String data) throws JSONException {
+    public void sendDataToServer(Context context , String data) throws JSONException {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -50,8 +53,14 @@ public class senddata {
                     String body = response.body().string();
                     if (response.isSuccessful()) {
                         Log.d("Network", "Send success. Response: " + body);
+                        Looper.prepare();
+                        Toast.makeText(context ,"Send success.",Toast.LENGTH_LONG).show();
+                        Looper.loop();
                     } else {
                         Log.e("Network", "Server error: " + response.code() + "\n" + body);
+                        Looper.prepare();
+                        Toast.makeText(context ,"Server error: " + response.code(),Toast.LENGTH_LONG).show();
+                        Looper.loop();
                     }
                 } catch (IOException e) {
                     Log.e("Network", "Response parsing error", e);

@@ -367,6 +367,8 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_executespeed(JNIE
                 "add r1, r1, #1\n" "str r1, [r0]\n"
                 "add r1, r1, #1\n" "str r1, [r0]\n"
                 "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
+                "add r1, r1, #1\n" "str r1, [r0]\n"
                 :
                 : "r" (data->global_value)
                 : "r0", "r1", "memory"
