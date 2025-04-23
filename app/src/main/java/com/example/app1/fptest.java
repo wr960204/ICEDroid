@@ -1,13 +1,33 @@
 package com.example.app1;
 
+import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.provider.Settings;
+import android.util.Log;
+import android.view.WindowManager;
+
+import android.os.Bundle;
+import android.os.Process;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.webkit.WebSettings;
+
 
 import androidx.annotation.NonNull;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,6 +113,266 @@ public class fptest {
         }
         return b;
     }
+
+    @SuppressLint("DefaultLocale")
+    public String getDisplayInformation(Context context) {
+        StringBuilder info = new StringBuilder();
+
+        // 正确获取WindowManager服务
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+
+        // 获取显示器基本信息
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+
+        // 获取更精确的显示器物理尺寸
+        DisplayMetrics realMetrics = new DisplayMetrics();
+        display.getRealMetrics(realMetrics);
+
+        // 分辨率信息
+        info.append("分辨率: ").append(realMetrics.widthPixels).append(" x ").append(realMetrics.heightPixels).append(" 像素\n\n");
+
+        // 显示密度信息
+        info.append("屏幕密度: ").append(metrics.density).append("\n");
+        info.append("点密度: ").append(metrics.densityDpi).append(" dpi\n");
+        info.append("缩放密度: ").append(metrics.scaledDensity).append("\n\n");
+
+        // 刷新率信息
+        float refreshRate = display.getRefreshRate();
+        info.append("刷新率: ").append(refreshRate).append(" Hz\n\n");
+
+        // 对于Android 11及以上版本，可以获取支持的刷新率范围
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                Display.Mode[] modes = display.getSupportedModes();
+                info.append("支持的刷新率: ");
+                for (Display.Mode mode : modes) {
+                    info.append(mode.getRefreshRate()).append(" Hz, ");
+                }
+                info.append("\n\n");
+            } catch (Exception e) {
+                info.append("无法获取支持的刷新率模式\n\n");
+            }
+        }
+
+        // 获取屏幕物理尺寸（英寸）
+        double x = Math.pow(realMetrics.widthPixels / realMetrics.xdpi, 2);
+        double y = Math.pow(realMetrics.heightPixels / realMetrics.ydpi, 2);
+        double screenInches = Math.sqrt(x + y);
+        info.append("屏幕物理尺寸: ").append(String.format("%.2f", screenInches)).append(" 英寸\n\n");
+
+        System.out.println(info);
+        return info.toString();
+    }
+
+    public String isMonkey(){
+        if(ActivityManager.isUserAMonkey()) {
+            return "isUserAMonkey：monkey";
+        }
+        return "isUserAMonkey：user";
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    public  String getUserAgent(Context context) {
+        String userAgent = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            try {
+                userAgent = WebSettings.getDefaultUserAgent(context);
+            } catch (Throwable ignored) {
+            }
+            if (userAgent == null) {
+                userAgent = System.getProperty("http.agent");
+            }
+        } else {
+            userAgent = System.getProperty("http.agent");
+        }
+        StringBuilder sb = new StringBuilder();
+        if (userAgent != null) {
+            for (int i = 0, length = userAgent.length(); i < length; i++) {
+                char c = userAgent.charAt(i);
+                if (c <= '\u001f' || c >= '\u007f') {
+                    sb.append(String.format("\\u%04x", (int) c));
+                } else {
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    public String getDefaultRingtoneInfo(Context context) {
+        StringBuilder info = new StringBuilder();
+
+        try {
+            // 获取默认电话铃声
+            Uri defaultRingtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+            info.append("默认电话铃声 URI: ").append(defaultRingtoneUri.toString()).append("\n");
+
+            // 获取默认通知铃声
+            Uri defaultNotificationUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            info.append("默认通知铃声 URI: ").append(defaultNotificationUri.toString()).append("\n");
+
+            // 获取默认闹钟铃声
+            Uri defaultAlarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+            info.append("默认闹钟铃声 URI: ").append(defaultAlarmUri.toString()).append("\n");
+
+            // 尝试获取铃声的标题
+            android.media.Ringtone ringtone = RingtoneManager.getRingtone(context, defaultRingtoneUri);
+            String ringtoneName = ringtone.getTitle(context);
+            info.append("默认电话铃声名称: ").append(ringtoneName).append("\n");
+
+            // 获取所有可用铃声列表
+            info.append("系统所有可用铃声列表:\n");
+            RingtoneManager manager = new RingtoneManager(context);
+
+            // 设置要查询的铃声类型（电话铃声、通知铃声和闹钟铃声）
+            manager.setType(RingtoneManager.TYPE_RINGTONE |
+                    RingtoneManager.TYPE_NOTIFICATION |
+                    RingtoneManager.TYPE_ALARM);
+
+            android.database.Cursor cursor = manager.getCursor();
+            int count = cursor.getCount();
+            info.append("总铃声数: ").append(count).append("\n\n");
+            /*
+            // 列出前10个铃声（避免列表过长）
+            int limit = Math.min(10, count);
+            for (int i = 0; i < limit; i++) {
+                cursor.moveToPosition(i);
+                String title = manager.getRingtone(i).getTitle(context);
+                Uri ringtoneUri = manager.getRingtoneUri(i);
+                info.append(i + 1).append(". ").append(title).append("\n")
+                        .append("   URI: ").append(ringtoneUri.toString()).append("\n\n");
+            }
+
+            if (count > 10) {
+                info.append("... 以及其他 ").append(count - 10).append(" 个铃声\n");
+            }
+
+             */
+
+        } catch (Exception e) {
+            info.append("获取铃声信息时出错: ").append(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return info.toString();
+    }
+
+    public String getAppInfo(Context context) {
+        StringBuilder info = new StringBuilder();
+        try {
+            // 获取应用包名
+            String packageName = context.getPackageName();
+            info.append("包名 (Package Name): ").append(packageName).append("\n\n");
+            // 获取应用版本信息
+            try {
+                PackageInfo packageInfo = context.getPackageManager().getPackageInfo(packageName, 0);
+                info.append("版本名称 (Version Name): ").append(packageInfo.versionName).append("\n");
+                info.append("版本代码 (Version Code): ").append(packageInfo.versionCode).append("\n\n");
+            } catch (PackageManager.NameNotFoundException e) {
+                info.append("无法获取版本信息: ").append(e.getMessage()).append("\n\n");
+            }
+            // 获取当前进程ID (PID)
+            int pid = Process.myPid();
+            info.append("进程ID (PID): ").append(pid).append("\n");
+            // 获取用户ID (UID)
+            int uid = Process.myUid();
+            info.append("用户ID (UID): ").append(uid).append("\n");
+            // 获取进程名称
+            String processName = getProcessName(context, pid);
+            if (processName != null) {
+                info.append("进程名称 (Process Name): ").append(processName).append("\n\n");
+            }
+            // 获取组ID (GID)
+            int[] gids = getGroupIds();
+            if (gids != null && gids.length > 0) {
+                info.append("组ID (GIDs): ");
+                for (int gid : gids) {
+                    info.append(gid).append(" ");
+                }
+                info.append("\n\n");
+            } else {
+                info.append("无法获取组ID (GIDs)\n\n");
+            }
+            // 获取当前进程的线程信息
+            int threadId = Process.myTid();
+            info.append("主线程ID (Main Thread ID): ").append(threadId).append("\n\n");
+            // 尝试获取进程状态信息
+            info.append("进程状态信息:\n");
+            info.append(getProcessStatusInfo(pid));
+        } catch (Exception e) {
+            info.append("获取应用信息时出现错误: ").append(e.getMessage());
+            e.printStackTrace();
+        }
+        return info.toString();
+    }
+    // 获取进程名称的方法
+    private String getProcessName(Context context, int pid) {
+        // 方法1：通过ActivityManager获取
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+        if (runningProcesses != null) {
+            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+                if (processInfo.pid == pid) {
+                    return processInfo.processName;
+                }
+            }
+        }
+        // 方法2：通过读取/proc/[pid]/cmdline文件获取
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("/proc/" + pid + "/cmdline"));
+            String processName = reader.readLine();
+            reader.close();
+            if (processName != null) {
+                processName = processName.trim();
+                if (!processName.isEmpty()) {
+                    return processName;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    // 获取组ID的方法
+    private int[] getGroupIds() {
+        try {
+            Class<?> processClass = Class.forName("android.os.Process");
+            java.lang.reflect.Method method;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Android 10+ 尝试反射获取隐藏方法
+                method = processClass.getDeclaredMethod("getProcessGids");
+            } else {
+                // 老版本 Android 尝试 getGroups 方法
+                method = processClass.getDeclaredMethod("getGroups");
+            }
+            method.setAccessible(true);
+            return (int[]) method.invoke(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    // 获取进程状态详细信息
+    private String getProcessStatusInfo(int pid) {
+        StringBuilder statusInfo = new StringBuilder();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("/proc/" + pid + "/status"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                statusInfo.append(line).append("\n");
+            }
+            reader.close();
+        } catch (IOException e) {
+            statusInfo.append("无法读取进程状态信息: ").append(e.getMessage());
+            e.printStackTrace();
+        }
+        return statusInfo.toString();
+    }
+
+
 
 
 

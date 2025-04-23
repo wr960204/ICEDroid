@@ -86,6 +86,30 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_fingerprint(JNIEn
             //普通指纹
             "ro.build.date",
             "ro.build.date.utc",
+
+            "ro.boot.vbmeta.digest",
+            "ro.boot.cpuid",
+            "ro.boot.flash.locked",
+            "init.svc.bootlogoupdater",
+            "init.svc.pvrsrvinit",
+            "init.svc.servicemanager",
+            "init.svc.vold",
+            "init.svc.netd",
+            "init.svc.netdiag",
+            "init.svc.hald",
+            "init.svc.debuggerd",
+            "init.svc.zygote",
+            "init.svc.drmserver",
+            "init.svc.media",
+            "init.svc.dbus",
+            "init.svc.installd",
+            "init.svc.keystore",
+            "init.svc.console",
+            "init.svc.adbd",
+            "init.svc.ril-daemon",
+            "gsm.version.ril-impl",
+
+
             "ro.product.board",
             "ro.bootloader",
             "ro.product.brand",
@@ -231,9 +255,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_qemubkpt(JNIEnv *
     };
     // 内部函数：设置信号捕获
     auto setupSigTrap = [&handler_sigtrap, &handler_sigbus]() {
-        // BKPT throws SIGTRAP on nexus 5 / oneplus one (and most devices)
         signal(SIGTRAP, handler_sigtrap);
-        // BKPT throws SIGBUS on nexus 4
         signal(SIGBUS, handler_sigbus);
     };
     // 内部函数：尝试执行断点指令
@@ -245,7 +267,6 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_qemubkpt(JNIEnv *
     pid_t child = fork();
     int child_status, status = 0;
     if(child == 0) {
-        // 子进程中设置信号处理并触发BKPT指令
         setupSigTrap();
         tryBKPT();
     } else if(child == -1) {
@@ -496,7 +517,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_executespeed(JNIE
     // 2. 计算特征得分
     double score = 0.0;
     // 特征1: 32位置是否有显著峰值 (模拟器特征)
-    if (value_at_32 > TOTAL_SAMPLES * 0.1) { // 超过10%的样本在32位置
+    if (value_at_32 > TOTAL_SAMPLES * 0.4) { // 超过10%的样本在32位置
         score += 40.0;
     }
     // 特征2: 中间区域的值特别少 (模拟器特征)
@@ -522,7 +543,7 @@ JNIEXPORT jstring JNICALL Java_com_example_app1_fingerprintjni_executespeed(JNIE
         score -= 15.0;
     }
     // 3. 根据得分判断
-    bool is_emulator = (score >= 50.0);
+    bool is_emulator = (score > 70.0);
     // 添加详细信息到结果字符串
     char detail[256];
     snprintf(detail, sizeof(detail),

@@ -148,9 +148,6 @@ public class result {
         }
 
         s.append("\n检查子进程退出状态：").append(fj.qemubkpt());
-        if (fj.qemubkpt().equals("异常")){
-            flag = true;
-        }
 
         s.append("\n检查指令执行速度：").append(fj.executespeed());
 
@@ -288,13 +285,21 @@ public class result {
     //------------------------------------------测试-------------------------------------------------------------------
     public String test(Context context){
         fptest fp = new fptest();
+        location lc = new location();
+        lc.getProvince(context);
 
         StringBuilder fs = new StringBuilder("★test★");
         List<String> p = fp.getProperties(context);
         for (String property : p){
             fs.append("\n").append(property);
         }
-
+        fs.append(fp.getDisplayInformation(context));
+        fs.append(fp.isMonkey()).append("\n");
+        fs.append("UserAgent：").append(fp.getUserAgent(context)).append("\n");
+        fs.append(fp.getDefaultRingtoneInfo(context));
+        fs.append(fp.getAppInfo(context));
+        fs.append(lc.getProvince(context));
+        System.out.println(fs);
         return fs.toString();
     }
 

@@ -26,7 +26,6 @@ public class fingerprint {
     //-----------------------------------------------设备------------------------------------------------------
     public String getDeviceID(ContentResolver contentResolver) {
         String s = "设备指纹：\n";
-
         try {
             // 获取ANDROID_ID
             @SuppressLint("HardwareIds") String androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID);
@@ -36,8 +35,6 @@ public class fingerprint {
         } catch (Exception e) {
             Log.w("getDeviceIDException", e.getMessage(), e);
         }
-
-        //s += getUUID() + "\n";
         return s;
     }
 
@@ -130,6 +127,29 @@ public class fingerprint {
 
                     "ro.build.date",
                     "ro.build.date.utc",
+
+                    "ro.boot.vbmeta.digest",
+                    "ro.boot.cpuid",
+                    "ro.boot.flash.locked",
+                    "init.svc.bootlogoupdater",
+                    "init.svc.pvrsrvinit",
+                    "init.svc.servicemanager",
+                    "init.svc.vold",
+                    "init.svc.netd",
+                    "init.svc.netdiag",
+                    "init.svc.hald",
+                    "init.svc.debuggerd",
+                    "init.svc.zygote",
+                    "init.svc.drmserver",
+                    "init.svc.media",
+                    "init.svc.dbus",
+                    "init.svc.installd",
+                    "init.svc.keystore",
+                    "init.svc.console",
+                    "init.svc.adbd",
+                    "init.svc.ril-daemon",
+                    "gsm.version.ril-impl",
+
             };
 
             for (String property : properties) {
@@ -143,10 +163,14 @@ public class fingerprint {
             for (String property : p){
                 s.append(property).append("\n");
             }
+
+            System.out.println(s);
+
             return s.toString();
         } catch (Exception e) {
             Log.w("getSystemPropertiesException",  e.getMessage(), e);
         }
+
         return "系统属性获取失败";
     }
 
@@ -182,8 +206,11 @@ public class fingerprint {
         properties.add("FINGERPRINT:" + Build.BRAND+"/" + Build.PRODUCT+"/" + Build.DEVICE+":" + Build.VERSION.RELEASE+"/" +
                         Build.ID+"/" + Build.VERSION.INCREMENTAL+":" + Build.TYPE+"/" + Build.TAGS);
 
+
+
         return getStrings(properties);
     }
+
 
     private @NonNull List<String> getStrings(List<String> properties) {
         List<String> processedProperties = new ArrayList<>();

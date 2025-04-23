@@ -77,6 +77,12 @@ public class MainActivity extends AppCompatActivity {
         TextView kc = findViewById(R.id.key);
         kc.setText(keyattestion);
 
+        System.out.println("----------------------------------------------------------------------");
+        service sv = new service();
+        sv.getservice();
+        System.out.println("----------------------------------------------------------------------");
+
+
         TextView st = findViewById(R.id.statusTitle);
         ImageView resultimage = findViewById(R.id.resultImage);
         setupMenuSpinner();
@@ -216,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
         //自建密钥库签名
         String sc_myappkey = "4D:DD:19:7F:A2:A2:59:77:0F:F1:3A:EB:FE:DD:26:A4:C1:8A:80:AA";
 
-        signcheck signCheck = new signcheck(this, sc_myappkey);
+        signcheck signCheck = new signcheck(this, sc_default);
         return signCheck.check();
     }
     //定时校验
@@ -225,7 +231,6 @@ public class MainActivity extends AppCompatActivity {
         scheduler.scheduleWithFixedDelay(this::signCheck, 0, 15, TimeUnit.SECONDS);
         Log.d("ScheduledTask", "signcheck executed");
     }
-
     private void setDailyAlarm() {
         AlarmManager aManager = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, MyReceiver.class);
