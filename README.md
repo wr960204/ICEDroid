@@ -1,6 +1,21 @@
 # ICEDroid：Intrusion Countermeasure Electronics Droid
 ICE（Intrusion Countermeasure Electronics：侵入対抗電子機器）： An Android app environment detection SDK, responsible for countering hooks and collecting risk control environment data.
 
+项目流程图：
+
+![image](https://github.com/user-attachments/assets/6dbdb934-9e5f-499b-a267-717da521ae56)
+
+
+demo：
+
+
+https://github.com/user-attachments/assets/0254b9b5-4ba7-44f6-b22b-ef183d9ca21d
+
+
+https://github.com/user-attachments/assets/3ff04726-1217-4790-99f9-499d1650964a
+
+
+
 **使用AAR**
 
 **项目语言：Java，kotlin**

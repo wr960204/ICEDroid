@@ -17,23 +17,33 @@ import java.nio.charset.StandardCharsets;
 
 public class filewr {
     //---------------------------------------------------------外部存储-----------------------------------------------------
-    public void bufferSave(String msg,String filename) {
-        File file = new File(Environment.getExternalStorageDirectory().getPath(),filename);
+    public void bufferSave(String msg, String filename) {
+        // 修改为使用上下文获取应用专属的外部存储目录
+        File externalDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "app1");
+        if (!externalDir.exists()) {
+            externalDir.mkdirs();
+        }
+        File file = new File(externalDir, filename);
+        
         // 先读取原有内容
         StringBuilder originalContent = new StringBuilder();
         try {
-            BufferedReader bfr = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                originalContent.append(line).append("\n");
+            if (file.exists()) {
+                BufferedReader bfr = new BufferedReader(new FileReader(file));
+                String line;
+                while ((line = bfr.readLine()) != null) {
+                    originalContent.append(line).append("\n");
+                }
+                bfr.close();
             }
-            bfr.close();
         } catch (IOException e) {
-            Log.w("bufferSaveException", e.getMessage(),e);
+            Log.w("bufferSaveException", e.getMessage(), e);
         }
+        
         // 将要写入的内容以换行符分割
         String[] newContentLines = msg.split("\n");
         String[] originalLines = originalContent.toString().split("\n");
+        
         // 对比并打印变化的部分
         for (int i = 0; i < Math.max(newContentLines.length, originalLines.length); i++) {
             String newLine = i < newContentLines.length ? newContentLines[i] : "";
@@ -44,6 +54,7 @@ public class filewr {
                 System.out.println("新内容: " + newLine);
             }
         }
+        
         // 覆盖写入新内容
         try {
             BufferedWriter bfw = new BufferedWriter(new FileWriter(file, false));//追加写入或覆盖写入
@@ -51,13 +62,21 @@ public class filewr {
             bfw.newLine();
             bfw.flush();
             bfw.close();
+            Log.d("bufferSave", "保存成功到: " + file.getAbsolutePath());
         } catch (IOException e1) {
-            Log.w("bufferSaveException", e1.getMessage(),e1);
+            Log.w("bufferSaveException", e1.getMessage(), e1);
         }
     }
 
     public String bufferRead(String filename) {
-        File file = new File(Environment.getExternalStorageDirectory().getPath(),filename);
+        // 修改为使用上下文获取应用专属的外部存储目录
+        File externalDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "app1");
+        File file = new File(externalDir, filename);
+        
+        if (!file.exists()) {
+            return "文件不存在";
+        }
+        
         try {
             BufferedReader bfr = new BufferedReader(new FileReader(file));
             String line = bfr.readLine();
@@ -72,7 +91,60 @@ public class filewr {
             Log.d("buffer", "bufferRead: " + sb);
             return sb.toString();
         } catch (IOException e) {
-            Log.w("bufferReadException", e.getMessage(),e);
+            Log.w("bufferReadException", e.getMessage(), e);
+        }
+        return "读取失败";
+    }
+    
+    // 兼容性更好的外部存储方法，需要Context
+    public void saveToExternalStorage(Context context, String msg, String filename) {
+        // 获取应用专属的外部存储目录
+        File externalDir = context.getExternalFilesDir(null);
+        if (externalDir == null) {
+            Log.e("FileStorage", "外部存储不可用");
+            return;
+        }
+        
+        File file = new File(externalDir, filename);
+        try {
+            BufferedWriter bfw = new BufferedWriter(new FileWriter(file, false));
+            bfw.write(msg);
+            bfw.newLine();
+            bfw.flush();
+            bfw.close();
+            Log.d("saveToExternalStorage", "保存成功到: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            Log.w("saveToExternalStorage", e.getMessage(), e);
+        }
+    }
+    
+    public String readFromExternalStorage(Context context, String filename) {
+        // 获取应用专属的外部存储目录
+        File externalDir = context.getExternalFilesDir(null);
+        if (externalDir == null) {
+            Log.e("FileStorage", "外部存储不可用");
+            return "外部存储不可用";
+        }
+        
+        File file = new File(externalDir, filename);
+        if (!file.exists()) {
+            return "文件不存在";
+        }
+        
+        try {
+            BufferedReader bfr = new BufferedReader(new FileReader(file));
+            String line = bfr.readLine();
+            StringBuilder sb = new StringBuilder("读取历史记录：\n");
+            while (line != null) {
+                sb.append(line);
+                sb.append("\n");
+                line = bfr.readLine();
+            }
+            bfr.close();
+            Log.d("readFromExternalStorage", "读取成功");
+            return sb.toString();
+        } catch (IOException e) {
+            Log.w("readFromExternalStorage", e.getMessage(), e);
         }
         return "读取失败";
     }
