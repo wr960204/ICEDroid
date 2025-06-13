@@ -220,3 +220,6 @@ bufferSave(String msg,String filename)：写入文件并输出有改变的部分
 
 bufferRead(String filename)：读取文件
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=liyao-l-y/ICEDroid&type=Date)](https://www.star-history.com/#liyao-l-y/ICEDroid&Date)
